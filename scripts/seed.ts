@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import mongoose from "mongoose";
+import mongoose, { type Types } from "mongoose";
 import {
   seedOrders,
   seedProducts,
@@ -12,6 +12,11 @@ import { Product, type ProductDocument } from "../src/models/product";
 import { Review } from "../src/models/review";
 import { User, type UserDocument } from "../src/models/user";
 import { Vendor, type VendorDocument } from "../src/models/vendor";
+
+type WithId<T> = T & { _id: Types.ObjectId };
+type SeedUserDocument = WithId<UserDocument>;
+type SeedVendorDocument = WithId<VendorDocument>;
+type SeedProductDocument = WithId<ProductDocument>;
 
 dotenv.config({ path: ".env.local" });
 dotenv.config();
@@ -54,7 +59,7 @@ async function resetCollections() {
 }
 
 async function seedUsers() {
-  const usersByKey = new Map<string, UserDocument>();
+  const usersByKey = new Map<string, SeedUserDocument>();
 
   for (const review of seedReviews) {
     const key = `review-${slugify(review.userName)}-${review.userInitials.toLowerCase()}`;
@@ -73,7 +78,7 @@ async function seedUsers() {
       { upsert: true, new: true, setDefaultsOnInsert: true },
     );
 
-    usersByKey.set(key, user);
+    usersByKey.set(key, user as SeedUserDocument);
   }
 
   for (const order of seedOrders) {
@@ -94,14 +99,14 @@ async function seedUsers() {
       { upsert: true, new: true, setDefaultsOnInsert: true },
     );
 
-    usersByKey.set(key, user);
+    usersByKey.set(key, user as SeedUserDocument);
   }
 
   return usersByKey;
 }
 
 async function seedVendorsAndProducts() {
-  const vendorsByExternalId = new Map<string, VendorDocument>();
+  const vendorsByExternalId = new Map<string, SeedVendorDocument>();
 
   for (const vendor of seedVendors) {
     const upserted = await Vendor.findOneAndUpdate(
@@ -122,10 +127,10 @@ async function seedVendorsAndProducts() {
       { upsert: true, new: true, setDefaultsOnInsert: true },
     );
 
-    vendorsByExternalId.set(vendor.externalId, upserted);
+    vendorsByExternalId.set(vendor.externalId, upserted as SeedVendorDocument);
   }
 
-  const productsByExternalId = new Map<string, ProductDocument>();
+  const productsByExternalId = new Map<string, SeedProductDocument>();
 
   for (const product of seedProducts) {
     const vendor = vendorsByExternalId.get(product.vendorExternalId);
@@ -149,15 +154,18 @@ async function seedVendorsAndProducts() {
       { upsert: true, new: true, setDefaultsOnInsert: true },
     );
 
-    productsByExternalId.set(product.externalId, upserted);
+    productsByExternalId.set(
+      product.externalId,
+      upserted as SeedProductDocument,
+    );
   }
 
   return { productsByExternalId, vendorsByExternalId };
 }
 
 async function seedReviewsData(
-  vendorsByExternalId: Map<string, VendorDocument>,
-  usersByKey: Map<string, UserDocument>,
+  vendorsByExternalId: Map<string, SeedVendorDocument>,
+  usersByKey: Map<string, SeedUserDocument>,
 ) {
   for (const review of seedReviews) {
     const vendor = vendorsByExternalId.get(review.vendorExternalId);
@@ -186,9 +194,9 @@ async function seedReviewsData(
 }
 
 async function seedOrdersData(
-  vendorsByExternalId: Map<string, VendorDocument>,
-  productsByExternalId: Map<string, ProductDocument>,
-  usersByKey: Map<string, UserDocument>,
+  vendorsByExternalId: Map<string, SeedVendorDocument>,
+  productsByExternalId: Map<string, SeedProductDocument>,
+  usersByKey: Map<string, SeedUserDocument>,
 ) {
   for (const order of seedOrders) {
     const vendor = vendorsByExternalId.get(order.vendorExternalId);

@@ -27,6 +27,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { VendorRouteNav } from "@/app/vendor/_components/VendorRouteNav";
 
 type Vendor = {
   _id: string;
@@ -302,6 +303,7 @@ export default function VendorAnalyticsPage() {
   return (
     <main className="min-h-screen bg-background p-4 sm:p-6">
       <div className="mx-auto max-w-6xl space-y-6">
+        <VendorRouteNav />
         <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <h1 className="text-2xl font-extrabold text-foreground">

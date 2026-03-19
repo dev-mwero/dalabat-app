@@ -27,7 +27,7 @@ function getOrderRefNote(orderRef: string) {
   return `order-ref:${orderRef}`;
 }
 
-async function findOrderByParam(orderId: string) {
+function findOrderByParam(orderId: string) {
   if (Types.ObjectId.isValid(orderId)) {
     return Order.findById(orderId);
   }

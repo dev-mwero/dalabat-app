@@ -3,6 +3,7 @@
 import { Bell, MapPin, Plus, Save, Store, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { VendorRouteNav } from "@/app/vendor/_components/VendorRouteNav";
 
 type Vendor = {
   _id: string;
@@ -307,6 +308,7 @@ export default function VendorSettingsPage() {
   return (
     <main className="min-h-screen bg-background p-4 md:p-6">
       <div className="mx-auto max-w-3xl space-y-6">
+        <VendorRouteNav />
         <header>
           <h1 className="text-2xl font-bold text-foreground">Settings</h1>
           <p className="mt-1 text-sm text-muted-foreground">

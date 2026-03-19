@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { VendorRouteNav } from "@/app/vendor/_components/VendorRouteNav";
 
 type Vendor = {
   _id: string;
@@ -227,6 +228,7 @@ export default function VendorDashboardPage() {
   return (
     <main className="min-h-screen bg-background p-4 sm:p-6">
       <div className="mx-auto max-w-5xl space-y-6">
+        <VendorRouteNav />
         <section className="space-y-3">
           <div>
             <h1 className="text-2xl font-extrabold text-foreground">

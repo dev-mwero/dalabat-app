@@ -3,6 +3,7 @@
 import { Package, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { VendorRouteNav } from "@/app/vendor/_components/VendorRouteNav";
 
 type Vendor = {
   _id: string;
@@ -131,21 +132,20 @@ export default function VendorInventoryPage() {
         setLoading(true);
         setError(null);
 
-        const query = new URLSearchParams({
-          vendorId,
-          limit: "200",
-          sort: "name_asc",
-        });
+        const params = new URLSearchParams();
+        params.set("vendorId", vendorId as string);
+        params.set("limit", "200");
+        params.set("sort", "name_asc");
 
         if (searchQuery.trim()) {
-          query.set("q", searchQuery.trim());
+          params.set("q", searchQuery.trim());
         }
 
         if (filterCategory !== "all") {
-          query.set("category", filterCategory);
+          params.set("category", filterCategory);
         }
 
-        const response = await fetch(`/api/products?${query.toString()}`, {
+        const response = await fetch(`/api/products?${params.toString()}`, {
           signal: controller.signal,
         });
 
@@ -204,21 +204,20 @@ export default function VendorInventoryPage() {
       return;
     }
 
-    const query = new URLSearchParams({
-      vendorId,
-      limit: "200",
-      sort: "name_asc",
-    });
+    const params = new URLSearchParams();
+    params.set("vendorId", vendorId as string);
+    params.set("limit", "200");
+    params.set("sort", "name_asc");
 
     if (searchQuery.trim()) {
-      query.set("q", searchQuery.trim());
+      params.set("q", searchQuery.trim());
     }
 
     if (filterCategory !== "all") {
-      query.set("category", filterCategory);
+      params.set("category", filterCategory);
     }
 
-    const response = await fetch(`/api/products?${query.toString()}`);
+    const response = await fetch(`/api/products?${params.toString()}`);
     if (!response.ok) {
       throw new Error("Failed to load products");
     }
@@ -419,6 +418,7 @@ export default function VendorInventoryPage() {
   return (
     <main className="min-h-screen bg-background p-4 sm:p-6">
       <div className="mx-auto max-w-5xl space-y-4">
+        <VendorRouteNav />
         <header className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
           <div>
             <h1 className="flex items-center gap-2 text-2xl font-extrabold text-foreground">

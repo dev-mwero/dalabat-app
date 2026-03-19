@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { VendorRouteNav } from "@/app/vendor/_components/VendorRouteNav";
 
 type Vendor = {
   _id: string;
@@ -314,6 +315,7 @@ export default function VendorOrdersPage() {
   return (
     <main className="min-h-screen bg-background p-4 sm:p-6">
       <div className="mx-auto max-w-5xl space-y-4">
+        <VendorRouteNav />
         <section className="space-y-2">
           <h1 className="flex items-center gap-2 text-2xl font-extrabold text-foreground">
             <ClipboardList className="h-6 w-6 text-primary" /> Orders
