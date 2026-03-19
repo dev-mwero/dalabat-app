@@ -14,10 +14,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/contexts/CartContext";
 
 interface Vendor {
@@ -27,27 +23,25 @@ interface Vendor {
   deliveryFee: number;
 }
 
-const CheckoutPage = () => {
+type DeliveryMethod = "pickup" | "delivery";
+type PaymentMethod = "cash" | "mpesa-auto" | "mpesa-manual";
+
+export default function CheckoutPage() {
   const router = useRouter();
   const { user } = useUser();
   const { items, vendorId, totalPrice, clearCart } = useCart();
   const [vendor, setVendor] = useState<Vendor | null>(null);
-  const [_loadingVendor, setLoadingVendor] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [deliveryMethod, setDeliveryMethod] = useState<"pickup" | "delivery">(
-    "pickup",
-  );
-  const [paymentMethod, setPaymentMethod] = useState<
-    "cash" | "mpesa-auto" | "mpesa-manual"
-  >("cash");
+  const [deliveryMethod, setDeliveryMethod] =
+    useState<DeliveryMethod>("pickup");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
   const [completedVendorName, setCompletedVendorName] = useState("");
   const [mpesaCode, setMpesaCode] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [orderPlaced, setOrderPlaced] = useState(false);
 
-  // Fetch vendor details
   useEffect(() => {
     if (!vendorId) return;
 
@@ -55,11 +49,13 @@ const CheckoutPage = () => {
 
     async function fetchVendor() {
       try {
-        setLoadingVendor(true);
-        const response = await fetch(`/api/vendors?limit=100`, {
+        const response = await fetch("/api/vendors?limit=100", {
           signal: controller.signal,
         });
-        if (!response.ok) throw new Error("Failed to fetch vendors");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch vendors");
+        }
 
         const data = await response.json();
         const foundVendor = data.data.find((v: Vendor) => v._id === vendorId);
@@ -71,11 +67,8 @@ const CheckoutPage = () => {
         }
       } catch (error) {
         if ((error as Error).name !== "AbortError") {
-          console.error("Error fetching vendor:", error);
           toast.error("Failed to load vendor details");
         }
-      } finally {
-        setLoadingVendor(false);
       }
     }
 
@@ -87,25 +80,24 @@ const CheckoutPage = () => {
     deliveryMethod === "delivery" && vendor?.deliveryAvailable
       ? vendor.deliveryFee
       : 0;
+
   const grandTotal = totalPrice + deliveryFee;
 
-  function formatPrice(price: number): string {
-    return new Intl.NumberFormat("en-KE", {
-      style: "currency",
-      currency: "KES",
-      minimumFractionDigits: 0,
-    }).format(price);
-  }
+  const currency = new Intl.NumberFormat("en-KE", {
+    style: "currency",
+    currency: "KES",
+    maximumFractionDigits: 0,
+  });
 
   if (items.length === 0 && !orderPlaced) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="flex flex-col items-center justify-center py-20 text-center container">
-          <div className="text-6xl mb-4">🛒</div>
-          <h2 className="text-xl font-bold text-foreground mb-2">
+        <div className="container flex flex-col items-center justify-center px-4 py-20 text-center">
+          <div className="mb-4 text-6xl">🛒</div>
+          <h2 className="mb-2 text-xl font-bold text-foreground">
             Your cart is empty
           </h2>
-          <Link href="/" className="text-primary font-medium hover:underline">
+          <Link href="/" className="font-medium text-primary hover:underline">
             Browse vendors
           </Link>
         </div>
@@ -115,41 +107,51 @@ const CheckoutPage = () => {
 
   if (orderPlaced) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background px-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="flex flex-col items-center justify-center py-20 text-center container"
+          className="container flex flex-col items-center justify-center py-20 text-center"
         >
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring" }}
-            className="text-7xl mb-6"
+            className="mb-6 text-7xl"
           >
             🎉
           </motion.div>
-          <CheckCircle className="h-16 w-16 text-green-500 mb-4" />
-          <h2 className="text-2xl font-extrabold text-foreground mb-2">
+          <CheckCircle className="mb-4 h-16 w-16 text-green-500" />
+          <h2 className="mb-2 text-2xl font-extrabold text-foreground">
             Order Placed!
           </h2>
-          <p className="text-muted-foreground mb-6 max-w-sm">
-            Your order has been sent to {completedVendorName}. You'll be
-            notified when it's ready.
+          <p className="mb-6 max-w-sm text-muted-foreground">
+            Your order has been sent to {completedVendorName}. You&apos;ll be
+            notified when it&apos;s ready.
           </p>
-          <Button onClick={() => router.push("/")} className="rounded-xl">
+          <button
+            type="button"
+            onClick={() => router.push("/")}
+            className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+          >
             Back to Marketplace
-          </Button>
+          </button>
         </motion.div>
       </div>
     );
   }
 
-  const handlePlaceOrder = async () => {
+  async function handlePlaceOrder() {
+    if (!vendorId) {
+      toast.error("Missing vendor for this checkout");
+      return;
+    }
+
     if (deliveryMethod === "delivery" && !address.trim()) {
       toast.error("Please enter a delivery address");
       return;
     }
+
     if (
       (paymentMethod === "mpesa-auto" || paymentMethod === "mpesa-manual") &&
       !phone.trim()
@@ -157,6 +159,7 @@ const CheckoutPage = () => {
       toast.error("Please enter your M-Pesa phone number");
       return;
     }
+
     if (paymentMethod === "mpesa-manual" && !mpesaCode.trim()) {
       toast.error("Please enter the M-Pesa transaction code");
       return;
@@ -165,24 +168,22 @@ const CheckoutPage = () => {
     setIsSubmitting(true);
 
     try {
-      const orderPayload = {
-        vendorId,
-        customerClerkId: user?.id,
-        items: items.map((item) => ({
-          productId: item.product._id,
-          quantity: item.quantity,
-        })),
-        paymentMethod,
-        mpesaCode: mpesaCode || undefined,
-        deliveryMethod,
-        deliveryAddress: address || undefined,
-        contactPhone: phone || undefined,
-      };
-
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderPayload),
+        body: JSON.stringify({
+          vendorId,
+          customerClerkId: user?.id,
+          items: items.map((item) => ({
+            productId: item.product._id,
+            quantity: item.quantity,
+          })),
+          paymentMethod,
+          mpesaCode: mpesaCode || undefined,
+          deliveryMethod,
+          deliveryAddress: deliveryMethod === "delivery" ? address : undefined,
+          contactPhone: phone || undefined,
+        }),
       });
 
       if (!response.ok) {
@@ -195,33 +196,31 @@ const CheckoutPage = () => {
       clearCart();
       setOrderPlaced(true);
       toast.success("Order placed successfully!");
-    } catch (error) {
-      console.error("Error placing order:", error);
+    } catch {
       toast.error("Failed to place order");
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container py-6 max-w-2xl">
+      <div className="container max-w-2xl px-4 py-6">
         <Link
           href={vendor ? `/store/${vendor._id}` : "/"}
-          className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 text-sm"
+          className="mb-6 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" /> Back
         </Link>
 
-        <h1 className="text-2xl font-extrabold text-foreground mb-6">
+        <h1 className="mb-6 text-2xl font-extrabold text-foreground">
           Checkout
         </h1>
 
-        {/* Order Summary */}
-        <div className="bg-card rounded-xl border border-border p-4 mb-6">
-          <h3 className="font-bold text-foreground mb-3">Order Summary</h3>
+        <div className="mb-6 rounded-xl border border-border bg-card p-4">
+          <h3 className="mb-3 font-bold text-foreground">Order Summary</h3>
           {vendor && (
-            <p className="text-sm text-muted-foreground mb-3">
+            <p className="mb-3 text-sm text-muted-foreground">
               From: {vendor.name}
             </p>
           )}
@@ -232,72 +231,76 @@ const CheckoutPage = () => {
                 className="flex justify-between text-sm"
               >
                 <span className="text-foreground">
-                  {item.product.name} × {item.quantity}
+                  {item.product.name} x {item.quantity}
                 </span>
                 <span className="font-medium text-foreground">
-                  {formatPrice(item.product.price * item.quantity)}
+                  {currency.format(item.product.price * item.quantity)}
                 </span>
               </div>
             ))}
           </div>
-          <div className="border-t border-border mt-3 pt-3 space-y-1">
+
+          <div className="mt-3 space-y-1 border-t border-border pt-3">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Subtotal</span>
-              <span className="text-foreground">{formatPrice(totalPrice)}</span>
+              <span className="text-foreground">
+                {currency.format(totalPrice)}
+              </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Delivery fee</span>
               <span className="text-foreground">
-                {deliveryFee > 0 ? formatPrice(deliveryFee) : "Free"}
+                {deliveryFee > 0 ? currency.format(deliveryFee) : "Free"}
               </span>
             </div>
-            <div className="flex justify-between text-lg font-bold pt-2">
+            <div className="flex justify-between pt-2 text-lg font-bold">
               <span className="text-foreground">Total</span>
-              <span className="text-primary">{formatPrice(grandTotal)}</span>
+              <span className="text-primary">
+                {currency.format(grandTotal)}
+              </span>
             </div>
           </div>
         </div>
 
-        {/* Delivery Method */}
-        <div className="bg-card rounded-xl border border-border p-4 mb-6">
-          <h3 className="font-bold text-foreground mb-3">Delivery Method</h3>
-          <RadioGroup
-            value={deliveryMethod}
-            onValueChange={(v) => setDeliveryMethod(v as "pickup" | "delivery")}
-          >
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-secondary/50">
-              <RadioGroupItem value="pickup" id="pickup" />
-              <Label
-                htmlFor="pickup"
-                className="flex items-center gap-2 cursor-pointer flex-1"
-              >
-                <MapPin className="h-4 w-4 text-primary" />
+        <div className="mb-6 rounded-xl border border-border bg-card p-4">
+          <h3 className="mb-3 font-bold text-foreground">Delivery Method</h3>
+          <fieldset className="space-y-2">
+            <label className="flex cursor-pointer items-center space-x-3 rounded-lg bg-secondary/50 p-3">
+              <input
+                name="delivery-method"
+                type="radio"
+                checked={deliveryMethod === "pickup"}
+                onChange={() => setDeliveryMethod("pickup")}
+                className="h-4 w-4"
+              />
+              <MapPin className="h-4 w-4 text-primary" />
+              <div>
+                <p className="font-medium text-foreground">Pickup</p>
+                <p className="text-xs text-muted-foreground">
+                  Collect from vendor location
+                </p>
+              </div>
+            </label>
+
+            {vendor?.deliveryAvailable && (
+              <label className="flex cursor-pointer items-center space-x-3 rounded-lg bg-secondary/50 p-3">
+                <input
+                  name="delivery-method"
+                  type="radio"
+                  checked={deliveryMethod === "delivery"}
+                  onChange={() => setDeliveryMethod("delivery")}
+                  className="h-4 w-4"
+                />
+                <Truck className="h-4 w-4 text-primary" />
                 <div>
-                  <p className="font-medium text-foreground">Pickup</p>
+                  <p className="font-medium text-foreground">Delivery</p>
                   <p className="text-xs text-muted-foreground">
-                    Collect from vendor location
+                    Fee: {currency.format(vendor.deliveryFee)}
                   </p>
                 </div>
-              </Label>
-            </div>
-            {vendor?.deliveryAvailable && (
-              <div className="flex items-center space-x-3 p-3 rounded-lg bg-secondary/50 mt-2">
-                <RadioGroupItem value="delivery" id="delivery" />
-                <Label
-                  htmlFor="delivery"
-                  className="flex items-center gap-2 cursor-pointer flex-1"
-                >
-                  <Truck className="h-4 w-4 text-primary" />
-                  <div>
-                    <p className="font-medium text-foreground">Delivery</p>
-                    <p className="text-xs text-muted-foreground">
-                      Fee: {formatPrice(vendor.deliveryFee)}
-                    </p>
-                  </div>
-                </Label>
-              </div>
+              </label>
             )}
-          </RadioGroup>
+          </fieldset>
 
           <AnimatePresence>
             {deliveryMethod === "delivery" && (
@@ -308,14 +311,18 @@ const CheckoutPage = () => {
                 className="overflow-hidden"
               >
                 <div className="mt-3">
-                  <Label className="text-sm text-foreground">
+                  <label
+                    htmlFor="delivery-address"
+                    className="text-sm text-foreground"
+                  >
                     Delivery Address
-                  </Label>
-                  <Input
+                  </label>
+                  <input
+                    id="delivery-address"
                     placeholder="Enter your delivery address"
                     value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    className="mt-1"
+                    onChange={(event) => setAddress(event.target.value)}
+                    className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                   />
                 </div>
               </motion.div>
@@ -323,67 +330,66 @@ const CheckoutPage = () => {
           </AnimatePresence>
         </div>
 
-        {/* Payment Method */}
-        <div className="bg-card rounded-xl border border-border p-4 mb-6">
-          <h3 className="font-bold text-foreground mb-3">Payment Method</h3>
-          <RadioGroup
-            value={paymentMethod}
-            onValueChange={(v) =>
-              setPaymentMethod(v as "cash" | "mpesa-auto" | "mpesa-manual")
-            }
-          >
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-secondary/50">
-              <RadioGroupItem value="cash" id="cash" />
-              <Label
-                htmlFor="cash"
-                className="flex items-center gap-2 cursor-pointer flex-1"
-              >
-                <Banknote className="h-4 w-4 text-primary" />
-                <div>
-                  <p className="font-medium text-foreground">
-                    Cash on Delivery/Pickup
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Pay when you receive your order
-                  </p>
-                </div>
-              </Label>
-            </div>
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-secondary/50 mt-2">
-              <RadioGroupItem value="mpesa-auto" id="mpesa-auto" />
-              <Label
-                htmlFor="mpesa-auto"
-                className="flex items-center gap-2 cursor-pointer flex-1"
-              >
-                <Phone className="h-4 w-4 text-primary" />
-                <div>
-                  <p className="font-medium text-foreground">
-                    M-Pesa (Automatic)
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    STK push to your phone
-                  </p>
-                </div>
-              </Label>
-            </div>
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-secondary/50 mt-2">
-              <RadioGroupItem value="mpesa-manual" id="mpesa-manual" />
-              <Label
-                htmlFor="mpesa-manual"
-                className="flex items-center gap-2 cursor-pointer flex-1"
-              >
-                <Phone className="h-4 w-4 text-primary" />
-                <div>
-                  <p className="font-medium text-foreground">
-                    M-Pesa (Manual Code)
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Enter transaction code after payment
-                  </p>
-                </div>
-              </Label>
-            </div>
-          </RadioGroup>
+        <div className="mb-6 rounded-xl border border-border bg-card p-4">
+          <h3 className="mb-3 font-bold text-foreground">Payment Method</h3>
+          <fieldset className="space-y-2">
+            <label className="flex cursor-pointer items-center space-x-3 rounded-lg bg-secondary/50 p-3">
+              <input
+                name="payment-method"
+                type="radio"
+                checked={paymentMethod === "cash"}
+                onChange={() => setPaymentMethod("cash")}
+                className="h-4 w-4"
+              />
+              <Banknote className="h-4 w-4 text-primary" />
+              <div>
+                <p className="font-medium text-foreground">
+                  Cash on Delivery/Pickup
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Pay when you receive your order
+                </p>
+              </div>
+            </label>
+
+            <label className="flex cursor-pointer items-center space-x-3 rounded-lg bg-secondary/50 p-3">
+              <input
+                name="payment-method"
+                type="radio"
+                checked={paymentMethod === "mpesa-auto"}
+                onChange={() => setPaymentMethod("mpesa-auto")}
+                className="h-4 w-4"
+              />
+              <Phone className="h-4 w-4 text-primary" />
+              <div>
+                <p className="font-medium text-foreground">
+                  M-Pesa (Automatic)
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  STK push to your phone
+                </p>
+              </div>
+            </label>
+
+            <label className="flex cursor-pointer items-center space-x-3 rounded-lg bg-secondary/50 p-3">
+              <input
+                name="payment-method"
+                type="radio"
+                checked={paymentMethod === "mpesa-manual"}
+                onChange={() => setPaymentMethod("mpesa-manual")}
+                className="h-4 w-4"
+              />
+              <Phone className="h-4 w-4 text-primary" />
+              <div>
+                <p className="font-medium text-foreground">
+                  M-Pesa (Manual Code)
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Enter transaction code after payment
+                </p>
+              </div>
+            </label>
+          </fieldset>
 
           <AnimatePresence>
             {(paymentMethod === "mpesa-auto" ||
@@ -396,26 +402,34 @@ const CheckoutPage = () => {
               >
                 <div className="mt-3 space-y-3">
                   <div>
-                    <Label className="text-sm text-foreground">
+                    <label
+                      htmlFor="contact-phone"
+                      className="text-sm text-foreground"
+                    >
                       Phone Number
-                    </Label>
-                    <Input
+                    </label>
+                    <input
+                      id="contact-phone"
                       placeholder="e.g. 0712345678"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="mt-1"
+                      onChange={(event) => setPhone(event.target.value)}
+                      className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                     />
                   </div>
                   {paymentMethod === "mpesa-manual" && (
                     <div>
-                      <Label className="text-sm text-foreground">
+                      <label
+                        htmlFor="mpesa-code"
+                        className="text-sm text-foreground"
+                      >
                         M-Pesa Transaction Code
-                      </Label>
-                      <Input
+                      </label>
+                      <input
+                        id="mpesa-code"
                         placeholder="e.g. QJK8L9M2PX"
                         value={mpesaCode}
-                        onChange={(e) => setMpesaCode(e.target.value)}
-                        className="mt-1"
+                        onChange={(event) => setMpesaCode(event.target.value)}
+                        className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                       />
                     </div>
                   )}
@@ -425,19 +439,17 @@ const CheckoutPage = () => {
           </AnimatePresence>
         </div>
 
-        {/* Place Order */}
-        <Button
+        <button
+          type="button"
           onClick={handlePlaceOrder}
           disabled={isSubmitting}
-          className="w-full h-14 rounded-2xl text-base font-bold"
+          className="h-14 w-full rounded-2xl bg-primary text-base font-bold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSubmitting
             ? "Placing order..."
-            : `Place Order — ${formatPrice(grandTotal)}`}
-        </Button>
+            : `Place Order - ${currency.format(grandTotal)}`}
+        </button>
       </div>
     </div>
   );
-};
-
-export default CheckoutPage;
+}
