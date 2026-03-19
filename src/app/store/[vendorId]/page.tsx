@@ -1,164 +1,61 @@
 "use client";
 
-import Link from "next/link";
+import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-
-type Vendor = {
-  _id: string;
-  name: string;
-  description: string;
-  image: string;
-  rating: number;
-  reviewCount: number;
-  location: string;
-  deliveryFee: number;
-  minimumOrder: number;
-  categories: string[];
-  isOpen: boolean;
-};
-
-type Product = {
-  _id: string;
-  vendorId: string;
-  name: string;
-  description: string;
-  image: string;
-  price: number;
-  unit: string;
-  category: string;
-  inStock: boolean;
-  stockQuantity: number;
-};
-
-type Review = {
-  _id: string;
-  rating: number;
-  comment: string;
-  createdAt: string;
-  userId?: {
-    name?: string;
-  };
-};
-
-const currency = new Intl.NumberFormat("en-KE", {
-  style: "currency",
-  currency: "KES",
-  maximumFractionDigits: 0,
-});
-
-const STORE_CATEGORIES = ["all", "rice", "flour", "sugar", "salt", "oil"];
-
-function stars(rating: number) {
-  return "★".repeat(Math.max(1, Math.round(rating)));
-}
+import Link from "next/link";
+import { Star, MapPin, Truck, Clock, ArrowLeft } from "lucide-react";
+import { Header } from "@/components/Header";
+import CategoryFilter from "@/components/CategoryFilter";
+import ProductCard from "@/components/ProductCard";
+import FloatingCartBar from "@/components/FloatingCartBar";
+import { useVendors } from "@/hooks/useVendors";
+import { useProducts } from "@/hooks/useProducts";
+import { useReviews } from "@/hooks/useReviews";
+import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { formatPrice } from "@/lib/utils";
 
 export default function VendorStorePage() {
   const params = useParams<{ vendorId: string }>();
   const vendorId = params.vendorId;
 
-  const [vendor, setVendor] = useState<Vendor | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [reviewSummary, setReviewSummary] = useState({
-    averageRating: 0,
-    total: 0,
-  });
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [postingReview, setPostingReview] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [reviewName, setReviewName] = useState("");
   const [reviewComment, setReviewComment] = useState("");
   const [reviewRating, setReviewRating] = useState(0);
 
-  useEffect(() => {
-    const controller = new AbortController();
+  const queryClient = useQueryClient();
 
-    async function load() {
-      if (!vendorId) {
-        return;
-      }
+  const { data: vendors = [], isLoading: loadingVendors } = useVendors();
+  const { data: products = [], isLoading: loadingProducts } = useProducts({
+    vendorId: vendorId as string,
+  });
+  const { data: reviewsData, isLoading: loadingReviews } = useReviews(vendorId as string);
 
-      setLoading(true);
-      setError(null);
+  const vendor = useMemo(() =>
+    vendors.find(v => v._id === vendorId),
+    [vendors, vendorId]
+  );
 
-      try {
-        const [vendorsRes, productsRes, reviewsRes] = await Promise.all([
-          fetch("/api/vendors?limit=100", { signal: controller.signal }),
-          fetch(`/api/products?vendorId=${vendorId}&limit=300`, {
-            signal: controller.signal,
-          }),
-          fetch(`/api/reviews?vendorId=${vendorId}`, {
-            signal: controller.signal,
-          }),
-        ]);
-
-        if (!vendorsRes.ok || !productsRes.ok || !reviewsRes.ok) {
-          throw new Error("Failed to load store details");
-        }
-
-        const vendorsJson = await vendorsRes.json();
-        const productsJson = await productsRes.json();
-        const reviewsJson = await reviewsRes.json();
-
-        const foundVendor = (vendorsJson.data as Vendor[]).find(
-          (item) => item._id === vendorId,
-        );
-
-        if (!foundVendor) {
-          setVendor(null);
-          setProducts([]);
-          setReviews([]);
-          setReviewSummary({ averageRating: 0, total: 0 });
-          return;
-        }
-
-        setVendor(foundVendor);
-        setProducts(productsJson.data ?? []);
-        setReviews(reviewsJson.data ?? []);
-        setReviewSummary(reviewsJson.summary ?? { averageRating: 0, total: 0 });
-      } catch (err) {
-        if (err instanceof DOMException && err.name === "AbortError") {
-          return;
-        }
-
-        setError("Unable to load this vendor store.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    load();
-
-    return () => {
-      controller.abort();
-    };
-  }, [vendorId]);
+  const reviews = reviewsData?.data ?? [];
+  const reviewSummary = reviewsData?.summary ?? { averageRating: 0, total: 0 };
 
   const filteredProducts = useMemo(() => {
-    if (selectedCategory === "all") {
-      return products;
-    }
-
-    return products.filter((product) => product.category === selectedCategory);
+    if (selectedCategory === "all") return products;
+    return products.filter((p) => p.category === selectedCategory);
   }, [products, selectedCategory]);
 
-  async function submitReview(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (reviewRating === 0) return;
 
-    if (!vendorId || !reviewComment.trim() || reviewRating < 1) {
-      return;
-    }
-
-    setPostingReview(true);
-
+    setSubmitting(true);
     try {
       const response = await fetch("/api/reviews", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           vendorId,
           userName: reviewName.trim() || "Anonymous Customer",
@@ -167,236 +64,236 @@ export default function VendorStorePage() {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to submit review");
+      if (response.ok) {
+        setReviewName("");
+        setReviewComment("");
+        setReviewRating(0);
+        queryClient.invalidateQueries({ queryKey: ["reviews", vendorId] });
       }
-
-      setReviewName("");
-      setReviewComment("");
-      setReviewRating(0);
-
-      const reviewsRes = await fetch(`/api/reviews?vendorId=${vendorId}`);
-      if (reviewsRes.ok) {
-        const reviewsJson = await reviewsRes.json();
-        setReviews(reviewsJson.data ?? []);
-        setReviewSummary(reviewsJson.summary ?? { averageRating: 0, total: 0 });
-      }
-    } catch {
-      setError("Review could not be submitted. Please try again.");
+    } catch (error) {
+      console.error("Review submission failed:", error);
     } finally {
-      setPostingReview(false);
+      setSubmitting(false);
     }
-  }
+  };
 
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-background text-foreground">
-        <div className="mx-auto max-w-6xl p-6">Loading vendor store...</div>
-      </main>
-    );
-  }
-
-  if (error) {
-    return (
-      <main className="min-h-screen bg-background text-foreground">
-        <div className="mx-auto max-w-6xl p-6">
-          <p>{error}</p>
-          <Link
-            href="/"
-            className="mt-4 inline-block text-sm font-medium text-primary hover:underline"
-          >
-            Back to marketplace
-          </Link>
-        </div>
-      </main>
-    );
+  if (loadingVendors || loadingProducts) {
+    return <div className="min-h-screen bg-background animate-pulse" />;
   }
 
   if (!vendor) {
     return (
-      <main className="min-h-screen bg-background text-foreground">
-        <div className="mx-auto max-w-6xl p-6">
-          <p>Vendor not found.</p>
-          <Link
-            href="/"
-            className="mt-4 inline-block text-sm font-medium text-primary hover:underline"
-          >
-            Back to marketplace
-          </Link>
-        </div>
-      </main>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <h1 className="text-2xl font-bold mb-4">Vendor not found</h1>
+        <Link href="/">
+          <Button>Back to Marketplace</Button>
+        </Link>
+      </div>
     );
   }
 
+  const vendorImageUrl = vendor.image?.includes("/assets/") 
+    ? `/assets/${vendor.image.split("/assets/")[1]}` 
+    : vendor.image?.startsWith("vendor-") 
+    ? `/assets/${vendor.image}` 
+    : vendor.image || "/assets/vendor-placeholder.jpg";
+
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <section className="border-b border-border bg-gradient-to-r from-zinc-900 to-zinc-700 px-6 py-10 text-white">
-        <div className="mx-auto max-w-6xl">
-          <Link
-            href="/"
-            className="text-xs uppercase tracking-[0.2em] text-zinc-300 hover:text-white"
-          >
-            Back to marketplace
-          </Link>
-          <h1 className="mt-3 text-3xl font-black sm:text-4xl">
-            {vendor.name}
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm text-zinc-200">
-            {vendor.description}
-          </p>
-          <div className="mt-4 flex flex-wrap gap-3 text-xs">
-            <span className="rounded-full bg-white/10 px-3 py-1">
-              {vendor.location}
-            </span>
-            <span className="rounded-full bg-white/10 px-3 py-1">
-              Rating {vendor.rating.toFixed(1)} ({vendor.reviewCount})
-            </span>
-            <span className="rounded-full bg-white/10 px-3 py-1">
-              Delivery {currency.format(vendor.deliveryFee)}
-            </span>
-            <span className="rounded-full bg-white/10 px-3 py-1">
-              Min order {currency.format(vendor.minimumOrder)}
-            </span>
+    <div className="min-h-screen bg-background pb-32">
+      <Header showSearch={false} />
+
+      {/* Banner */}
+      <section className="relative h-48 sm:h-64 overflow-hidden">
+        <img
+          src={vendorImageUrl}
+          alt={vendor.name}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+        <Link 
+          href="/" 
+          className="absolute top-4 left-4 z-10 bg-white/20 backdrop-blur-md rounded-full p-2 text-white hover:bg-white/30 transition-colors sm:hidden"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Link>
+        <div className="absolute inset-x-0 bottom-0 p-4 sm:p-8">
+          <div className="container mx-auto max-w-7xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-2">
+                {vendor.name}
+              </h1>
+              <p className="text-white/80 text-sm sm:text-base max-w-2xl">
+                {vendor.description}
+              </p>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto flex max-w-6xl flex-wrap gap-2 px-6 py-5">
-        {STORE_CATEGORIES.map((category) => {
-          const active = selectedCategory === category;
-          return (
-            <button
-              type="button"
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wide ${
-                active
-                  ? "bg-zinc-900 text-white"
-                  : "border border-border bg-card text-foreground hover:bg-muted"
-              }`}
-            >
-              {category}
-            </button>
-          );
-        })}
+      {/* Info Bar */}
+      <section className="sticky top-16 z-30 glass border-b border-border py-4">
+        <div className="container mx-auto px-4 max-w-7xl flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-6 overflow-x-auto scrollbar-hide">
+            <div className="flex items-center gap-1.5 shrink-0">
+              <Star className="h-5 w-5 fill-primary text-primary" />
+              <span className="font-bold text-foreground">{vendor.rating}</span>
+              <span className="text-sm text-muted-foreground">({vendor.reviewCount} reviews)</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground shrink-0">
+              <MapPin className="h-4 w-4" />
+              <span>{vendor.location}</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground shrink-0">
+              <Clock className="h-4 w-4" />
+              <span>{vendor.deliveryTime}</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 text-sm font-medium shrink-0">
+            <div className="flex items-center gap-1.5">
+              <Truck className="h-4 w-4 text-primary" />
+              <span>Delivery: {formatPrice(vendor.deliveryFee)}</span>
+            </div>
+            <div className="h-4 w-px bg-border hidden sm:block"></div>
+            <div className="text-muted-foreground">
+              Min. order: {formatPrice(vendor.minimumOrder)}
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-8">
-        <h2 className="mb-4 text-lg font-bold">Products</h2>
+      {/* Category Filter */}
+      <section className="container mx-auto px-4 max-w-7xl pt-6">
+        <CategoryFilter selected={selectedCategory} onSelect={setSelectedCategory} />
+      </section>
+
+      {/* Products */}
+      <section className="container mx-auto px-4 max-w-7xl py-8">
+        <h2 className="text-2xl font-bold text-foreground mb-6">Our Products</h2>
         {filteredProducts.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border p-6 text-sm text-muted-foreground">
-            No products available in this category.
+          <div className="text-center py-12 bg-secondary/30 rounded-2xl border border-dashed border-border">
+            <p className="text-muted-foreground text-lg">No products found in this category</p>
           </div>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredProducts.map((product) => (
-              <article
-                key={product._id}
-                className="rounded-xl border border-border bg-card p-4"
-              >
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                  {product.category}
-                </p>
-                <h3 className="mt-1 text-base font-semibold">{product.name}</h3>
-                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
-                  {product.description}
-                </p>
-                <p className="mt-3 text-sm font-bold">
-                  {currency.format(product.price)} / {product.unit}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {product.inStock
-                    ? `${product.stockQuantity} in stock`
-                    : "Out of stock"}
-                </p>
-              </article>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {filteredProducts.map((product, index) => (
+              <ProductCard key={product._id} product={product} index={index} />
             ))}
           </div>
         )}
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-6 border-t border-border px-6 py-8 lg:grid-cols-[1fr_2fr]">
-        <div className="rounded-xl border border-border bg-card p-4">
-          <h2 className="text-base font-bold">Reviews summary</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {reviewSummary.total} reviews •{" "}
-            {reviewSummary.averageRating.toFixed(1)} average
-          </p>
-          <p className="mt-3 text-xl text-amber-500">
-            {stars(reviewSummary.averageRating || 0)}
-          </p>
-
-          <form onSubmit={submitReview} className="mt-5 space-y-3">
-            <h3 className="text-sm font-semibold">Write a review</h3>
-            <input
-              value={reviewName}
-              onChange={(event) => setReviewName(event.target.value)}
-              placeholder="Your name"
-              className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm"
-            />
-            <select
-              value={reviewRating}
-              onChange={(event) => setReviewRating(Number(event.target.value))}
-              className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm"
-            >
-              <option value={0}>Choose rating</option>
-              <option value={5}>5</option>
-              <option value={4}>4</option>
-              <option value={3}>3</option>
-              <option value={2}>2</option>
-              <option value={1}>1</option>
-            </select>
-            <textarea
-              value={reviewComment}
-              onChange={(event) => setReviewComment(event.target.value)}
-              placeholder="Share your experience"
-              rows={4}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-            />
-            <button
-              type="submit"
-              disabled={postingReview}
-              className="inline-flex h-10 items-center justify-center rounded-md bg-zinc-900 px-4 text-sm font-semibold text-white disabled:opacity-40"
-            >
-              {postingReview ? "Submitting..." : "Submit review"}
-            </button>
-          </form>
-        </div>
-
-        <div className="space-y-3">
-          {reviews.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border p-6 text-sm text-muted-foreground">
-              No reviews yet.
-            </div>
-          ) : (
-            reviews.map((review) => (
-              <article
-                key={review._id}
-                className="rounded-xl border border-border bg-card p-4"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold">
-                    {review.userId?.name ?? "Customer"}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(review.createdAt).toLocaleDateString("en-KE", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </p>
+      {/* Reviews */}
+      <section className="container mx-auto px-4 max-w-7xl border-t border-border pt-12 pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Review Summary & Form */}
+          <div className="lg:col-span-4 space-y-8">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground mb-4">Reviews</h2>
+              <div className="flex items-center gap-4">
+                <div className="text-5xl font-black text-primary">
+                  {reviewSummary.averageRating.toFixed(1)}
                 </div>
-                <p className="mt-2 text-sm text-amber-500">
-                  {stars(review.rating)}
-                </p>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {review.comment}
-                </p>
-              </article>
-            ))
-          )}
+                <div>
+                  <div className="flex gap-0.5 mb-1">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`h-4 w-4 ${i < Math.round(reviewSummary.averageRating) ? "fill-primary text-primary" : "fill-muted text-muted"}`} 
+                      />
+                    ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground">Based on {reviewSummary.total} reviews</p>
+                </div>
+              </div>
+            </div>
+
+            <form onSubmit={handleReviewSubmit} className="bg-card p-6 rounded-2xl border border-border shadow-sm space-y-4">
+              <h3 className="font-bold text-lg">Leave a Review</h3>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">Rating</label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((num) => (
+                    <button
+                      key={num}
+                      type="button"
+                      onClick={() => setReviewRating(num)}
+                      className={`h-10 w-10 rounded-full flex items-center justify-center transition-all ${
+                        reviewRating >= num 
+                          ? "bg-primary text-primary-foreground" 
+                          : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                      }`}
+                    >
+                      <Star className={`h-5 w-5 ${reviewRating >= num ? "fill-current" : ""}`} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">Comments</label>
+                <textarea
+                  value={reviewComment}
+                  onChange={(e) => setReviewComment(e.target.value)}
+                  placeholder="Tell others about your experience..."
+                  className="w-full h-24 bg-secondary border-none rounded-xl p-3 text-sm focus:ring-1 focus:ring-primary resize-none"
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={submitting || reviewRating === 0}>
+                {submitting ? "Submitting..." : "Submit Review"}
+              </Button>
+            </form>
+          </div>
+
+          {/* Review List */}
+          <div className="lg:col-span-8 space-y-6">
+            <h3 className="font-bold text-lg mb-4">Customer Experience</h3>
+            {reviews.length === 0 ? (
+              <p className="text-muted-foreground italic">No reviews yet. Be the first to share your experience!</p>
+            ) : (
+              <div className="space-y-4">
+                {reviews.map((review, index) => (
+                  <motion.div
+                    key={review._id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="p-6 bg-card rounded-2xl border border-border"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                          {(review.userId?.name || "A")[0].toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="font-bold text-sm">{review.userId?.name || "Anonymous Customer"}</p>
+                          <div className="flex gap-0.5 mt-0.5">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Star 
+                                key={i} 
+                                className={`h-3 w-3 ${i < review.rating ? "fill-primary text-primary" : "fill-muted text-muted"}`} 
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(review.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="text-muted-foreground text-sm line-clamp-3 italic">
+                      &quot;{review.comment}&quot;
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </section>
-    </main>
+
+      <FloatingCartBar />
+    </div>
   );
 }
