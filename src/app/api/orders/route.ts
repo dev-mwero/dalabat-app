@@ -216,6 +216,11 @@ export async function POST(request: NextRequest) {
         throw new Error(`Product does not belong to vendor: ${item.productId}`);
       }
 
+      // Check stock availability
+      if (!product.inStock || (product.stockQuantity ?? 0) < item.quantity) {
+        throw new Error(`Insufficient stock for product: ${product.name}`);
+      }
+
       const unitPrice = Number(product.price);
       const lineTotal = unitPrice * item.quantity;
 
@@ -259,6 +264,41 @@ export async function POST(request: NextRequest) {
         ? `order-ref:${orderRef} | ${data.notes}`
         : `order-ref:${orderRef}`,
     });
+
+    // Automatically decrement stock after order creation.
+    // We use a conditional update to ensure availability hasn't changed
+    // in the tiny window between validation and creation.
+    await Promise.all(
+      data.items.map(async (item) => {
+        const updateResult = await Product.findOneAndUpdate(
+          {
+            _id: new Types.ObjectId(item.productId),
+            stockQuantity: { $gte: item.quantity },
+          },
+          [
+            {
+              $set: {
+                stockQuantity: { $subtract: ["$stockQuantity", item.quantity] },
+              },
+            },
+            {
+              $set: {
+                inStock: { $gt: ["$stockQuantity", 0] },
+              },
+            },
+          ],
+          { new: true },
+        );
+
+        if (!updateResult) {
+          console.error(
+            `Failed to decrement stock for product ${item.productId} — likely oversold in a race condition.`,
+          );
+          // In a production app, we would ideally use a transaction or
+          // a compensation flow here if we didn't use a transaction for the whole process.
+        }
+      }),
+    );
 
     return NextResponse.json(
       {
