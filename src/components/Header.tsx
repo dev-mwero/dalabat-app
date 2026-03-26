@@ -75,7 +75,14 @@ export const Header = ({ searchQuery = "", onSearchChange, showSearch = true }: 
           <div className="border-l border-border h-6 mx-1 hidden sm:block"></div>
 
           {isSignedIn ? (
-            <UserButton afterSignOutUrl="/" />
+            <div className="flex items-center gap-3">
+              <Link href="/profile" className="hidden sm:block">
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                  My Profile
+                </Button>
+              </Link>
+              <UserButton afterSignOutUrl="/" />
+            </div>
           ) : (
             <SignInButton mode="modal">
               <Button size="sm">Sign In</Button>
