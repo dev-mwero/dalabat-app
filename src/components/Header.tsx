@@ -1,12 +1,12 @@
 "use client";
 
-import { ShoppingCart, MapPin, Search, Package } from "lucide-react";
-import { useCart } from "@/contexts/CartContext";
+import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
+import { AnimatePresence, motion } from "framer-motion";
+import { MapPin, Package, Search, ShoppingCart } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
+import { useCart } from "@/contexts/CartContext";
 
 interface HeaderProps {
   searchQuery?: string;
@@ -14,7 +14,11 @@ interface HeaderProps {
   showSearch?: boolean;
 }
 
-export const Header = ({ searchQuery = "", onSearchChange, showSearch = true }: HeaderProps) => {
+export const Header = ({
+  searchQuery = "",
+  onSearchChange,
+  showSearch = true,
+}: HeaderProps) => {
   const { totalItems, setIsOpen } = useCart();
   const { isSignedIn } = useUser();
 
@@ -44,7 +48,11 @@ export const Header = ({ searchQuery = "", onSearchChange, showSearch = true }: 
           </div>
 
           <Link href="/track-order">
-            <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground hidden sm:flex">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-1.5 text-muted-foreground hover:text-foreground hidden sm:flex"
+            >
               <Package className="h-4 w-4" />
               <span>Track Order</span>
             </Button>
@@ -77,7 +85,11 @@ export const Header = ({ searchQuery = "", onSearchChange, showSearch = true }: 
           {isSignedIn ? (
             <div className="flex items-center gap-3">
               <Link href="/profile" className="hidden sm:block">
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground hover:text-foreground"
+                >
                   My Profile
                 </Button>
               </Link>

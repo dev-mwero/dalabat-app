@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import Link from "next/link";
+import { motion } from "framer-motion";
 import { ArrowUpDown, Store } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import CategoryFilter from "@/components/CategoryFilter";
 import { Header } from "@/components/Header";
-import VendorCard from "@/components/VendorCard";
 import ProductCard from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
-import CategoryFilter from "@/components/CategoryFilter";
-import { useVendors } from "@/hooks/useVendors";
+import VendorCard from "@/components/VendorCard";
 import { useProducts } from "@/hooks/useProducts";
-import { motion } from "framer-motion";
+import { useVendors } from "@/hooks/useVendors";
 
 const PRODUCTS_PER_PAGE = 8;
 
@@ -42,13 +42,19 @@ export default function Home() {
 
   const filteredProducts = useMemo(() => {
     if (!isProductSearch && !isCategoryFilter) return [];
-    
+
     const result = [...products];
     // Sort
     switch (sortOption) {
-      case "price-asc": result.sort((a, b) => a.price - b.price); break;
-      case "price-desc": result.sort((a, b) => b.price - a.price); break;
-      case "name": result.sort((a, b) => a.name.localeCompare(b.name)); break;
+      case "price-asc":
+        result.sort((a, b) => a.price - b.price);
+        break;
+      case "price-desc":
+        result.sort((a, b) => b.price - a.price);
+        break;
+      case "name":
+        result.sort((a, b) => a.name.localeCompare(b.name));
+        break;
     }
     return result;
   }, [products, isProductSearch, isCategoryFilter, sortOption]);
@@ -79,11 +85,11 @@ export default function Home() {
               transition={{ duration: 0.6 }}
             >
               <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-2">
-                Your Market,{" "}
-                <span className="text-primary">Delivered</span>
+                Your Market, <span className="text-primary">Delivered</span>
               </h1>
               <p className="text-white/80 text-sm sm:text-base max-w-md">
-                Rice, flour, sugar, salt & cooking oils from trusted local vendors — delivered to your door.
+                Rice, flour, sugar, salt & cooking oils from trusted local
+                vendors — delivered to your door.
               </p>
             </motion.div>
           </div>
@@ -92,7 +98,10 @@ export default function Home() {
 
       {/* Category Filter */}
       <section className="container mx-auto px-4 max-w-7xl pt-4">
-        <CategoryFilter selected={selectedCategory} onSelect={setSelectedCategory} />
+        <CategoryFilter
+          selected={selectedCategory}
+          onSelect={setSelectedCategory}
+        />
       </section>
 
       {/* Product Results */}
@@ -101,10 +110,13 @@ export default function Home() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-xl font-bold text-foreground mb-1">
-                {isProductSearch ? `Products matching "${searchQuery}"` : `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Products`}
+                {isProductSearch
+                  ? `Products matching "${searchQuery}"`
+                  : `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Products`}
               </h2>
               <p className="text-sm text-muted-foreground">
-                {filteredProducts.length} product{filteredProducts.length !== 1 && "s"} found across vendors
+                {filteredProducts.length} product
+                {filteredProducts.length !== 1 && "s"} found across vendors
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -123,7 +135,7 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {paginatedProducts.map((product, index) => {
-              const vendor = vendors.find(v => v._id === product.vendorId);
+              const vendor = vendors.find((v) => v._id === product.vendorId);
               return (
                 <div key={product._id}>
                   <ProductCard product={product} index={index} />
@@ -149,21 +161,25 @@ export default function Home() {
               >
                 Previous
               </Button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <Button
-                  key={page}
-                  variant={page === currentPage ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setCurrentPage(page)}
-                  className="w-9"
-                >
-                  {page}
-                </Button>
-              ))}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <Button
+                    key={page}
+                    variant={page === currentPage ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(page)}
+                    className="w-9"
+                  >
+                    {page}
+                  </Button>
+                ),
+              )}
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
                 disabled={currentPage === totalPages}
               >
                 Next
@@ -196,15 +212,17 @@ export default function Home() {
 
         {loadingVendors && vendors.length === 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-             {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="h-48 rounded-xl bg-muted animate-pulse" />
-             ))}
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-48 rounded-xl bg-muted animate-pulse" />
+            ))}
           </div>
         ) : vendors.length === 0 && filteredProducts.length === 0 ? (
           <div className="text-center py-16">
             <div className="text-5xl mb-4">🔍</div>
             <p className="text-muted-foreground text-lg">No results found</p>
-            <p className="text-sm text-muted-foreground mt-1">Try a different search term</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Try a different search term
+            </p>
           </div>
         ) : vendors.length === 0 ? null : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

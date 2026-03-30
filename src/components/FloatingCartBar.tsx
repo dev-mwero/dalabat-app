@@ -1,8 +1,8 @@
 "use client";
 
-import { useCart } from "@/contexts/CartContext";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { useCart } from "@/contexts/CartContext";
 import { formatPrice } from "@/lib/utils";
 
 const FloatingCartBar = () => {

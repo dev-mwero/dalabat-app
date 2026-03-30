@@ -1,12 +1,12 @@
 "use client";
 
-import { useUser, UserProfile, UserButton } from "@clerk/nextjs";
-import { Header } from "@/components/Header";
-import { OrderHistory } from "./_components/OrderHistory";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { User, Mail, Phone, MapPin, Settings, LogOut } from "lucide-react";
+import { UserButton, UserProfile, useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
+import { LogOut, Mail, MapPin, Phone, Settings, User } from "lucide-react";
+import { Header } from "@/components/Header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { OrderHistory } from "./_components/OrderHistory";
 
 export default function ProfilePage() {
   const { user, isLoaded } = useUser();
@@ -27,8 +27,12 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Please sign in to view your profile</h1>
-          <Button onClick={() => window.location.href = "/"}>Back to Home</Button>
+          <h1 className="text-2xl font-bold mb-4">
+            Please sign in to view your profile
+          </h1>
+          <Button onClick={() => (window.location.href = "/")}>
+            Back to Home
+          </Button>
         </div>
       </div>
     );
@@ -74,9 +78,9 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <div className="flex flex-col gap-2 w-full sm:w-auto mt-4 sm:mt-0">
-                     <Button variant="outline" className="gap-2 font-semibold">
-                        <Settings className="h-4 w-4" /> Edit Profile
-                     </Button>
+                    <Button variant="outline" className="gap-2 font-semibold">
+                      <Settings className="h-4 w-4" /> Edit Profile
+                    </Button>
                   </div>
                 </div>
               </CardContent>

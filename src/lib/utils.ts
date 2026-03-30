@@ -5,5 +5,4 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const formatPrice = (price: number) =>
-  `KSh ${price.toLocaleString()}`;
+export const formatPrice = (price: number) => `KSh ${price.toLocaleString()}`;

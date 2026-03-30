@@ -1,9 +1,9 @@
 "use client";
 
-import { Star, MapPin, Truck } from "lucide-react";
-import Link from "next/link";
 import { motion } from "framer-motion";
-import { Vendor } from "@/hooks/useVendors";
+import { MapPin, Star, Truck } from "lucide-react";
+import Link from "next/link";
+import type { Vendor } from "@/hooks/useVendors";
 
 interface VendorCardProps {
   vendor: Vendor;
@@ -12,11 +12,11 @@ interface VendorCardProps {
 
 const VendorCard = ({ vendor, index }: VendorCardProps) => {
   // Ensure image path is correct. If it starts with /src/assets/ or similar, fix it to /assets/
-  const imageUrl = vendor.image?.includes("/assets/") 
-    ? `/assets/${vendor.image.split("/assets/")[1]}` 
-    : vendor.image?.startsWith("vendor-") 
-    ? `/assets/${vendor.image}` 
-    : vendor.image || "/assets/vendor-placeholder.jpg";
+  const imageUrl = vendor.image?.includes("/assets/")
+    ? `/assets/${vendor.image.split("/assets/")[1]}`
+    : vendor.image?.startsWith("vendor-")
+      ? `/assets/${vendor.image}`
+      : vendor.image || "/assets/vendor-placeholder.jpg";
 
   return (
     <motion.div
@@ -55,8 +55,12 @@ const VendorCard = ({ vendor, index }: VendorCardProps) => {
             <div className="flex items-center justify-between mt-3">
               <div className="flex items-center gap-1">
                 <Star className="h-4 w-4 fill-primary text-primary" />
-                <span className="text-sm font-semibold text-foreground">{vendor.rating}</span>
-                <span className="text-xs text-muted-foreground">({vendor.reviewCount})</span>
+                <span className="text-sm font-semibold text-foreground">
+                  {vendor.rating}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  ({vendor.reviewCount})
+                </span>
               </div>
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <MapPin className="h-3 w-3" />

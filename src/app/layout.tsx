@@ -1,7 +1,7 @@
-import { Header } from "@/components/Header";
-import { CartDrawer } from "@/components/CartDrawer";
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { CartDrawer } from "@/components/CartDrawer";
+import { Header } from "@/components/Header";
 import { AppProviders } from "@/providers/AppProviders";
 import "./globals.css";
 
@@ -32,9 +32,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans">
         <AppProviders>
-          <div className="flex-1 flex flex-col">
-            {children}
-          </div>
+          <div className="flex-1 flex flex-col">{children}</div>
           <CartDrawer />
         </AppProviders>
       </body>

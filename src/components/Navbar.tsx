@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { ShoppingBag, User } from "lucide-react";
+import Link from "next/link";
 import { useCart } from "@/contexts/CartContext";
-import { UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
 
 export function Navbar() {
   const { setIsOpen, totalItems } = useCart();

@@ -1,19 +1,19 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { ArrowLeft, Clock, MapPin, Star, Truck } from "lucide-react";
 import Link from "next/link";
-import { Star, MapPin, Truck, Clock, ArrowLeft } from "lucide-react";
-import { Header } from "@/components/Header";
+import { useParams } from "next/navigation";
+import { useMemo, useState } from "react";
 import CategoryFilter from "@/components/CategoryFilter";
-import ProductCard from "@/components/ProductCard";
 import FloatingCartBar from "@/components/FloatingCartBar";
-import { useVendors } from "@/hooks/useVendors";
+import { Header } from "@/components/Header";
+import ProductCard from "@/components/ProductCard";
+import { Button } from "@/components/ui/button";
 import { useProducts } from "@/hooks/useProducts";
 import { useReviews } from "@/hooks/useReviews";
-import { useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { useVendors } from "@/hooks/useVendors";
 import { formatPrice } from "@/lib/utils";
 
 export default function VendorStorePage() {
@@ -32,11 +32,13 @@ export default function VendorStorePage() {
   const { data: products = [], isLoading: loadingProducts } = useProducts({
     vendorId: vendorId as string,
   });
-  const { data: reviewsData, isLoading: loadingReviews } = useReviews(vendorId as string);
+  const { data: reviewsData, isLoading: loadingReviews } = useReviews(
+    vendorId as string,
+  );
 
-  const vendor = useMemo(() =>
-    vendors.find(v => v._id === vendorId),
-    [vendors, vendorId]
+  const vendor = useMemo(
+    () => vendors.find((v) => v._id === vendorId),
+    [vendors, vendorId],
   );
 
   const reviews = reviewsData?.data ?? [];
@@ -92,11 +94,11 @@ export default function VendorStorePage() {
     );
   }
 
-  const vendorImageUrl = vendor.image?.includes("/assets/") 
-    ? `/assets/${vendor.image.split("/assets/")[1]}` 
-    : vendor.image?.startsWith("vendor-") 
-    ? `/assets/${vendor.image}` 
-    : vendor.image || "/assets/vendor-placeholder.jpg";
+  const vendorImageUrl = vendor.image?.includes("/assets/")
+    ? `/assets/${vendor.image.split("/assets/")[1]}`
+    : vendor.image?.startsWith("vendor-")
+      ? `/assets/${vendor.image}`
+      : vendor.image || "/assets/vendor-placeholder.jpg";
 
   return (
     <div className="min-h-screen bg-background pb-32">
@@ -110,8 +112,8 @@ export default function VendorStorePage() {
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="absolute top-4 left-4 z-10 bg-white/20 backdrop-blur-md rounded-full p-2 text-white hover:bg-white/30 transition-colors sm:hidden"
         >
           <ArrowLeft className="h-5 w-5" />
@@ -140,7 +142,9 @@ export default function VendorStorePage() {
             <div className="flex items-center gap-1.5 shrink-0">
               <Star className="h-5 w-5 fill-primary text-primary" />
               <span className="font-bold text-foreground">{vendor.rating}</span>
-              <span className="text-sm text-muted-foreground">({vendor.reviewCount} reviews)</span>
+              <span className="text-sm text-muted-foreground">
+                ({vendor.reviewCount} reviews)
+              </span>
             </div>
             <div className="flex items-center gap-1.5 text-sm text-muted-foreground shrink-0">
               <MapPin className="h-4 w-4" />
@@ -166,15 +170,22 @@ export default function VendorStorePage() {
 
       {/* Category Filter */}
       <section className="container mx-auto px-4 max-w-7xl pt-6">
-        <CategoryFilter selected={selectedCategory} onSelect={setSelectedCategory} />
+        <CategoryFilter
+          selected={selectedCategory}
+          onSelect={setSelectedCategory}
+        />
       </section>
 
       {/* Products */}
       <section className="container mx-auto px-4 max-w-7xl py-8">
-        <h2 className="text-2xl font-bold text-foreground mb-6">Our Products</h2>
+        <h2 className="text-2xl font-bold text-foreground mb-6">
+          Our Products
+        </h2>
         {filteredProducts.length === 0 ? (
           <div className="text-center py-12 bg-secondary/30 rounded-2xl border border-dashed border-border">
-            <p className="text-muted-foreground text-lg">No products found in this category</p>
+            <p className="text-muted-foreground text-lg">
+              No products found in this category
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -191,7 +202,9 @@ export default function VendorStorePage() {
           {/* Review Summary & Form */}
           <div className="lg:col-span-4 space-y-8">
             <div>
-              <h2 className="text-2xl font-bold text-foreground mb-4">Reviews</h2>
+              <h2 className="text-2xl font-bold text-foreground mb-4">
+                Reviews
+              </h2>
               <div className="flex items-center gap-4">
                 <div className="text-5xl font-black text-primary">
                   {reviewSummary.averageRating.toFixed(1)}
@@ -199,21 +212,28 @@ export default function VendorStorePage() {
                 <div>
                   <div className="flex gap-0.5 mb-1">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`h-4 w-4 ${i < Math.round(reviewSummary.averageRating) ? "fill-primary text-primary" : "fill-muted text-muted"}`} 
+                      <Star
+                        key={i}
+                        className={`h-4 w-4 ${i < Math.round(reviewSummary.averageRating) ? "fill-primary text-primary" : "fill-muted text-muted"}`}
                       />
                     ))}
                   </div>
-                  <p className="text-sm text-muted-foreground">Based on {reviewSummary.total} reviews</p>
+                  <p className="text-sm text-muted-foreground">
+                    Based on {reviewSummary.total} reviews
+                  </p>
                 </div>
               </div>
             </div>
 
-            <form onSubmit={handleReviewSubmit} className="bg-card p-6 rounded-2xl border border-border shadow-sm space-y-4">
+            <form
+              onSubmit={handleReviewSubmit}
+              className="bg-card p-6 rounded-2xl border border-border shadow-sm space-y-4"
+            >
               <h3 className="font-bold text-lg">Leave a Review</h3>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">Rating</label>
+                <label className="text-sm font-medium text-muted-foreground">
+                  Rating
+                </label>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((num) => (
                     <button
@@ -221,18 +241,22 @@ export default function VendorStorePage() {
                       type="button"
                       onClick={() => setReviewRating(num)}
                       className={`h-10 w-10 rounded-full flex items-center justify-center transition-all ${
-                        reviewRating >= num 
-                          ? "bg-primary text-primary-foreground" 
+                        reviewRating >= num
+                          ? "bg-primary text-primary-foreground"
                           : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                       }`}
                     >
-                      <Star className={`h-5 w-5 ${reviewRating >= num ? "fill-current" : ""}`} />
+                      <Star
+                        className={`h-5 w-5 ${reviewRating >= num ? "fill-current" : ""}`}
+                      />
                     </button>
                   ))}
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">Comments</label>
+                <label className="text-sm font-medium text-muted-foreground">
+                  Comments
+                </label>
                 <textarea
                   value={reviewComment}
                   onChange={(e) => setReviewComment(e.target.value)}
@@ -240,7 +264,11 @@ export default function VendorStorePage() {
                   className="w-full h-24 bg-secondary border-none rounded-xl p-3 text-sm focus:ring-1 focus:ring-primary resize-none"
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={submitting || reviewRating === 0}>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={submitting || reviewRating === 0}
+              >
                 {submitting ? "Submitting..." : "Submit Review"}
               </Button>
             </form>
@@ -250,7 +278,9 @@ export default function VendorStorePage() {
           <div className="lg:col-span-8 space-y-6">
             <h3 className="font-bold text-lg mb-4">Customer Experience</h3>
             {reviews.length === 0 ? (
-              <p className="text-muted-foreground italic">No reviews yet. Be the first to share your experience!</p>
+              <p className="text-muted-foreground italic">
+                No reviews yet. Be the first to share your experience!
+              </p>
             ) : (
               <div className="space-y-4">
                 {reviews.map((review, index) => (
@@ -264,15 +294,17 @@ export default function VendorStorePage() {
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                          {(review.userId?.name || "A")[0].toUpperCase()}
+                          {(review.userName || "A")[0].toUpperCase()}
                         </div>
                         <div>
-                          <p className="font-bold text-sm">{review.userId?.name || "Anonymous Customer"}</p>
+                          <p className="font-bold text-sm">
+                            {review.userName || "Anonymous Customer"}
+                          </p>
                           <div className="flex gap-0.5 mt-0.5">
                             {Array.from({ length: 5 }).map((_, i) => (
-                              <Star 
-                                key={i} 
-                                className={`h-3 w-3 ${i < review.rating ? "fill-primary text-primary" : "fill-muted text-muted"}`} 
+                              <Star
+                                key={i}
+                                className={`h-3 w-3 ${i < review.rating ? "fill-primary text-primary" : "fill-muted text-muted"}`}
                               />
                             ))}
                           </div>

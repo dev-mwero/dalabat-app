@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Minus } from "lucide-react";
-import { Product } from "@/hooks/useProducts";
-import { useCart } from "@/contexts/CartContext";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { Minus, Plus } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useCart } from "@/contexts/CartContext";
+import type { Product } from "@/hooks/useProducts";
 import { formatPrice } from "@/lib/utils";
 import { ProductDetailModal } from "./ProductDetailModal";
 
@@ -17,7 +17,7 @@ interface ProductCardProps {
 const ProductCard = ({ product, index }: ProductCardProps) => {
   const { items, addItem, updateQuantity, removeItem } = useCart();
   const [modalOpen, setModalOpen] = useState(false);
-  
+
   // Map MongoDB _id to the id used in original logic if necessary
   const cartItem = items.find((i) => i.product._id === product._id);
   const quantity = cartItem?.quantity || 0;
@@ -42,7 +42,9 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
       >
         <div>
           <div className="flex items-start justify-between gap-2">
-            <div className="text-3xl mb-2">{categoryEmoji[product.category.toLowerCase()] || "📦"}</div>
+            <div className="text-3xl mb-2">
+              {categoryEmoji[product.category.toLowerCase()] || "📦"}
+            </div>
             {!product.inStock && (
               <span className="text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded-full font-medium">
                 Out of stock
@@ -50,17 +52,26 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
             )}
           </div>
           <h4 className="font-semibold text-foreground">{product.name}</h4>
-          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{product.description}</p>
+          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+            {product.description}
+          </p>
         </div>
 
         <div className="flex items-center justify-between mt-4">
           <div>
-            <span className="text-lg font-bold text-primary">{formatPrice(product.price)}</span>
-            <span className="text-xs text-muted-foreground ml-1">/{product.unit}</span>
+            <span className="text-lg font-bold text-primary">
+              {formatPrice(product.price)}
+            </span>
+            <span className="text-xs text-muted-foreground ml-1">
+              /{product.unit}
+            </span>
           </div>
 
           {product.inStock && (
-            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="flex items-center gap-2"
+              onClick={(e) => e.stopPropagation()}
+            >
               {quantity > 0 ? (
                 <div className="flex items-center gap-2 bg-primary/10 rounded-full px-1">
                   <Button
@@ -75,7 +86,9 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
                   >
                     <Minus className="h-4 w-4" />
                   </Button>
-                  <span className="text-sm font-bold w-5 text-center text-foreground">{quantity}</span>
+                  <span className="text-sm font-bold w-5 text-center text-foreground">
+                    {quantity}
+                  </span>
                   <Button
                     size="icon"
                     variant="ghost"

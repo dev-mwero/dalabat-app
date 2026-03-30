@@ -3,13 +3,22 @@
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { ChevronDown, ChevronUp, Package, Clock, CheckCircle2, Truck, XCircle, ShoppingBag } from "lucide-react";
+import {
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Package,
+  ShoppingBag,
+  Truck,
+  XCircle,
+} from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import Link from "next/link";
 
 interface OrderItem {
   productId: string;
@@ -31,12 +40,23 @@ interface Order {
   createdAt: string;
 }
 
-const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: any }> = {
+const statusConfig: Record<
+  string,
+  {
+    label: string;
+    variant: "default" | "secondary" | "destructive" | "outline";
+    icon: any;
+  }
+> = {
   pending: { label: "Pending", variant: "outline", icon: Clock },
   confirmed: { label: "Confirmed", variant: "secondary", icon: CheckCircle2 },
   preparing: { label: "Preparing", variant: "secondary", icon: Package },
   ready: { label: "Ready", variant: "secondary", icon: Package },
-  out_for_delivery: { label: "Out for Delivery", variant: "default", icon: Truck },
+  out_for_delivery: {
+    label: "Out for Delivery",
+    variant: "default",
+    icon: Truck,
+  },
   delivered: { label: "Delivered", variant: "default", icon: CheckCircle2 },
   cancelled: { label: "Cancelled", variant: "destructive", icon: XCircle },
 };
@@ -45,7 +65,11 @@ export function OrderHistory() {
   const { user } = useUser();
   const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set());
 
-  const { data: orders, isLoading, error } = useQuery({
+  const {
+    data: orders,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["user-orders", user?.id],
     queryFn: async () => {
       const resp = await fetch(`/api/orders?customerClerkId=${user?.id}`);
@@ -86,7 +110,9 @@ export function OrderHistory() {
       <div className="text-center py-16 bg-muted/30 rounded-2xl border-2 border-dashed border-border mt-4">
         <div className="text-5xl mb-4">🛍️</div>
         <h3 className="text-lg font-bold mb-1">No orders yet</h3>
-        <p className="text-muted-foreground text-sm mb-6">Start shopping from our amazing vendors!</p>
+        <p className="text-muted-foreground text-sm mb-6">
+          Start shopping from our amazing vendors!
+        </p>
         <Link href="/">
           <Button>Browse Marketplace</Button>
         </Link>
@@ -113,8 +139,11 @@ export function OrderHistory() {
         const isExpanded = expandedOrders.has(order._id);
 
         return (
-          <Card key={order._id} className="overflow-hidden border-border transition-all hover:border-primary/50">
-            <div 
+          <Card
+            key={order._id}
+            className="overflow-hidden border-border transition-all hover:border-primary/50"
+          >
+            <div
               className="p-4 flex items-center justify-between cursor-pointer select-none"
               onClick={() => toggleOrder(order._id)}
             >
@@ -123,7 +152,9 @@ export function OrderHistory() {
                   <Package className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm sm:text-base">{order.vendorId?.name || "Unknown Vendor"}</h4>
+                  <h4 className="font-bold text-sm sm:text-base">
+                    {order.vendorId?.name || "Unknown Vendor"}
+                  </h4>
                   <p className="text-xs text-muted-foreground">
                     {format(new Date(order.createdAt), "MMM d, yyyy • h:mm a")}
                   </p>
@@ -132,13 +163,22 @@ export function OrderHistory() {
 
               <div className="flex items-center gap-4">
                 <div className="text-right hidden sm:block">
-                  <p className="font-bold text-sm">{currency.format(order.total)}</p>
-                  <Badge variant={config.variant} className="gap-1 mt-1 font-medium">
+                  <p className="font-bold text-sm">
+                    {currency.format(order.total)}
+                  </p>
+                  <Badge
+                    variant={config.variant}
+                    className="gap-1 mt-1 font-medium"
+                  >
                     <Icon className="h-3 w-3" />
                     {config.label}
                   </Badge>
                 </div>
-                {isExpanded ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
+                {isExpanded ? (
+                  <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                )}
               </div>
             </div>
 
@@ -149,34 +189,54 @@ export function OrderHistory() {
                   <Icon className="h-3 w-3" />
                   {config.label}
                 </Badge>
-                <p className="font-bold text-sm">{currency.format(order.total)}</p>
+                <p className="font-bold text-sm">
+                  {currency.format(order.total)}
+                </p>
               </div>
             )}
 
             {isExpanded && (
               <CardContent className="border-t border-border/50 bg-secondary/20 pt-4">
-                <h5 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Order Items</h5>
+                <h5 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
+                  Order Items
+                </h5>
                 <div className="space-y-3">
                   {order.items.map((item, idx) => (
-                    <div key={idx} className="flex justify-between items-center text-sm">
+                    <div
+                      key={idx}
+                      className="flex justify-between items-center text-sm"
+                    >
                       <div className="flex gap-2">
-                        <span className="font-medium text-primary">x{item.quantity}</span>
+                        <span className="font-medium text-primary">
+                          x{item.quantity}
+                        </span>
                         <span>{item.name}</span>
                       </div>
-                      <span className="font-medium">{currency.format(item.lineTotal)}</span>
+                      <span className="font-medium">
+                        {currency.format(item.lineTotal)}
+                      </span>
                     </div>
                   ))}
                   <div className="pt-3 mt-3 border-t border-border flex justify-between items-center font-bold">
                     <span>Total Paid</span>
-                    <span className="text-primary text-lg">{currency.format(order.total)}</span>
+                    <span className="text-primary text-lg">
+                      {currency.format(order.total)}
+                    </span>
                   </div>
                 </div>
                 <div className="mt-4 flex flex-col sm:flex-row gap-2">
-                   <Link href={`/track-order?id=${order._id}`} className="flex-1">
-                      <Button variant="outline" size="sm" className="w-full gap-2">
-                         <Truck className="h-4 w-4" /> Track Status
-                      </Button>
-                   </Link>
+                  <Link
+                    href={`/track-order?id=${order._id}`}
+                    className="flex-1"
+                  >
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full gap-2"
+                    >
+                      <Truck className="h-4 w-4" /> Track Status
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             )}

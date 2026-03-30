@@ -1,9 +1,8 @@
 "use client";
 
-import { Plus, Minus, MapPin, Truck, Star } from "lucide-react";
-import { Product } from "@/hooks/useProducts";
-import { useVendors } from "@/hooks/useVendors";
-import { useCart } from "@/contexts/CartContext";
+import { MapPin, Minus, Plus, Star, Truck } from "lucide-react";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,8 +10,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+import { useCart } from "@/contexts/CartContext";
+import type { Product } from "@/hooks/useProducts";
+import { useVendors } from "@/hooks/useVendors";
 import { formatPrice } from "@/lib/utils";
 
 interface ProductDetailModalProps {
@@ -30,24 +30,28 @@ const categoryEmoji: Record<string, string> = {
   "cooking oil": "🫒",
 };
 
-export const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetailModalProps) => {
+export const ProductDetailModal = ({
+  product,
+  open,
+  onOpenChange,
+}: ProductDetailModalProps) => {
   const { items, addItem, updateQuantity, removeItem } = useCart();
-  
-  // Fetch vendors and find the specific one. 
+
+  // Fetch vendors and find the specific one.
   // In a real app we might have a useVendor(id) hook, but useVendors() is fine for now as it caches.
   const { data: vendors } = useVendors();
-  const vendor = vendors?.find(v => v._id === product?.vendorId);
+  const vendor = vendors?.find((v) => v._id === product?.vendorId);
 
   if (!product) return null;
 
   const cartItem = items.find((i) => i.product._id === product._id);
   const quantity = cartItem?.quantity || 0;
 
-  const imageUrl = product.image?.includes("/assets/") 
-    ? `/assets/${product.image.split("/assets/")[1]}` 
-    : product.image?.startsWith("product-") 
-    ? `/assets/${product.image}` 
-    : product.image || "/assets/vendor-placeholder.jpg";
+  const imageUrl = product.image?.includes("/assets/")
+    ? `/assets/${product.image.split("/assets/")[1]}`
+    : product.image?.startsWith("product-")
+      ? `/assets/${product.image}`
+      : product.image || "/assets/vendor-placeholder.jpg";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -60,7 +64,9 @@ export const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetai
             className="w-full h-full object-cover"
           />
           <Badge className="absolute top-3 left-3 text-sm">
-            {categoryEmoji[product.category.toLowerCase()] || "📦"} {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+            {categoryEmoji[product.category.toLowerCase()] || "📦"}{" "}
+            {product.category.charAt(0).toUpperCase() +
+              product.category.slice(1)}
           </Badge>
           {!product.inStock && (
             <Badge variant="destructive" className="absolute top-3 right-3">
@@ -73,14 +79,20 @@ export const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetai
           {/* Product info */}
           <DialogHeader className="text-left space-y-1">
             <DialogTitle className="text-xl">{product.name}</DialogTitle>
-            <p className="text-sm text-muted-foreground">{product.description}</p>
+            <p className="text-sm text-muted-foreground">
+              {product.description}
+            </p>
           </DialogHeader>
 
           {/* Price & stock */}
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-2xl font-bold text-primary">{formatPrice(product.price)}</span>
-              <span className="text-sm text-muted-foreground ml-1">/{product.unit}</span>
+              <span className="text-2xl font-bold text-primary">
+                {formatPrice(product.price)}
+              </span>
+              <span className="text-sm text-muted-foreground ml-1">
+                /{product.unit}
+              </span>
             </div>
             {product.inStock && (
               <span className="text-xs text-muted-foreground">
@@ -102,7 +114,9 @@ export const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetai
                 </Link>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Star className="h-3.5 w-3.5 fill-primary text-primary" />
-                  <span className="font-medium text-foreground">{vendor.rating}</span>
+                  <span className="font-medium text-foreground">
+                    {vendor.rating}
+                  </span>
                   <span>({vendor.reviewCount})</span>
                 </div>
               </div>
@@ -112,7 +126,8 @@ export const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetai
                 </span>
                 {vendor.deliveryFee > 0 && (
                   <span className="flex items-center gap-1">
-                    <Truck className="h-3 w-3" /> Delivery {formatPrice(vendor.deliveryFee)}
+                    <Truck className="h-3 w-3" /> Delivery{" "}
+                    {formatPrice(vendor.deliveryFee)}
                   </span>
                 )}
               </div>
@@ -140,7 +155,9 @@ export const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetai
                     >
                       <Minus className="h-4 w-4" />
                     </Button>
-                    <span className="text-base font-bold w-6 text-center text-foreground">{quantity}</span>
+                    <span className="text-base font-bold w-6 text-center text-foreground">
+                      {quantity}
+                    </span>
                     <Button
                       size="icon"
                       variant="ghost"
@@ -155,8 +172,13 @@ export const ProductDetailModal = ({ product, open, onOpenChange }: ProductDetai
                   </span>
                 </div>
               ) : (
-                <Button className="w-full" size="lg" onClick={() => addItem(product)}>
-                  <Plus className="h-4 w-4 mr-2" /> Add to Cart — {formatPrice(product.price)}
+                <Button
+                  className="w-full"
+                  size="lg"
+                  onClick={() => addItem(product)}
+                >
+                  <Plus className="h-4 w-4 mr-2" /> Add to Cart —{" "}
+                  {formatPrice(product.price)}
                 </Button>
               )}
             </div>
