@@ -106,7 +106,7 @@ export const ProductDetailModal = ({
             <div className="rounded-lg border border-border p-4 space-y-2">
               <div className="flex items-center justify-between">
                 <Link
-                  href={`/store/${vendor._id}`}
+                  href={`/store/${vendor.slug || vendor._id}`}
                   className="font-semibold text-foreground hover:text-primary transition-colors"
                   onClick={() => onOpenChange(false)}
                 >

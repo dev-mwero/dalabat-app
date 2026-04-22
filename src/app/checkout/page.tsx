@@ -18,6 +18,7 @@ import { useCart } from "@/contexts/CartContext";
 
 interface Vendor {
   _id: string;
+  slug: string;
   name: string;
   deliveryAvailable: boolean;
   deliveryFee: number;
@@ -207,7 +208,7 @@ export default function CheckoutPage() {
       <header className="bg-[#F8F9FF]/90 backdrop-blur-lg sticky top-0 z-50 py-4 px-6 border-b border-outline-variant/10">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="text-2xl font-extrabold tracking-tighter text-[#9D4300]">Zest Marketplace</div>
-          <Link href={vendor ? `/store/${vendor._id}` : "/"} className="flex items-center gap-2 text-on-surface-variant font-medium text-sm hover:text-primary transition-colors">
+          <Link href={vendor ? `/store/${vendor.slug || vendor._id}` : "/"} className="flex items-center gap-2 text-on-surface-variant font-medium text-sm hover:text-primary transition-colors">
             <ArrowLeft className="w-4 h-4" />
             Back to Store
           </Link>

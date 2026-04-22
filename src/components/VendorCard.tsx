@@ -24,7 +24,7 @@ const VendorCard = ({ vendor, index }: VendorCardProps) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.08, duration: 0.4 }}
     >
-      <Link href={`/store/${vendor._id}`} className="block group">
+      <Link href={`/store/${vendor.slug || vendor._id}`} className="block group">
         <div className="bg-card rounded-lg overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow duration-300">
           <div className="relative h-40 overflow-hidden">
             <img

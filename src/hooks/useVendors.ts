@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export type Vendor = {
   _id: string;
+  slug: string;
   name: string;
   description: string;
   image: string;

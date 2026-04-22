@@ -52,5 +52,6 @@ export function useProducts(options: UseProductsOptions = {}) {
     queryKey: ["products", options],
     queryFn: () => fetchProducts(options),
     staleTime: 60 * 1000,
+    enabled: options.vendorId !== undefined ? !!options.vendorId : true,
   });
 }

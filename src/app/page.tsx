@@ -149,7 +149,7 @@ export default function Home() {
                       </div>
                     ))
                   ) : vendors.slice(0, 5).map(vendor => (
-                    <Link href={`/store/${vendor._id}`} key={vendor._id} className="block group">
+                    <Link href={`/store/${vendor.slug || vendor._id}`} key={vendor._id} className="block group">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-primary group-hover:bg-primary-container group-hover:text-white transition-colors">
                           <Store className="w-4 h-4" />
@@ -228,12 +228,12 @@ export default function Home() {
                         </p>
                         <div className="flex items-center justify-between pt-4 border-t border-surface-container-low mt-auto">
                           {vendor ? (
-                            <Link href={`/store/${vendor._id}`} className="text-xs font-bold text-on-surface-variant/80 hover:text-primary flex items-center gap-1 uppercase transition-colors">
+                            <Link href={`/store/${vendor.slug || vendor._id}`} className="text-xs font-bold text-on-surface-variant/80 hover:text-primary flex items-center gap-1 uppercase transition-colors">
                               <Store className="w-3.5 h-3.5" />
                               <span className="truncate max-w-[120px]">{vendor.name}</span>
                             </Link>
                           ) : <div />}
-                          <Link href={`/store/${product.vendorId}`} className="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center hover:bg-primary-container hover:text-white transition-all shadow-sm">
+                          <Link href={`/store/${vendor?.slug || product.vendorId}`} className="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center hover:bg-primary-container hover:text-white transition-all shadow-sm">
                             <ShoppingCart className="w-4 h-4" />
                           </Link>
                         </div>

@@ -7,11 +7,16 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useVendors } from "@/hooks/useVendors";
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, totalPrice, vendorId } = useCart();
+  const { data: vendors = [] } = useVendors();
   const [promoCode, setPromoCode] = useState("");
   const router = useRouter();
+
+  const vendor = vendors.find(v => v._id === vendorId);
+  const vendorSlug = vendor?.slug || vendorId;
 
   const handleCheckout = () => {
     if (items.length === 0) {
@@ -30,7 +35,7 @@ export default function CartPage() {
           </h1>
           <p className="text-on-surface-variant font-medium">Review your curated selection of artisanal provisions</p>
         </div>
-        <Link href={vendorId ? `/store/${vendorId}` : "/"} className="hidden md:flex items-center gap-2 text-primary font-bold hover:underline">
+        <Link href={vendorSlug ? `/store/${vendorSlug}` : "/"} className="hidden md:flex items-center gap-2 text-primary font-bold hover:underline">
           <ArrowLeft className="w-4 h-4" />
           Continue Shopping
         </Link>

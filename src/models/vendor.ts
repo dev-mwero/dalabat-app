@@ -14,6 +14,13 @@ const vendorSchema = new Schema(
       trim: true,
       index: true,
     },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      index: true,
+    },
     description: {
       type: String,
       required: true,

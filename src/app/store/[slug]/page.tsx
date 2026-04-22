@@ -2,7 +2,7 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ArrowLeft, Clock, MapPin, Star, Truck, Search, Heart } from "lucide-react";
+import { ArrowLeft, Clock, MapPin, Star, Truck, Search, Store } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -17,8 +17,8 @@ import { useVendors } from "@/hooks/useVendors";
 import { formatPrice } from "@/lib/utils";
 
 export default function VendorStorePage() {
-  const params = useParams<{ vendorId: string }>();
-  const vendorId = params.vendorId;
+  const params = useParams<{ slug: string }>();
+  const slug = params.slug;
   const router = useRouter();
 
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -31,16 +31,19 @@ export default function VendorStorePage() {
   const queryClient = useQueryClient();
 
   const { data: vendors = [], isLoading: loadingVendors } = useVendors();
+
+  const vendor = useMemo(
+    () => vendors.find((v) => v.slug === slug),
+    [vendors, slug],
+  );
+
+  const vendorId = vendor?._id;
+
   const { data: products = [], isLoading: loadingProducts } = useProducts({
     vendorId: vendorId as string,
   });
   const { data: reviewsData, isLoading: loadingReviews } = useReviews(
     vendorId as string,
-  );
-
-  const vendor = useMemo(
-    () => vendors.find((v) => v._id === vendorId),
-    [vendors, vendorId],
   );
 
   const reviews = reviewsData?.data ?? [];

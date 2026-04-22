@@ -2,6 +2,7 @@ import type { FilterQuery } from "mongoose";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { connectToDatabase } from "@/lib/mongodb";
+import { generateSlug } from "@/lib/utils";
 import { Vendor, type VendorDocument } from "@/models/vendor";
 
 const DEFAULT_PAGE = 1;
@@ -10,6 +11,7 @@ const MAX_LIMIT = 50;
 
 const vendorCreateSchema = z.object({
   name: z.string().trim().min(2),
+  slug: z.string().trim().min(2).optional(),
   description: z.string().trim().min(10),
   image: z.string().trim().min(1),
   rating: z.number().min(0).max(5).default(0),
@@ -140,7 +142,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const vendor = await Vendor.create(parsed.data);
+    const baseSlug = parsed.data.slug || generateSlug(parsed.data.name);
+    let slug = baseSlug;
+    let counter = 1;
+
+    // Handle slug uniqueness
+    while (await Vendor.findOne({ slug })) {
+      slug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+
+    const vendor = await Vendor.create({
+      ...parsed.data,
+      slug,
+    });
     return NextResponse.json({ data: vendor }, { status: 201 });
   } catch (error) {
     return NextResponse.json(
