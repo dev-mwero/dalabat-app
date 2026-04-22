@@ -17,6 +17,7 @@ const FloatingCartBar = () => {
       animate={{ y: 0 }}
       exit={{ y: 100 }}
       className="fixed bottom-0 left-0 right-0 p-4 z-40 bg-gradient-to-t from-background to-transparent pointer-events-none"
+    >
       <div className="max-w-lg mx-auto pointer-events-auto">
         <Link href="/cart">
           <Button
