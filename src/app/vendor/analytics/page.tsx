@@ -2,14 +2,8 @@
 
 import { format, subDays } from "date-fns";
 import {
-  ArrowDownRight,
-  ArrowUpRight,
   CalendarIcon,
-  DollarSign,
   Download,
-  ShoppingCart,
-  TrendingUp,
-  Users,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -27,7 +21,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { VendorRouteNav } from "@/app/vendor/_components/VendorRouteNav";
 
 type Vendor = {
   _id: string;
@@ -55,12 +48,13 @@ type DashboardSummary = {
   };
 };
 
-type Preset = "7d" | "14d" | "30d";
+type Preset = "7d" | "14d" | "30d" | "90d";
 
 const presetDays: Record<Preset, number> = {
   "7d": 7,
   "14d": 14,
   "30d": 30,
+  "90d": 90,
 };
 
 const currency = new Intl.NumberFormat("en-KE", {
@@ -82,7 +76,7 @@ function buildDayKeys(days: number) {
 export default function VendorAnalyticsPage() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [vendorId, setVendorId] = useState<string | null>(null);
-  const [preset, setPreset] = useState<Preset>("14d");
+  const [preset, setPreset] = useState<Preset>("30d");
   const [orders, setOrders] = useState<Order[]>([]);
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -201,13 +195,13 @@ export default function VendorAnalyticsPage() {
     }
 
     const colorByStatus: Record<string, string> = {
-      pending: "#f59e0b",
-      confirmed: "#3b82f6",
-      preparing: "#8b5cf6",
-      ready: "#6366f1",
+      pending: "#dae2fd", // secondary-container
+      confirmed: "#9d4300", // primary
+      preparing: "#8c9cb4", // tertiary-container
+      ready: "#f97316", // primary-container
       out_for_delivery: "#06b6d4",
-      delivered: "#10b981",
-      cancelled: "#f43f5e",
+      delivered: "#10b981", // green
+      cancelled: "#ffdad6", // error-container
     };
 
     return [...counts.entries()].map(([name, value]) => ({
@@ -280,78 +274,35 @@ export default function VendorAnalyticsPage() {
     URL.revokeObjectURL(url);
   }
 
-  if (loading) {
+  if (loading && !summary) {
     return (
-      <main className="min-h-screen bg-background p-4 sm:p-6">
-        <div className="mx-auto max-w-6xl rounded-xl border border-border bg-card p-8 text-sm text-muted-foreground">
-          Loading analytics...
-        </div>
-      </main>
+      <div className="p-8 max-w-6xl mx-auto space-y-8 animate-pulse text-on-surface-variant">
+        Loading analytics...
+      </div>
     );
   }
 
   if (error) {
     return (
-      <main className="min-h-screen bg-background p-4 sm:p-6">
-        <div className="mx-auto max-w-6xl rounded-xl border border-red-200 bg-red-50 p-8 text-sm text-red-700">
-          {error}
-        </div>
-      </main>
+      <div className="p-8 max-w-6xl mx-auto space-y-8 text-error bg-error-container rounded-xl">
+        {error}
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="mx-auto max-w-6xl space-y-6">
-        <VendorRouteNav />
-        <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <h1 className="text-2xl font-extrabold text-foreground">
-              Analytics & Reports
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Track store performance and sales trends.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            {(["7d", "14d", "30d"] as Preset[]).map((key) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setPreset(key)}
-                className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
-                  preset === key
-                    ? "bg-primary text-primary-foreground"
-                    : "border border-border bg-background text-foreground"
-                }`}
-              >
-                {presetDays[key]} days
-              </button>
-            ))}
-
-            <button
-              type="button"
-              onClick={handleExportCSV}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground"
-            >
-              <Download className="h-3.5 w-3.5" /> Export CSV
-            </button>
-          </div>
-        </header>
-
-        <section className="max-w-sm space-y-1">
-          <label
-            htmlFor="vendor-selector"
-            className="text-xs font-medium text-muted-foreground"
-          >
-            Vendor
-          </label>
+    <div className="p-8 max-w-[1400px] mx-auto">
+      {/* Header & Date Picker */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+        <div>
+          <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Analytics & Reports</h1>
+          <p className="text-on-surface-variant font-medium">Tracking your pantry's performance and growth metrics.</p>
+        </div>
+        <div className="flex items-center gap-3">
           <select
-            id="vendor-selector"
             value={vendorId ?? ""}
             onChange={(event) => setVendorId(event.target.value)}
-            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+            className="h-10 rounded-full border border-outline-variant/30 bg-surface-container-low px-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary text-on-surface cursor-pointer"
           >
             {vendors.map((vendor) => (
               <option key={vendor._id} value={vendor._id}>
@@ -359,243 +310,197 @@ export default function VendorAnalyticsPage() {
               </option>
             ))}
           </select>
-        </section>
 
-        <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {[
-            {
-              label: "Revenue",
-              value: currency.format(summary?.stats.revenue ?? 0),
-              change: "+",
-              icon: DollarSign,
-              up: true,
-            },
-            {
-              label: "Orders",
-              value: `${totalOrders}`,
-              change: `${summary?.stats.activeOrders ?? 0} active`,
-              icon: ShoppingCart,
-              up: true,
-            },
-            {
-              label: "Avg. Order",
-              value: currency.format(averageOrderValue),
-              change: `${completionRate.toFixed(1)}% completed`,
-              icon: TrendingUp,
-              up: completionRate >= 60,
-            },
-            {
-              label: "Products",
-              value: `${summary?.stats.productCount ?? 0}`,
-              change: `${deliveredOrders} delivered`,
-              icon: Users,
-              up: true,
-            },
-          ].map((stat) => (
-            <article
-              key={stat.label}
-              className="rounded-xl border border-border bg-card p-4"
+          <div className="flex items-center gap-2 bg-surface-container-lowest p-1.5 rounded-full shadow-sm border border-outline-variant/10">
+            <button 
+              onClick={() => setPreset("30d")}
+              className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors ${preset === "30d" ? "bg-primary text-on-primary" : "text-on-surface-variant hover:bg-surface-container-low"}`}
             >
-              <div className="mb-2 flex items-center justify-between">
-                <stat.icon className="h-4 w-4 text-primary" />
-                <span
-                  className={`inline-flex items-center gap-0.5 text-xs font-semibold ${
-                    stat.up ? "text-emerald-600" : "text-rose-600"
-                  }`}
-                >
-                  {stat.up ? (
-                    <ArrowUpRight className="h-3 w-3" />
-                  ) : (
-                    <ArrowDownRight className="h-3 w-3" />
-                  )}
-                  {stat.change}
-                </span>
-              </div>
-              <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{stat.label}</p>
-            </article>
-          ))}
-        </section>
-
-        <section className="rounded-xl border border-border bg-card p-4 sm:p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-bold text-foreground">Revenue Trend</h2>
-            <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-              <CalendarIcon className="h-3.5 w-3.5" /> Last {presetDays[preset]}{" "}
-              days
-            </span>
+              Last 30 Days
+            </button>
+            <button 
+              onClick={() => setPreset("90d")}
+              className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors ${preset === "90d" ? "bg-primary text-on-primary" : "text-on-surface-variant hover:bg-surface-container-low"}`}
+            >
+              Quarterly
+            </button>
+            <div className="h-6 w-px bg-outline-variant/30"></div>
+            <button onClick={handleExportCSV} className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+              <Download className="w-4 h-4" />
+              Export
+            </button>
           </div>
-          <div className="h-64 sm:h-72">
+        </div>
+      </div>
+
+      {/* Metric Bento Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/10 group hover:bg-orange-50/50 transition-colors duration-300">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-12 h-12 flex items-center justify-center bg-primary-container/10 rounded-xl text-primary-container">
+              <span className="material-symbols-outlined">payments</span>
+            </div>
+            <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">+12.5%</span>
+          </div>
+          <p className="text-on-surface-variant text-sm font-semibold uppercase tracking-wider mb-1">Total Revenue</p>
+          <h3 className="text-3xl font-extrabold text-on-surface">{currency.format(summary?.stats.revenue ?? 0)}</h3>
+        </div>
+
+        <div className="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/10 group hover:bg-orange-50/50 transition-colors duration-300">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-12 h-12 flex items-center justify-center bg-secondary-container rounded-xl text-on-secondary-container">
+              <span className="material-symbols-outlined">shopping_cart</span>
+            </div>
+            <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">+8.2%</span>
+          </div>
+          <p className="text-on-surface-variant text-sm font-semibold uppercase tracking-wider mb-1">Total Orders</p>
+          <h3 className="text-3xl font-extrabold text-on-surface">{totalOrders}</h3>
+        </div>
+
+        <div className="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/10 group hover:bg-orange-50/50 transition-colors duration-300">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-12 h-12 flex items-center justify-center bg-tertiary-container/20 rounded-xl text-tertiary-container">
+              <span className="material-symbols-outlined">receipt_long</span>
+            </div>
+            <span className="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-full">-2.4%</span>
+          </div>
+          <p className="text-on-surface-variant text-sm font-semibold uppercase tracking-wider mb-1">Avg. Order Value</p>
+          <h3 className="text-3xl font-extrabold text-on-surface">{currency.format(averageOrderValue)}</h3>
+        </div>
+
+        <div className="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/10 group hover:bg-orange-50/50 transition-colors duration-300">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-xl text-primary">
+              <span className="material-symbols-outlined">inventory</span>
+            </div>
+            <span className="text-xs font-bold text-on-surface-variant bg-surface-container-low px-2 py-1 rounded-full">Stable</span>
+          </div>
+          <p className="text-on-surface-variant text-sm font-semibold uppercase tracking-wider mb-1">Active Products</p>
+          <h3 className="text-3xl font-extrabold text-on-surface">{summary?.stats.productCount ?? 0}</h3>
+        </div>
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        {/* Revenue Trend Area Chart */}
+        <div className="lg:col-span-2 bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/10 flex flex-col">
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h4 className="text-xl font-bold text-on-surface">Revenue Trend</h4>
+              <p className="text-sm text-on-surface-variant">Daily earnings for the current period</p>
+            </div>
+            <button className="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg">
+              <CalendarIcon className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="flex-1 min-h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={revenueSeries}>
                 <defs>
-                  <linearGradient
-                    id="revenueGradient"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop
-                      offset="5%"
-                      stopColor="hsl(25, 95%, 53%)"
-                      stopOpacity={0.3}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor="hsl(25, 95%, 53%)"
-                      stopOpacity={0}
-                    />
+                  <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#f97316" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke="hsl(30, 20%, 90%)"
-                />
-                <XAxis
-                  dataKey="date"
-                  tick={{ fontSize: 11 }}
-                  stroke="hsl(20, 5%, 45%)"
-                />
-                <YAxis
-                  tick={{ fontSize: 11 }}
-                  stroke="hsl(20, 5%, 45%)"
-                  tickFormatter={(value) =>
-                    `${Math.round(Number(value) / 1000)}k`
-                  }
-                />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                <XAxis dataKey="date" tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} dy={10} />
+                <YAxis tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} tickFormatter={(value) => `${Math.round(Number(value) / 1000)}k`} dx={-10} />
                 <Tooltip
-                  contentStyle={{
-                    borderRadius: 12,
-                    border: "1px solid hsl(30,20%,90%)",
-                    fontSize: 12,
-                  }}
-                  formatter={(value: number) => [
-                    currency.format(value),
-                    "Revenue",
-                  ]}
+                  contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
+                  formatter={(value: number) => [currency.format(value), "Revenue"]}
                 />
-                <Area
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="hsl(25, 95%, 53%)"
-                  fill="url(#revenueGradient)"
-                  strokeWidth={2}
-                />
+                <Area type="monotone" dataKey="revenue" stroke="#f97316" fill="url(#revenueGradient)" strokeWidth={3} activeDot={{ r: 6, fill: "#f97316", stroke: "#fff", strokeWidth: 2 }} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
-        </section>
+        </div>
 
-        <section className="grid gap-4 lg:grid-cols-2">
-          <article className="rounded-xl border border-border bg-card p-4 sm:p-6">
-            <h2 className="mb-4 font-bold text-foreground">Orders by Day</h2>
-            <div className="h-56">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={revenueSeries}>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="hsl(30, 20%, 90%)"
-                  />
-                  <XAxis
-                    dataKey="date"
-                    tick={{ fontSize: 11 }}
-                    stroke="hsl(20, 5%, 45%)"
-                  />
-                  <YAxis tick={{ fontSize: 11 }} stroke="hsl(20, 5%, 45%)" />
-                  <Tooltip
-                    contentStyle={{
-                      borderRadius: 12,
-                      border: "1px solid hsl(30,20%,90%)",
-                      fontSize: 12,
-                    }}
-                    formatter={(value: number) => [value, "Orders"]}
-                  />
-                  <Bar
-                    dataKey="orders"
-                    fill="hsl(25, 95%, 53%)"
-                    radius={[6, 6, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </article>
-
-          <article className="rounded-xl border border-border bg-card p-4 sm:p-6">
-            <h2 className="mb-4 font-bold text-foreground">
-              Order Status Share
-            </h2>
-            <div className="h-56">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={statusBreakdown}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={50}
-                    outerRadius={80}
-                    paddingAngle={4}
-                    dataKey="value"
-                  >
-                    {statusBreakdown.map((entry) => (
-                      <Cell key={entry.name} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      borderRadius: 12,
-                      border: "1px solid hsl(30,20%,90%)",
-                      fontSize: 12,
-                    }}
-                    formatter={(value: number) => [value, "Orders"]}
-                  />
-                  <Legend
-                    iconType="circle"
-                    iconSize={8}
-                    wrapperStyle={{ fontSize: 12 }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </article>
-        </section>
-
-        <section className="rounded-xl border border-border bg-card">
-          <div className="border-b border-border p-4">
-            <h2 className="font-bold text-foreground">Top Selling Products</h2>
+        {/* Order Status Pie Chart */}
+        <div className="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/10 flex flex-col">
+          <div>
+            <h4 className="text-xl font-bold text-on-surface mb-1">Order Status</h4>
+            <p className="text-sm text-on-surface-variant">Fulfillment distribution</p>
           </div>
-          <div className="divide-y divide-border">
-            {topProducts.map((product, index) => (
-              <div
-                key={product.name}
-                className="flex items-center justify-between p-4"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="w-5 text-xs font-bold text-muted-foreground">
-                    #{index + 1}
-                  </span>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">
-                      {product.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {product.sold} units sold
-                    </p>
-                  </div>
-                </div>
-                <span className="text-sm font-bold text-foreground">
-                  {currency.format(product.revenue)}
-                </span>
+          <div className="flex-1 relative min-h-[250px] mt-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={statusBreakdown}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={90}
+                  paddingAngle={5}
+                  dataKey="value"
+                  stroke="none"
+                >
+                  {statusBreakdown.map((entry) => (
+                    <Cell key={entry.name} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
+                  formatter={(value: number) => [value, "Orders"]}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+            {/* Center Label */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <span className="text-3xl font-extrabold text-on-surface">{completionRate.toFixed(0)}%</span>
+              <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Success Rate</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3 mt-6">
+            {statusBreakdown.slice(0, 4).map((status) => (
+              <div key={status.name} className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: status.color }}></div>
+                <span className="text-xs font-bold text-on-surface capitalize">{status.name.replace(/_/g, ' ')}</span>
               </div>
             ))}
-            {topProducts.length === 0 && (
-              <div className="p-6 text-sm text-muted-foreground">
-                No product sales data yet.
-              </div>
-            )}
           </div>
-        </section>
+        </div>
       </div>
-    </main>
+
+      {/* Top Selling Products Table */}
+      <div className="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/10 overflow-hidden">
+        <div className="px-8 py-6 border-b border-surface-container flex justify-between items-center bg-surface-container-low/30">
+          <h4 className="text-xl font-bold text-on-surface">Top Selling Products</h4>
+          <button className="text-sm font-bold text-primary hover:underline">View All Inventory</button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="text-on-surface-variant text-xs font-bold uppercase tracking-widest border-b border-surface-container bg-surface-container-lowest">
+                <th className="px-8 py-4">Product Name</th>
+                <th className="px-8 py-4">Sales</th>
+                <th className="px-8 py-4">Revenue</th>
+                <th className="px-8 py-4 text-right">Trend</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-surface-container">
+              {topProducts.map((product) => (
+                <tr key={product.name} className="hover:bg-surface-container-low/50 transition-colors group">
+                  <td className="px-8 py-5">
+                    <p className="font-bold text-on-surface">{product.name}</p>
+                  </td>
+                  <td className="px-8 py-5 font-semibold text-on-surface">{product.sold}</td>
+                  <td className="px-8 py-5 font-extrabold text-on-surface">{currency.format(product.revenue)}</td>
+                  <td className="px-8 py-5 text-right">
+                    <span className="material-symbols-outlined text-green-500">trending_up</span>
+                  </td>
+                </tr>
+              ))}
+              {topProducts.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-8 py-8 text-center text-on-surface-variant text-sm">
+                    No sales data available for this period.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   );
 }
