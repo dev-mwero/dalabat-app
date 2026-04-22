@@ -33,7 +33,6 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         <AppProviders>
           <div className="flex-1 flex flex-col">{children}</div>
-          <CartDrawer />
         </AppProviders>
       </body>
     </html>

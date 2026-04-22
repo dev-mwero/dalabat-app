@@ -58,27 +58,28 @@ export const Header = ({
             </Button>
           </Link>
 
-          <Button
-            variant="outline"
-            size="icon"
-            className="relative"
-            onClick={() => setIsOpen(true)}
-          >
-            <ShoppingCart className="h-5 w-5" />
-            <AnimatePresence mode="wait">
-              {totalItems > 0 && (
-                <motion.span
-                  key="cart-badge"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
-                  className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-bold"
-                >
-                  {totalItems}
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </Button>
+          <Link href="/cart">
+            <Button
+              variant="outline"
+              size="icon"
+              className="relative"
+            >
+              <ShoppingCart className="h-5 w-5" />
+              <AnimatePresence mode="wait">
+                {totalItems > 0 && (
+                  <motion.span
+                    key="cart-badge"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-bold"
+                  >
+                    {totalItems}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </Button>
+          </Link>
 
           <div className="border-l border-border h-6 mx-1 hidden sm:block"></div>
 
