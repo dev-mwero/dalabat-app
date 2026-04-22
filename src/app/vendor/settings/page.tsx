@@ -1,9 +1,9 @@
 "use client";
 
-import { Bell, MapPin, Plus, Save, Store, X } from "lucide-react";
+import { Bell, MapPin, Plus, Save, Store, X, Edit, Lightbulb } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { VendorRouteNav } from "@/app/vendor/_components/VendorRouteNav";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Vendor = {
   _id: string;
@@ -80,8 +80,7 @@ export default function VendorSettingsPage() {
 
   const [profile, setProfile] = useState<ProfileState>(defaultProfile);
   const [zones, setZones] = useState<Zone[]>([]);
-  const [notifications, setNotifications] =
-    useState<NotificationsState>(defaultNotifications);
+  const [notifications, setNotifications] = useState<NotificationsState>(defaultNotifications);
   const [newZoneName, setNewZoneName] = useState("");
   const [newZoneFee, setNewZoneFee] = useState("");
 
@@ -210,7 +209,7 @@ export default function VendorSettingsPage() {
   async function saveProfile() {
     setSavingProfile(true);
     try {
-      const ok = await patchSettings(profile);
+      const ok = await patchSettings({ profile });
       if (ok) {
         toast.success("Store profile saved");
       }
@@ -285,49 +284,34 @@ export default function VendorSettingsPage() {
     );
   }
 
-  if (loading) {
+  if (loading && !profile.storeName) {
     return (
-      <main className="min-h-screen bg-background p-4 md:p-6">
-        <div className="mx-auto max-w-3xl rounded-xl border border-border bg-card p-8 text-sm text-muted-foreground">
-          Loading settings...
-        </div>
-      </main>
+      <div className="p-8 max-w-6xl mx-auto space-y-8 animate-pulse text-on-surface-variant">
+        Loading settings...
+      </div>
     );
   }
 
   if (error) {
     return (
-      <main className="min-h-screen bg-background p-4 md:p-6">
-        <div className="mx-auto max-w-3xl rounded-xl border border-red-200 bg-red-50 p-8 text-sm text-red-700">
-          {error}
-        </div>
-      </main>
+      <div className="p-8 max-w-6xl mx-auto space-y-8 text-error bg-error-container rounded-xl">
+        {error}
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-background p-4 md:p-6">
-      <div className="mx-auto max-w-3xl space-y-6">
-        <VendorRouteNav />
-        <header>
-          <h1 className="text-2xl font-bold text-foreground">Settings</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage your store profile, delivery zones, and notifications.
-          </p>
-        </header>
-
-        <section className="max-w-sm space-y-1">
-          <label
-            htmlFor="vendor-selector"
-            className="text-xs font-medium text-muted-foreground"
-          >
-            Vendor
-          </label>
+    <div className="p-8 max-w-7xl mx-auto pb-24">
+      <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Store Management</h1>
+          <p className="text-on-surface-variant text-lg">Configure your digital storefront and preference profiles.</p>
+        </div>
+        <div className="flex items-center gap-3">
           <select
-            id="vendor-selector"
             value={vendorId ?? ""}
             onChange={(event) => setVendorId(event.target.value)}
-            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+            className="h-12 rounded-full border border-outline-variant/30 bg-surface-container-low px-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary text-on-surface cursor-pointer"
           >
             {vendors.map((vendor) => (
               <option key={vendor._id} value={vendor._id}>
@@ -335,454 +319,349 @@ export default function VendorSettingsPage() {
               </option>
             ))}
           </select>
-          {currentVendorName && (
-            <p className="text-xs text-muted-foreground">
-              Editing: {currentVendorName}
-            </p>
-          )}
-        </section>
+        </div>
+      </header>
 
-        <section className="space-y-4">
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.key;
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.key}
-                  type="button"
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium whitespace-nowrap ${
-                    isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground"
-                  }`}
-                >
-                  <Icon className="h-4 w-4" /> {tab.label}
-                </button>
-              );
-            })}
-          </div>
+      {/* Tabbed Interface */}
+      <div className="flex gap-8 border-b border-surface-container mb-8 overflow-x-auto scrollbar-hide">
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.key;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`pb-4 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap ${
+                isActive 
+                  ? "text-primary border-b-2 border-primary-container" 
+                  : "text-on-surface-variant hover:text-primary"
+              }`}
+            >
+              <tab.icon className="w-4 h-4" />
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
 
-          {activeTab === "profile" && (
-            <div className="space-y-4 rounded-xl border border-border bg-card p-4 sm:p-5">
-              <div>
-                <h2 className="font-semibold text-foreground">Store Profile</h2>
-                <p className="text-xs text-muted-foreground">
-                  Update your store information visible to customers.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="store-name" className="text-sm text-foreground">
-                  Store Name
-                </label>
-                <input
-                  id="store-name"
-                  value={profile.storeName}
-                  onChange={(event) =>
-                    setProfile((prev) => ({
-                      ...prev,
-                      storeName: event.target.value,
-                    }))
-                  }
-                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label
-                  htmlFor="description"
-                  className="text-sm text-foreground"
-                >
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  rows={3}
-                  value={profile.description}
-                  onChange={(event) =>
-                    setProfile((prev) => ({
-                      ...prev,
-                      description: event.target.value,
-                    }))
-                  }
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <label htmlFor="phone" className="text-sm text-foreground">
-                    Phone
-                  </label>
-                  <input
-                    id="phone"
-                    value={profile.phone}
-                    onChange={(event) =>
-                      setProfile((prev) => ({
-                        ...prev,
-                        phone: event.target.value,
-                      }))
-                    }
-                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm text-foreground">
-                    Email
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    value={profile.email}
-                    onChange={(event) =>
-                      setProfile((prev) => ({
-                        ...prev,
-                        email: event.target.value,
-                      }))
-                    }
-                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="address" className="text-sm text-foreground">
-                  Address
-                </label>
-                <input
-                  id="address"
-                  value={profile.address}
-                  onChange={(event) =>
-                    setProfile((prev) => ({
-                      ...prev,
-                      address: event.target.value,
-                    }))
-                  }
-                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label
-                    htmlFor="open-time"
-                    className="text-sm text-foreground"
-                  >
-                    Opening Time
-                  </label>
-                  <input
-                    id="open-time"
-                    type="time"
-                    value={profile.openTime}
-                    onChange={(event) =>
-                      setProfile((prev) => ({
-                        ...prev,
-                        openTime: event.target.value,
-                      }))
-                    }
-                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="close-time"
-                    className="text-sm text-foreground"
-                  >
-                    Closing Time
-                  </label>
-                  <input
-                    id="close-time"
-                    type="time"
-                    value={profile.closeTime}
-                    onChange={(event) =>
-                      setProfile((prev) => ({
-                        ...prev,
-                        closeTime: event.target.value,
-                      }))
-                    }
-                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={() => void saveProfile()}
-                  disabled={savingProfile}
-                  className="inline-flex items-center rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  <Save className="mr-1.5 h-4 w-4" />
-                  {savingProfile ? "Saving..." : "Save Profile"}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "delivery" && (
-            <div className="space-y-4 rounded-xl border border-border bg-card p-4 sm:p-5">
-              <div>
-                <h2 className="font-semibold text-foreground">
-                  Delivery Zones
-                </h2>
-                <p className="text-xs text-muted-foreground">
-                  Configure areas you deliver to and their fees.
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                {zones.map((zone) => (
-                  <div
-                    key={zone.id}
-                    className="flex items-center justify-between rounded-lg border border-border bg-secondary/40 p-3"
-                  >
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        checked={zone.active}
-                        onChange={() => toggleZone(zone.id)}
-                        className="h-4 w-4"
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+        {/* Left Column: Form Content */}
+        <div className="xl:col-span-8 space-y-8">
+          <AnimatePresence mode="wait">
+            {activeTab === "profile" && (
+              <motion.div 
+                key="profile"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                className="space-y-8"
+              >
+                {/* Profile Section Card */}
+                <section className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
+                  <h3 className="text-xl font-bold mb-6 text-on-surface">Store Identity</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-on-surface-variant px-1">Store Name</label>
+                      <input 
+                        value={profile.storeName}
+                        onChange={(e) => setProfile(p => ({ ...p, storeName: e.target.value }))}
+                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium" 
+                        type="text" 
                       />
-                      <div>
-                        <span
-                          className={`text-sm font-medium ${
-                            zone.active
-                              ? "text-foreground"
-                              : "text-muted-foreground line-through"
-                          }`}
-                        >
-                          {zone.name}
-                        </span>
-                        <p className="text-xs text-muted-foreground">
-                          KSh {zone.fee} delivery fee
-                        </p>
-                      </div>
                     </div>
-                    <button
-                      type="button"
-                      className="rounded p-1 text-muted-foreground hover:bg-secondary hover:text-rose-600"
-                      onClick={() => removeZone(zone.id)}
-                      aria-label={`Remove ${zone.name}`}
-                    >
-                      <X className="h-4 w-4" />
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-on-surface-variant px-1">Primary Category</label>
+                      <select className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium">
+                        <option>Bakery & Pastries</option>
+                        <option>Organic Produce</option>
+                        <option>Artisan Cheese</option>
+                        <option>General Groceries</option>
+                      </select>
+                    </div>
+                    <div className="md:col-span-2 space-y-2">
+                      <label className="block text-sm font-semibold text-on-surface-variant px-1">Description</label>
+                      <textarea 
+                        value={profile.description}
+                        onChange={(e) => setProfile(p => ({ ...p, description: e.target.value }))}
+                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium resize-none" 
+                        rows={4}
+                      />
+                    </div>
+                  </div>
+                </section>
+
+                {/* Contact & Location */}
+                <section className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
+                  <h3 className="text-xl font-bold mb-6 text-on-surface">Contact & Location</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-on-surface-variant px-1">Email Address</label>
+                      <input 
+                        value={profile.email}
+                        onChange={(e) => setProfile(p => ({ ...p, email: e.target.value }))}
+                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium" 
+                        type="email" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-on-surface-variant px-1">Phone Number</label>
+                      <input 
+                        value={profile.phone}
+                        onChange={(e) => setProfile(p => ({ ...p, phone: e.target.value }))}
+                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium" 
+                        type="tel" 
+                      />
+                    </div>
+                    <div className="md:col-span-2 space-y-2">
+                      <label className="block text-sm font-semibold text-on-surface-variant px-1">Business Address</label>
+                      <input 
+                        value={profile.address}
+                        onChange={(e) => setProfile(p => ({ ...p, address: e.target.value }))}
+                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium" 
+                        type="text" 
+                      />
+                    </div>
+                  </div>
+                </section>
+
+                {/* Operating Hours */}
+                <section className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
+                  <h3 className="text-xl font-bold mb-6 text-on-surface">Operating Hours</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-surface-container-low p-4 rounded-xl text-center">
+                      <span className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Open</span>
+                      <input 
+                        type="time" 
+                        value={profile.openTime}
+                        onChange={(e) => setProfile(p => ({ ...p, openTime: e.target.value }))}
+                        className="bg-transparent border-none text-sm font-semibold text-on-surface text-center p-0 focus:ring-0" 
+                      />
+                    </div>
+                    <div className="bg-surface-container-low p-4 rounded-xl text-center">
+                      <span className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Close</span>
+                      <input 
+                        type="time" 
+                        value={profile.closeTime}
+                        onChange={(e) => setProfile(p => ({ ...p, closeTime: e.target.value }))}
+                        className="bg-transparent border-none text-sm font-semibold text-on-surface text-center p-0 focus:ring-0" 
+                      />
+                    </div>
+                    <div className="bg-surface-container-low p-4 rounded-xl text-center border-2 border-primary-container/20 opacity-50">
+                      <span className="block text-xs font-bold text-primary uppercase tracking-wider mb-2">Sunday</span>
+                      <span className="text-sm font-semibold text-on-surface">Closed</span>
+                    </div>
+                    <div className="flex items-center justify-center border-2 border-dashed border-outline-variant rounded-xl cursor-pointer hover:bg-surface-container-low transition-colors text-primary-container flex-col gap-1">
+                      <Edit className="w-5 h-5" />
+                      <span className="text-xs font-bold">Edit Schedule</span>
+                    </div>
+                  </div>
+                </section>
+
+                <div className="flex justify-end pt-4">
+                  <button 
+                    onClick={() => saveProfile()}
+                    disabled={savingProfile}
+                    className="bg-primary-container text-white px-10 py-4 rounded-full font-bold shadow-lg shadow-primary-container/20 hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
+                  >
+                    <Save className="w-5 h-5" />
+                    {savingProfile ? "Saving..." : "Save Profile Changes"}
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === "delivery" && (
+              <motion.div 
+                key="delivery"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                className="space-y-8"
+              >
+                <section className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
+                  <h3 className="text-xl font-bold mb-6 text-on-surface">Delivery Zones</h3>
+                  <div className="space-y-4">
+                    {zones.map((zone) => (
+                      <div key={zone.id} className={`flex items-center justify-between p-4 rounded-xl border ${zone.active ? 'bg-surface-container-low border-transparent' : 'bg-transparent border-outline-variant/30 opacity-60'}`}>
+                        <div className="flex items-center gap-4">
+                          <label className="relative flex items-center cursor-pointer">
+                            <input type="checkbox" checked={zone.active} onChange={() => toggleZone(zone.id)} className="sr-only peer" />
+                            <div className="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:bg-primary-container transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+                          </label>
+                          <div>
+                            <span className={`text-sm font-bold ${zone.active ? "text-on-surface" : "text-on-surface-variant line-through"}`}>{zone.name}</span>
+                            <p className="text-xs text-on-surface-variant font-medium mt-0.5">KSh {zone.fee} delivery fee</p>
+                          </div>
+                        </div>
+                        <button onClick={() => removeZone(zone.id)} className="p-2 text-on-surface-variant hover:text-error hover:bg-error-container rounded-full transition-colors">
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-8 pt-8 border-t border-surface-container flex flex-col sm:flex-row gap-3">
+                    <input
+                      placeholder="Zone name (e.g. Westlands)"
+                      value={newZoneName}
+                      onChange={(e) => setNewZoneName(e.target.value)}
+                      className="flex-1 bg-surface-container-low border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary-container"
+                    />
+                    <input
+                      placeholder="Fee (KSh)"
+                      type="number"
+                      value={newZoneFee}
+                      onChange={(e) => setNewZoneFee(e.target.value)}
+                      className="w-32 bg-surface-container-low border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary-container"
+                    />
+                    <button onClick={addZone} className="bg-secondary-container text-on-secondary-container px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+                      <Plus className="w-4 h-4" />
+                      Add
                     </button>
                   </div>
-                ))}
-              </div>
+                </section>
 
-              <div className="h-px bg-border" />
+                <div className="flex justify-end pt-4">
+                  <button 
+                    onClick={() => saveDelivery()}
+                    disabled={savingDelivery}
+                    className="bg-primary-container text-white px-10 py-4 rounded-full font-bold shadow-lg shadow-primary-container/20 hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
+                  >
+                    <Save className="w-5 h-5" />
+                    {savingDelivery ? "Saving..." : "Save Delivery Zones"}
+                  </button>
+                </div>
+              </motion.div>
+            )}
 
-              <div className="flex gap-2">
-                <input
-                  placeholder="Zone name"
-                  value={newZoneName}
-                  onChange={(event) => setNewZoneName(event.target.value)}
-                  className="h-10 flex-1 rounded-md border border-input bg-background px-3 text-sm"
-                />
-                <input
-                  placeholder="Fee (KSh)"
-                  type="number"
-                  min={0}
-                  value={newZoneFee}
-                  onChange={(event) => setNewZoneFee(event.target.value)}
-                  className="h-10 w-32 rounded-md border border-input bg-background px-3 text-sm"
-                />
-                <button
-                  type="button"
-                  onClick={addZone}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-primary text-primary-foreground"
-                  aria-label="Add zone"
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
-              </div>
+            {activeTab === "notifications" && (
+              <motion.div 
+                key="notifications"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                className="space-y-8"
+              >
+                <section className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
+                  <h3 className="text-xl font-bold mb-6 text-on-surface">Order Alerts</h3>
+                  <div className="space-y-6">
+                    {[
+                      { key: "newOrder", label: "New Orders", desc: "Get notified when a new order is placed" },
+                      { key: "orderStatusChange", label: "Status Changes", desc: "Alerts when order status is updated" },
+                      { key: "lowStock", label: "Low Stock Warnings", desc: "Notify when product stock runs low" },
+                    ].map((item) => (
+                      <div key={item.key} className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-bold text-on-surface">{item.label}</p>
+                          <p className="text-xs text-on-surface-variant">{item.desc}</p>
+                        </div>
+                        <label className="relative flex items-center cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            checked={notifications[item.key as keyof NotificationsState]} 
+                            onChange={(e) => setNotifications(p => ({ ...p, [item.key]: e.target.checked }))} 
+                            className="sr-only peer" 
+                          />
+                          <div className="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:bg-primary-container transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </section>
 
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={() => void saveDelivery()}
-                  disabled={savingDelivery}
-                  className="inline-flex items-center rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  <Save className="mr-1.5 h-4 w-4" />
-                  {savingDelivery ? "Saving..." : "Save Delivery Zones"}
-                </button>
+                <section className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
+                  <h3 className="text-xl font-bold mb-6 text-on-surface">Reports & Channels</h3>
+                  <div className="space-y-6">
+                    {[
+                      { key: "dailySummary", label: "Daily Summary", desc: "Receive a daily sales recap" },
+                      { key: "weeklySummary", label: "Weekly Summary", desc: "Receive a weekly performance report" },
+                      { key: "smsAlerts", label: "SMS Alerts", desc: "Receive critical notifications via SMS" },
+                      { key: "emailAlerts", label: "Email Alerts", desc: "Receive detailed notifications via email" },
+                    ].map((item) => (
+                      <div key={item.key} className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-bold text-on-surface">{item.label}</p>
+                          <p className="text-xs text-on-surface-variant">{item.desc}</p>
+                        </div>
+                        <label className="relative flex items-center cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            checked={notifications[item.key as keyof NotificationsState]} 
+                            onChange={(e) => setNotifications(p => ({ ...p, [item.key]: e.target.checked }))} 
+                            className="sr-only peer" 
+                          />
+                          <div className="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:bg-primary-container transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                <div className="flex justify-end pt-4">
+                  <button 
+                    onClick={() => saveNotifications()}
+                    disabled={savingNotifications}
+                    className="bg-primary-container text-white px-10 py-4 rounded-full font-bold shadow-lg shadow-primary-container/20 hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
+                  >
+                    <Save className="w-5 h-5" />
+                    {savingNotifications ? "Saving..." : "Save Preferences"}
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Right Column: Visual Preview */}
+        <div className="xl:col-span-4 space-y-6 hidden lg:block">
+          <div className="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-outline-variant/10">
+            <div className="h-48 relative bg-surface-container-low">
+              <img 
+                src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1000&auto=format&fit=crop" 
+                alt="Storefront cover" 
+                className="w-full h-full object-cover opacity-80" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+              <div className="absolute bottom-4 left-6 pr-6">
+                <span className="bg-primary-container text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+                  Active Storefront
+                </span>
+                <h2 className="text-white text-xl font-bold mt-2 truncate">
+                  {profile.storeName || currentVendorName || "Your Store Name"}
+                </h2>
               </div>
             </div>
-          )}
+            <div className="p-6">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center">
+                  <Store className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-on-surface">Premium Vendor</h4>
+                  <p className="text-xs text-on-surface-variant">Active since 2024</p>
+                </div>
+              </div>
+              <p className="text-sm text-on-surface-variant leading-relaxed">
+                This preview shows how your store appears to customers in the marketplace discovery feed. Make sure your profile details are accurate and up-to-date.
+              </p>
+            </div>
+          </div>
 
-          {activeTab === "notifications" && (
-            <div className="space-y-6 rounded-xl border border-border bg-card p-4 sm:p-5">
+          {/* Helper Card */}
+          <div className="bg-secondary-container/40 rounded-xl p-6 border border-secondary-container">
+            <div className="flex items-start gap-4">
+              <div className="p-2 bg-secondary-container rounded-lg shrink-0">
+                <Lightbulb className="w-6 h-6 text-on-secondary-container" />
+              </div>
               <div>
-                <h2 className="font-semibold text-foreground">
-                  Notification Preferences
-                </h2>
-                <p className="text-xs text-muted-foreground">
-                  Choose what alerts you want to receive.
+                <h4 className="font-bold text-on-surface mb-1">Pro Tip</h4>
+                <p className="text-sm text-on-surface-variant leading-relaxed">
+                  Keeping your operating hours updated reduces missed orders and increases customer satisfaction by up to 40%.
                 </p>
               </div>
-
-              <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-foreground">
-                  Order Alerts
-                </h3>
-                {[
-                  {
-                    key: "newOrder",
-                    label: "New Orders",
-                    description: "Get notified when a new order is placed",
-                  },
-                  {
-                    key: "orderStatusChange",
-                    label: "Status Changes",
-                    description: "Alerts when order status is updated",
-                  },
-                  {
-                    key: "lowStock",
-                    label: "Low Stock Warnings",
-                    description: "Notify when product stock runs low",
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.key}
-                    className="flex items-center justify-between gap-3"
-                  >
-                    <div>
-                      <p className="text-sm font-medium text-foreground">
-                        {item.label}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={
-                        notifications[item.key as keyof NotificationsState]
-                      }
-                      onChange={(event) =>
-                        setNotifications((prev) => ({
-                          ...prev,
-                          [item.key]: event.target.checked,
-                        }))
-                      }
-                      className="h-4 w-4"
-                    />
-                  </div>
-                ))}
-              </div>
-
-              <div className="h-px bg-border" />
-
-              <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-foreground">
-                  Reports
-                </h3>
-                {[
-                  {
-                    key: "dailySummary",
-                    label: "Daily Summary",
-                    description: "Receive a daily sales recap",
-                  },
-                  {
-                    key: "weeklySummary",
-                    label: "Weekly Summary",
-                    description: "Receive a weekly performance report",
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.key}
-                    className="flex items-center justify-between gap-3"
-                  >
-                    <div>
-                      <p className="text-sm font-medium text-foreground">
-                        {item.label}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={
-                        notifications[item.key as keyof NotificationsState]
-                      }
-                      onChange={(event) =>
-                        setNotifications((prev) => ({
-                          ...prev,
-                          [item.key]: event.target.checked,
-                        }))
-                      }
-                      className="h-4 w-4"
-                    />
-                  </div>
-                ))}
-              </div>
-
-              <div className="h-px bg-border" />
-
-              <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-foreground">
-                  Channels
-                </h3>
-                {[
-                  {
-                    key: "smsAlerts",
-                    label: "SMS Alerts",
-                    description: "Receive notifications via SMS",
-                  },
-                  {
-                    key: "emailAlerts",
-                    label: "Email Alerts",
-                    description: "Receive notifications via email",
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.key}
-                    className="flex items-center justify-between gap-3"
-                  >
-                    <div>
-                      <p className="text-sm font-medium text-foreground">
-                        {item.label}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={
-                        notifications[item.key as keyof NotificationsState]
-                      }
-                      onChange={(event) =>
-                        setNotifications((prev) => ({
-                          ...prev,
-                          [item.key]: event.target.checked,
-                        }))
-                      }
-                      className="h-4 w-4"
-                    />
-                  </div>
-                ))}
-              </div>
-
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={() => void saveNotifications()}
-                  disabled={savingNotifications}
-                  className="inline-flex items-center rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  <Save className="mr-1.5 h-4 w-4" />
-                  {savingNotifications ? "Saving..." : "Save Preferences"}
-                </button>
-              </div>
             </div>
-          )}
-        </section>
+          </div>
+        </div>
       </div>
-    </main>
+    </div>
   );
 }
