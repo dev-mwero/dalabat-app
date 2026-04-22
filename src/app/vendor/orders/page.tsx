@@ -1,17 +1,16 @@
 "use client";
 
 import {
-  ChevronRight,
   ClipboardList,
   CreditCard,
   MapPin,
   Phone,
   Truck,
-  X,
+  Mail
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { VendorRouteNav } from "@/app/vendor/_components/VendorRouteNav";
+import { motion } from "framer-motion";
 
 type Vendor = {
   _id: string;
@@ -68,26 +67,25 @@ const statusLabels: Record<VendorOrder["status"], string> = {
   cancelled: "Cancelled",
 };
 
-const statusClassNames: Record<VendorOrder["status"], string> = {
-  pending: "bg-amber-50 text-amber-700 border border-amber-200",
-  confirmed: "bg-blue-50 text-blue-700 border border-blue-200",
-  preparing: "bg-violet-50 text-violet-700 border border-violet-200",
-  ready: "bg-indigo-50 text-indigo-700 border border-indigo-200",
-  out_for_delivery: "bg-cyan-50 text-cyan-700 border border-cyan-200",
-  delivered: "bg-emerald-50 text-emerald-700 border border-emerald-200",
-  cancelled: "bg-rose-50 text-rose-700 border border-rose-200",
+const statusColors: Record<VendorOrder["status"], string> = {
+  pending: "bg-amber-100 text-amber-700",
+  confirmed: "bg-blue-100 text-blue-700",
+  preparing: "bg-violet-100 text-violet-700",
+  ready: "bg-indigo-100 text-indigo-700",
+  out_for_delivery: "bg-cyan-100 text-cyan-700",
+  delivered: "bg-emerald-100 text-emerald-700",
+  cancelled: "bg-rose-100 text-rose-700",
 };
 
-const statusFlow: Record<VendorOrder["status"], VendorOrder["status"] | null> =
-  {
-    pending: "confirmed",
-    confirmed: "preparing",
-    preparing: "ready",
-    ready: "out_for_delivery",
-    out_for_delivery: "delivered",
-    delivered: null,
-    cancelled: null,
-  };
+const statusFlow: Record<VendorOrder["status"], VendorOrder["status"] | null> = {
+  pending: "confirmed",
+  confirmed: "preparing",
+  preparing: "ready",
+  ready: "out_for_delivery",
+  out_for_delivery: "delivered",
+  delivered: null,
+  cancelled: null,
+};
 
 const filterStatuses = [
   "all",
@@ -105,37 +103,16 @@ function getOrderRef(order: VendorOrder) {
   if (fromNotes) {
     return fromNotes;
   }
-
   return `ORD-${order._id.slice(-6).toUpperCase()}`;
-}
-
-function formatPaymentMethod(order: VendorOrder) {
-  if (order.paymentMethod === "cash") {
-    return "Cash";
-  }
-
-  if (order.paymentMethod === "mpesa_auto") {
-    return "M-Pesa";
-  }
-
-  if (order.mpesaCode) {
-    return `M-Pesa (${order.mpesaCode})`;
-  }
-
-  return "M-Pesa (Manual)";
 }
 
 function timeAgo(createdAt: string) {
   const created = new Date(createdAt).getTime();
   const mins = Math.floor((Date.now() - created) / 60_000);
-  if (mins < 60) {
-    return `${Math.max(1, mins)}m ago`;
-  }
+  if (mins < 60) return `${Math.max(1, mins)}m ago`;
 
   const hours = Math.floor(mins / 60);
-  if (hours < 24) {
-    return `${hours}h ago`;
-  }
+  if (hours < 24) return `${hours}h ago`;
 
   return `${Math.floor(hours / 24)}d ago`;
 }
@@ -144,7 +121,6 @@ export default function VendorOrdersPage() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [vendorId, setVendorId] = useState<string | null>(null);
   const [orders, setOrders] = useState<VendorOrder[]>([]);
-  const [selectedOrder, setSelectedOrder] = useState<VendorOrder | null>(null);
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
   const [loading, setLoading] = useState(true);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
@@ -159,28 +135,19 @@ export default function VendorOrdersPage() {
           signal: controller.signal,
         });
 
-        if (!response.ok) {
-          throw new Error("Failed to load vendors");
-        }
+        if (!response.ok) throw new Error("Failed to load vendors");
 
         const result = await response.json();
         const list = (result.data ?? []) as Vendor[];
         setVendors(list);
         setVendorId(list[0]?._id ?? null);
       } catch (err) {
-        if (err instanceof DOMException && err.name === "AbortError") {
-          return;
-        }
-
+        if (err instanceof DOMException && err.name === "AbortError") return;
         setError("Unable to load vendors");
       }
     }
-
     loadVendors();
-
-    return () => {
-      controller.abort();
-    };
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {
@@ -203,22 +170,15 @@ export default function VendorOrdersPage() {
 
         const response = await fetch(
           `/api/orders?vendorId=${vendorId}&limit=100&sort=newest${statusQuery}`,
-          {
-            signal: controller.signal,
-          },
+          { signal: controller.signal }
         );
 
-        if (!response.ok) {
-          throw new Error("Failed to load orders");
-        }
+        if (!response.ok) throw new Error("Failed to load orders");
 
         const result = (await response.json()) as OrdersResponse;
         setOrders(result.data ?? []);
       } catch (err) {
-        if (err instanceof DOMException && err.name === "AbortError") {
-          return;
-        }
-
+        if (err instanceof DOMException && err.name === "AbortError") return;
         setError("Unable to load orders");
       } finally {
         setLoading(false);
@@ -226,10 +186,7 @@ export default function VendorOrdersPage() {
     }
 
     loadOrders();
-
-    return () => {
-      controller.abort();
-    };
+    return () => controller.abort();
   }, [filterStatus, vendorId]);
 
   const statusCounts = useMemo(() => {
@@ -247,7 +204,6 @@ export default function VendorOrdersPage() {
         countByStatus[order.status] += 1;
       }
     }
-
     return countByStatus;
   }, [orders]);
 
@@ -276,10 +232,6 @@ export default function VendorOrdersPage() {
         ),
       );
 
-      setSelectedOrder((prev) =>
-        prev && prev._id === orderId ? { ...prev, status: nextStatus } : prev,
-      );
-
       toast.success("Order status updated");
     } catch {
       toast.error("Failed to update order");
@@ -288,295 +240,157 @@ export default function VendorOrdersPage() {
     }
   }
 
-  async function cancelOrder(orderId: string) {
-    await patchOrderStatus(orderId, "cancelled");
-  }
-
   if (loading && orders.length === 0) {
     return (
-      <main className="min-h-screen bg-background p-4 sm:p-6">
-        <div className="mx-auto max-w-5xl rounded-xl border border-border bg-card p-8 text-sm text-muted-foreground">
-          Loading orders...
-        </div>
-      </main>
+      <div className="p-8 max-w-6xl mx-auto space-y-8 animate-pulse text-on-surface-variant">
+        Loading orders...
+      </div>
     );
   }
 
   if (error) {
     return (
-      <main className="min-h-screen bg-background p-4 sm:p-6">
-        <div className="mx-auto max-w-5xl rounded-xl border border-red-200 bg-red-50 p-8 text-sm text-red-700">
-          {error}
-        </div>
-      </main>
+      <div className="p-8 max-w-6xl mx-auto space-y-8 text-error bg-error-container rounded-xl">
+        {error}
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="mx-auto max-w-5xl space-y-4">
-        <VendorRouteNav />
-        <section className="space-y-2">
-          <h1 className="flex items-center gap-2 text-2xl font-extrabold text-foreground">
-            <ClipboardList className="h-6 w-6 text-primary" /> Orders
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {orders.length} total orders
-          </p>
+    <div className="p-8 max-w-6xl mx-auto">
+      <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Order Management</h1>
+          <p className="text-on-surface-variant text-lg">Track and manage your customer orders with precision.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <select
+            value={vendorId ?? ""}
+            onChange={(event) => setVendorId(event.target.value)}
+            className="h-12 rounded-full border border-outline-variant/30 bg-surface-container-low px-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary text-on-surface cursor-pointer"
+          >
+            {vendors.map((vendor) => (
+              <option key={vendor._id} value={vendor._id}>
+                {vendor.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </header>
 
-          <div className="max-w-sm space-y-1">
-            <label
-              htmlFor="vendor-selector"
-              className="text-xs font-medium text-muted-foreground"
+      {/* Status Filter Tabs */}
+      <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+        {filterStatuses.map((status) => {
+          const isActive = filterStatus === status;
+          const label = status === "all" ? "All Orders" : statusLabels[status];
+          const count = status === "all" ? "" : ` (${statusCounts[status] ?? 0})`;
+
+          return (
+            <button
+              key={status}
+              onClick={() => setFilterStatus(status)}
+              className={`px-6 py-2 rounded-full text-sm transition-all whitespace-nowrap ${
+                isActive
+                  ? "bg-primary-container text-white font-bold shadow-md shadow-primary-container/10"
+                  : "bg-surface-container-high text-on-surface-variant font-medium hover:bg-surface-container-highest"
+              }`}
             >
-              Vendor
-            </label>
-            <select
-              id="vendor-selector"
-              value={vendorId ?? ""}
-              onChange={(event) => setVendorId(event.target.value)}
-              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              {label}{count}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Orders Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {orders.map((order) => {
+          const nextStatus = statusFlow[order.status];
+          const isUpdating = updatingOrderId === order._id;
+
+          return (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              key={order._id} 
+              className="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/10 transition-transform hover:-translate-y-1 duration-300"
             >
-              {vendors.map((vendor) => (
-                <option key={vendor._id} value={vendor._id}>
-                  {vendor.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </section>
-
-        <section className="flex gap-2 overflow-x-auto pb-1">
-          {filterStatuses.map((status) => {
-            const isActive = filterStatus === status;
-            const label = status === "all" ? "All" : statusLabels[status];
-
-            return (
-              <button
-                key={status}
-                type="button"
-                onClick={() => setFilterStatus(status)}
-                className={`whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium transition-all ${
-                  isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                }`}
-              >
-                {label}
-                <span className="ml-1 opacity-70">
-                  {statusCounts[status] ?? 0}
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <span className="text-xs text-on-surface-variant font-bold block mb-1 uppercase tracking-widest">{getOrderRef(order)} • {timeAgo(order.createdAt)}</span>
+                  <h3 className="text-xl font-bold text-on-surface">Guest Customer</h3>
+                </div>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1 ${statusColors[order.status]}`}>
+                  <span className="w-1.5 h-1.5 bg-current rounded-full opacity-80"></span>
+                  {statusLabels[order.status]}
                 </span>
-              </button>
-            );
-          })}
-        </section>
+              </div>
 
-        <section className="space-y-2">
-          {orders.map((order) => {
-            const nextStatus = statusFlow[order.status];
-            const itemCount = order.items.reduce(
-              (sum, item) => sum + item.quantity,
-              0,
-            );
-
-            return (
-              <article
-                key={order._id}
-                className="cursor-pointer rounded-lg border border-border bg-card p-4 transition-shadow hover:shadow-sm"
-              >
-                <div className="mb-2 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-foreground">
-                      {getOrderRef(order)}
-                    </span>
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusClassNames[order.status]}`}
-                    >
-                      {statusLabels[order.status]}
-                    </span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    {timeAgo(order.createdAt)}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-foreground">
-                      {order.contactPhone ?? "Guest order"}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {itemCount} item{itemCount === 1 ? "" : "s"} ·{" "}
-                      {order.deliveryMethod === "delivery"
-                        ? "Delivery"
-                        : "Pickup"}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-foreground">
-                      {currency.format(order.total)}
-                    </span>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                </div>
-
-                {nextStatus &&
-                  !["delivered", "cancelled"].includes(order.status) && (
-                    <div className="mt-3 flex gap-2">
-                      <button
-                        type="button"
-                        disabled={updatingOrderId === order._id}
-                        className="rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          void patchOrderStatus(order._id, nextStatus);
-                        }}
-                      >
-                        Mark as {statusLabels[nextStatus]}
-                      </button>
+              <div className="space-y-4 mb-6">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  {order.contactPhone && (
+                    <div className="flex flex-1 items-center gap-3 p-3 bg-surface-container-low rounded-lg">
+                      <Phone className="w-4 h-4 text-primary-container" />
+                      <span className="text-sm text-on-surface-variant font-medium">{order.contactPhone}</span>
                     </div>
                   )}
-              </article>
-            );
-          })}
-
-          {orders.length === 0 && (
-            <div className="py-12 text-center text-muted-foreground">
-              <ClipboardList className="mx-auto mb-3 h-12 w-12 opacity-40" />
-              <p>No orders found</p>
-            </div>
-          )}
-        </section>
-
-        {selectedOrder && (
-          <section className="rounded-xl border border-border bg-card p-4 sm:p-5">
-            <div className="mb-4 flex items-start justify-between gap-4">
-              <div>
-                <h2 className="flex items-center gap-2 text-lg font-bold text-foreground">
-                  {getOrderRef(selectedOrder)}
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusClassNames[selectedOrder.status]}`}
-                  >
-                    {statusLabels[selectedOrder.status]}
-                  </span>
-                </h2>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Created {new Date(selectedOrder.createdAt).toLocaleString()}
-                </p>
-              </div>
-              <button
-                type="button"
-                className="rounded-full p-1.5 text-muted-foreground hover:bg-secondary"
-                onClick={() => setSelectedOrder(null)}
-                aria-label="Close details"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div className="space-y-2 rounded-lg bg-secondary/50 p-3">
-                <p className="text-sm font-semibold text-foreground">
-                  Order Details
-                </p>
-                {selectedOrder.contactPhone && (
-                  <p className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <Phone className="h-3 w-3" /> {selectedOrder.contactPhone}
-                  </p>
-                )}
-                {selectedOrder.deliveryAddress && (
-                  <p className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <MapPin className="h-3 w-3" />{" "}
-                    {selectedOrder.deliveryAddress}
-                  </p>
-                )}
-                <div className="flex flex-wrap gap-2">
-                  <span className="rounded-md border border-border px-2 py-1 text-xs text-foreground">
-                    <Truck className="mr-1 inline h-3 w-3" />
-                    {selectedOrder.deliveryMethod === "delivery"
-                      ? "Delivery"
-                      : "Pickup"}
-                  </span>
-                  <span className="rounded-md border border-border px-2 py-1 text-xs text-foreground">
-                    <CreditCard className="mr-1 inline h-3 w-3" />
-                    {formatPaymentMethod(selectedOrder)}
-                  </span>
-                  <span className="rounded-md border border-border px-2 py-1 text-xs text-foreground">
-                    Payment: {selectedOrder.paymentStatus}
-                  </span>
+                  <div className="flex flex-1 items-center gap-3 p-3 bg-surface-container-low rounded-lg">
+                    {order.deliveryMethod === "delivery" ? <Truck className="w-4 h-4 text-primary-container" /> : <MapPin className="w-4 h-4 text-primary-container" />}
+                    <span className="text-sm text-on-surface-variant font-medium truncate max-w-[150px]">
+                      {order.deliveryMethod === "delivery" ? order.deliveryAddress || "Delivery" : "Pickup"}
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <h3 className="mb-2 font-semibold text-foreground">Items</h3>
                 <div className="space-y-2">
-                  {selectedOrder.items.map((item) => (
-                    <div
-                      key={item.productId}
-                      className="flex justify-between text-sm"
-                    >
-                      <span className="text-foreground">
-                        {item.name} × {item.quantity}
+                  {order.items.map((item, idx) => (
+                    <div key={`${item.productId}-${idx}`} className="flex justify-between items-center text-sm border-b border-surface-container-low/50 pb-2 last:border-0 last:pb-0">
+                      <span className="text-on-surface-variant">
+                        <span className="font-bold text-on-surface mr-2">{item.quantity}x</span>
+                        {item.name}
                       </span>
-                      <span className="font-medium text-foreground">
-                        {currency.format(item.lineTotal)}
-                      </span>
+                      <span className="font-bold">{currency.format(item.lineTotal)}</span>
                     </div>
                   ))}
-                  <div className="flex justify-between border-t border-border pt-2 text-sm font-bold">
-                    <span className="text-foreground">Total</span>
-                    <span className="text-primary">
-                      {currency.format(selectedOrder.total)}
-                    </span>
-                  </div>
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                {statusFlow[selectedOrder.status] &&
-                  !["delivered", "cancelled"].includes(
-                    selectedOrder.status,
-                  ) && (
-                    <button
-                      type="button"
-                      disabled={updatingOrderId === selectedOrder._id}
-                      className="rounded-xl bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                      onClick={() => {
-                        const nextStatus = statusFlow[selectedOrder.status];
-                        if (!nextStatus) {
-                          return;
-                        }
-
-                        void patchOrderStatus(selectedOrder._id, nextStatus);
-                      }}
+              <div className="flex items-center justify-between pt-4 border-t border-surface-container-low">
+                <div>
+                  <p className="text-xs text-on-surface-variant font-medium">Total Amount</p>
+                  <p className="text-xl font-extrabold text-on-surface">{currency.format(order.total)}</p>
+                </div>
+                <div className="flex gap-2">
+                  {nextStatus && !["delivered", "cancelled"].includes(order.status) && (
+                    <button 
+                      disabled={isUpdating}
+                      onClick={() => patchOrderStatus(order._id, nextStatus)}
+                      className="px-6 py-2.5 rounded-full bg-primary-container text-white font-bold text-sm hover:opacity-90 transition-all disabled:opacity-50"
                     >
-                      Mark as{" "}
-                      {
-                        statusLabels[
-                          statusFlow[
-                            selectedOrder.status
-                          ] as VendorOrder["status"]
-                        ]
-                      }
+                      {isUpdating ? "Updating..." : `Mark as ${statusLabels[nextStatus]}`}
                     </button>
                   )}
-                {!["delivered", "cancelled"].includes(selectedOrder.status) && (
-                  <button
-                    type="button"
-                    disabled={updatingOrderId === selectedOrder._id}
-                    className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-semibold text-rose-700 transition-colors hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-60"
-                    onClick={() => {
-                      void cancelOrder(selectedOrder._id);
-                    }}
-                  >
-                    Cancel order
-                  </button>
-                )}
+                  {!["delivered", "cancelled"].includes(order.status) && (
+                    <button 
+                      disabled={isUpdating}
+                      onClick={() => patchOrderStatus(order._id, "cancelled")}
+                      className="px-4 py-2.5 rounded-full bg-error-container text-error font-bold text-sm hover:bg-error/20 transition-all disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          </section>
+            </motion.div>
+          );
+        })}
+
+        {orders.length === 0 && (
+          <div className="lg:col-span-2 py-12 text-center text-muted-foreground bg-surface-container-lowest rounded-xl border border-dashed border-outline-variant/30">
+            <ClipboardList className="mx-auto mb-3 h-12 w-12 opacity-40 text-on-surface-variant" />
+            <p className="font-medium text-on-surface-variant">No orders found</p>
+          </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }
