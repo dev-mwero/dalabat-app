@@ -1,9 +1,9 @@
 "use client";
 
-import { Package, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { Package, Pencil, Plus, Search, Trash2, Download, MoreVertical, Eye, ImagePlus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { VendorRouteNav } from "@/app/vendor/_components/VendorRouteNav";
+import { motion } from "framer-motion";
 
 type Vendor = {
   _id: string;
@@ -37,12 +37,12 @@ type ProductFormState = {
 const CATEGORY_OPTIONS = ["rice", "flour", "sugar", "salt", "oil"];
 const UNIT_OPTIONS = ["kg", "litre", "sack", "jerrycan", "piece"];
 
-const categoryEmoji: Record<string, string> = {
-  rice: "🍚",
-  flour: "🌾",
-  sugar: "🍬",
-  salt: "🧂",
-  oil: "🫒",
+const categoryLabels: Record<string, string> = {
+  rice: "Rice & Grains",
+  flour: "Flour & Baking",
+  sugar: "Sugar & Sweeteners",
+  salt: "Salt & Spices",
+  oil: "Cooking Oils",
 };
 
 const currency = new Intl.NumberFormat("en-KE", {
@@ -68,7 +68,6 @@ export default function VendorInventoryPage() {
   const [vendorId, setVendorId] = useState<string | null>(null);
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
 
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
@@ -137,10 +136,6 @@ export default function VendorInventoryPage() {
         params.set("limit", "200");
         params.set("sort", "name_asc");
 
-        if (searchQuery.trim()) {
-          params.set("q", searchQuery.trim());
-        }
-
         if (filterCategory !== "all") {
           params.set("category", filterCategory);
         }
@@ -171,12 +166,7 @@ export default function VendorInventoryPage() {
     return () => {
       controller.abort();
     };
-  }, [vendorId, searchQuery, filterCategory]);
-
-  const currentVendorName = useMemo(
-    () => vendors.find((vendor) => vendor._id === vendorId)?.name,
-    [vendorId, vendors],
-  );
+  }, [vendorId, filterCategory]);
 
   function openCreateDialog() {
     setEditingProductId(null);
@@ -189,7 +179,7 @@ export default function VendorInventoryPage() {
     setForm({
       name: product.name,
       description: product.description,
-      image: product.image,
+      image: product.image || emptyForm.image,
       price: String(product.price),
       unit: product.unit,
       category: product.category,
@@ -208,10 +198,6 @@ export default function VendorInventoryPage() {
     params.set("vendorId", vendorId as string);
     params.set("limit", "200");
     params.set("sort", "name_asc");
-
-    if (searchQuery.trim()) {
-      params.set("q", searchQuery.trim());
-    }
 
     if (filterCategory !== "all") {
       params.set("category", filterCategory);
@@ -294,16 +280,7 @@ export default function VendorInventoryPage() {
         const response = await fetch(`/api/products/${editingProductId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: payload.name,
-            description: payload.description,
-            image: payload.image,
-            price: payload.price,
-            unit: payload.unit,
-            category: payload.category,
-            inStock: payload.inStock,
-            stockQuantity: payload.stockQuantity,
-          }),
+          body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
@@ -397,59 +374,38 @@ export default function VendorInventoryPage() {
 
   if (loading && products.length === 0) {
     return (
-      <main className="min-h-screen bg-background p-4 sm:p-6">
-        <div className="mx-auto max-w-5xl rounded-xl border border-border bg-card p-8 text-sm text-muted-foreground">
-          Loading inventory...
-        </div>
-      </main>
+      <div className="p-8 max-w-7xl mx-auto space-y-8 animate-pulse text-on-surface-variant">
+        Loading inventory...
+      </div>
     );
   }
 
   if (error) {
     return (
-      <main className="min-h-screen bg-background p-4 sm:p-6">
-        <div className="mx-auto max-w-5xl rounded-xl border border-red-200 bg-red-50 p-8 text-sm text-red-700">
-          {error}
-        </div>
-      </main>
+      <div className="p-8 max-w-7xl mx-auto space-y-8 text-error bg-error-container rounded-xl">
+        {error}
+      </div>
     );
   }
 
+  const lowStockItems = products.filter(p => p.stockQuantity < 10);
+  const totalValue = products.reduce((sum, p) => sum + (p.price * p.stockQuantity), 0);
+
   return (
-    <main className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="mx-auto max-w-5xl space-y-4">
-        <VendorRouteNav />
-        <header className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-          <div>
-            <h1 className="flex items-center gap-2 text-2xl font-extrabold text-foreground">
-              <Package className="h-6 w-6 text-primary" /> Inventory
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              {products.length} products
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={openCreateDialog}
-            className="inline-flex items-center rounded-xl bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground"
-          >
-            <Plus className="mr-1 h-4 w-4" /> Add Product
-          </button>
-        </header>
-
-        <section className="max-w-sm space-y-1">
-          <label
-            htmlFor="vendor-selector"
-            className="text-xs font-medium text-muted-foreground"
-          >
-            Vendor
-          </label>
+    <div className="p-8 max-w-7xl mx-auto space-y-8 bg-surface">
+      {/* Editorial Header */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+        <div>
+          <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Curated Inventory</h1>
+          <p className="text-on-surface-variant text-lg max-w-xl">
+            Manage your premium offerings and maintain the stock of your artisanal pantry staples.
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
           <select
-            id="vendor-selector"
             value={vendorId ?? ""}
             onChange={(event) => setVendorId(event.target.value)}
-            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+            className="h-12 rounded-full border border-outline-variant/30 bg-surface-container-low px-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary text-on-surface cursor-pointer"
           >
             {vendors.map((vendor) => (
               <option key={vendor._id} value={vendor._id}>
@@ -457,318 +413,261 @@ export default function VendorInventoryPage() {
               </option>
             ))}
           </select>
-          {currentVendorName && (
-            <p className="text-xs text-muted-foreground">
-              Editing: {currentVendorName}
-            </p>
-          )}
-        </section>
-
-        <section className="flex flex-col gap-3 sm:flex-row">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              className="h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 text-sm"
-            />
-          </div>
-
-          <select
-            value={filterCategory}
-            onChange={(event) => setFilterCategory(event.target.value)}
-            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm sm:w-44"
-          >
-            <option value="all">All Categories</option>
-            {CATEGORY_OPTIONS.map((category) => (
-              <option key={category} value={category}>
-                {categoryEmoji[category]} {category}
-              </option>
-            ))}
-          </select>
-        </section>
-
-        <section className="space-y-2">
-          {products.map((product) => (
-            <article
-              key={product._id}
-              className="flex items-center gap-4 rounded-lg border border-border bg-card p-4"
-            >
-              <div className="text-2xl">
-                {categoryEmoji[product.category] ?? "📦"}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <h2 className="truncate font-semibold text-foreground">
-                    {product.name}
-                  </h2>
-                  {!product.inStock && (
-                    <span className="rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700">
-                      Out of stock
-                    </span>
-                  )}
-                </div>
-                <p className="truncate text-xs text-muted-foreground">
-                  {product.description}
-                </p>
-                <div className="mt-1 flex items-center gap-3">
-                  <span className="text-sm font-bold text-primary">
-                    {currency.format(product.price)}/{product.unit}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    Stock: {product.stockQuantity}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex shrink-0 items-center gap-2">
-                <label className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground">
-                  <input
-                    type="checkbox"
-                    checked={product.inStock}
-                    onChange={() => {
-                      void toggleStock(product);
-                    }}
-                    className="h-4 w-4"
-                  />
-                  In stock
-                </label>
-
-                <button
-                  type="button"
-                  className="rounded p-2 text-muted-foreground hover:bg-secondary"
-                  onClick={() => openEditDialog(product)}
-                  aria-label={`Edit ${product.name}`}
-                >
-                  <Pencil className="h-4 w-4" />
-                </button>
-
-                <button
-                  type="button"
-                  className="rounded p-2 text-rose-600 hover:bg-rose-50"
-                  onClick={() => {
-                    void handleDelete(product._id);
-                  }}
-                  aria-label={`Delete ${product.name}`}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            </article>
-          ))}
-
-          {products.length === 0 && (
-            <div className="py-12 text-center text-muted-foreground">
-              <Package className="mx-auto mb-3 h-12 w-12 opacity-40" />
-              <p>No products found</p>
-            </div>
-          )}
-        </section>
+          <button className="bg-surface-container-high text-on-surface px-6 py-3 rounded-full font-bold text-sm flex items-center gap-2 hover:bg-surface-container-highest transition-colors">
+            <Download className="w-5 h-5" />
+            Export List
+          </button>
+          <button onClick={openCreateDialog} className="bg-primary-container text-white px-6 py-3 rounded-full font-bold text-sm flex items-center gap-2 shadow-[0_8px_20px_rgba(249,115,22,0.3)] hover:scale-105 transition-transform shrink-0">
+            <Plus className="w-5 h-5" />
+            New Product
+          </button>
+        </div>
       </div>
 
+      {/* Filter Chips Section */}
+      <section className="mb-8 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setFilterCategory("all")}
+            className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${filterCategory === "all" ? "bg-primary-container text-white shadow-lg shadow-primary-container/20" : "bg-surface-container-high text-on-surface hover:bg-surface-container-highest"}`}
+          >
+            All Items
+          </button>
+          {CATEGORY_OPTIONS.map((cat) => (
+            <button 
+              key={cat}
+              onClick={() => setFilterCategory(cat)}
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${filterCategory === cat ? "bg-primary-container text-white shadow-lg shadow-primary-container/20" : "bg-surface-container-high text-on-surface hover:bg-surface-container-highest"}`}
+            >
+              {categoryLabels[cat] || cat}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Inventory Grid: Bento Style */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {products.map((product) => (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            key={product._id} 
+            className="bg-surface-container-lowest rounded-xl overflow-hidden group hover:-translate-y-1 transition-all duration-300 border border-outline-variant/10 shadow-sm"
+          >
+            <div className="relative h-64 w-full overflow-hidden bg-surface-container-low">
+              <img 
+                src={product.image || "https://images.unsplash.com/photo-1563959834617-5f0f7f4e07a2?q=80&w=1200&auto=format&fit=crop"} 
+                alt={product.name} 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+              />
+              {!product.inStock && (
+                <div className="absolute top-4 left-4 bg-error-container text-error px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                  Out of stock
+                </div>
+              )}
+            </div>
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-2 gap-4">
+                <h3 className="text-xl font-bold text-on-surface line-clamp-1">{product.name}</h3>
+                <span className="text-primary-container font-extrabold text-lg shrink-0">{currency.format(product.price)}</span>
+              </div>
+              <div className="flex items-center gap-2 mb-4">
+                {product.inStock ? (
+                  <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">In stock</span>
+                ) : (
+                  <span className="bg-error-container text-error px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Empty</span>
+                )}
+                <span className="text-on-surface-variant text-xs font-medium">{product.stockQuantity} units available</span>
+              </div>
+              <div className="flex items-center justify-between border-t border-surface-container pt-4">
+                <button onClick={() => openEditDialog(product)} className="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1">
+                  <Pencil className="w-4 h-4" />
+                  Edit
+                </button>
+                <div className="flex gap-2">
+                  <button onClick={() => toggleStock(product)} className="p-2 bg-surface-container-low rounded-full hover:bg-surface-container-high transition-colors" title="Toggle Stock">
+                    <Eye className={`w-5 h-5 ${product.inStock ? "text-primary" : "text-on-surface-variant"}`} />
+                  </button>
+                  <button onClick={() => handleDelete(product._id)} className="p-2 bg-surface-container-low rounded-full hover:bg-error-container hover:text-error transition-colors" title="Delete">
+                    <Trash2 className="w-5 h-5 text-on-surface-variant hover:text-error" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+
+        {/* Large Bento Summary Card (Occupies 2 columns on XL) */}
+        {products.length > 0 && (
+          <div className="xl:col-span-2 bg-surface-container-low rounded-xl p-8 flex flex-col md:flex-row items-center gap-8 border border-surface-container">
+            <div className="flex-1 w-full">
+              <h2 className="text-2xl font-extrabold text-on-surface mb-3">Inventory Health</h2>
+              <p className="text-on-surface-variant mb-6">
+                Your pantry is currently tracking {products.length} products. {lowStockItems.length} items are nearing low stock thresholds.
+              </p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/10">
+                  <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Total Value</p>
+                  <p className="text-2xl font-extrabold text-primary">{currency.format(totalValue)}</p>
+                </div>
+                <div className="bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/10">
+                  <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Low Stock</p>
+                  <p className="text-2xl font-extrabold text-error">{lowStockItems.length}</p>
+                </div>
+              </div>
+            </div>
+            <div className="relative w-48 h-48 shrink-0">
+              <svg className="w-full h-full transform -rotate-90">
+                <circle className="text-surface-container-high" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" strokeWidth="12"></circle>
+                <circle 
+                  className="text-primary-container" 
+                  cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" 
+                  strokeDasharray="502" 
+                  strokeDashoffset={products.length > 0 ? 502 - (502 * ((products.length - lowStockItems.length) / products.length)) : 502} 
+                  strokeWidth="12"
+                ></circle>
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-3xl font-extrabold text-on-surface">{products.length > 0 ? Math.round(((products.length - lowStockItems.length) / products.length) * 100) : 0}%</span>
+                <span className="text-[10px] font-bold text-on-surface-variant uppercase">Healthy</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Empty State / Add Suggestion */}
+        <div 
+          onClick={openCreateDialog}
+          className="bg-surface-container-lowest rounded-xl border-2 border-dashed border-outline-variant flex flex-col items-center justify-center p-8 text-center min-h-[300px] group cursor-pointer hover:bg-surface-container-low transition-colors"
+        >
+          <div className="w-16 h-16 bg-surface-container-high rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <ImagePlus className="text-primary-container w-8 h-8" />
+          </div>
+          <h3 className="text-lg font-bold text-on-surface">Expand Your Range</h3>
+          <p className="text-on-surface-variant text-sm mb-6 max-w-xs">New seasonal items arriving? Add them to your storefront now.</p>
+          <button className="text-primary-container font-bold text-sm underline-offset-4 hover:underline">Start listing</button>
+        </div>
+      </div>
+
+      {/* Product Edit/Create Modal */}
       {isDialogOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-xl border border-border bg-card p-5 shadow-xl">
-            <h2 className="text-lg font-bold text-foreground">
-              {isCreating ? "Add Product" : "Edit Product"}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="w-full max-w-lg rounded-2xl border border-outline-variant/20 bg-surface p-6 shadow-2xl my-auto">
+            <h2 className="text-2xl font-bold text-on-surface mb-6 tracking-tight">
+              {isCreating ? "Add New Product" : "Edit Product"}
             </h2>
 
-            <div className="mt-4 space-y-4">
+            <div className="space-y-4">
               <div>
-                <label
-                  htmlFor="product-name"
-                  className="text-sm text-foreground"
-                >
-                  Product Name
-                </label>
+                <label className="text-sm font-bold text-on-surface">Product Name</label>
                 <input
-                  id="product-name"
                   value={form.name}
-                  onChange={(event) =>
-                    setForm((prev) => ({ ...prev, name: event.target.value }))
-                  }
-                  className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
+                  className="mt-1 h-12 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all"
+                  placeholder="e.g. Artisan Sourdough Loaf"
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="product-description"
-                  className="text-sm text-foreground"
-                >
-                  Description
-                </label>
+                <label className="text-sm font-bold text-on-surface">Description</label>
                 <textarea
-                  id="product-description"
                   value={form.description}
-                  onChange={(event) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      description: event.target.value,
-                    }))
-                  }
+                  onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
                   rows={3}
-                  className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 py-3 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all resize-none"
+                  placeholder="Describe your product..."
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="product-image"
-                  className="text-sm text-foreground"
-                >
-                  Image URL
-                </label>
+                <label className="text-sm font-bold text-on-surface">Image URL</label>
                 <input
-                  id="product-image"
                   value={form.image}
-                  onChange={(event) =>
-                    setForm((prev) => ({ ...prev, image: event.target.value }))
-                  }
-                  className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  onChange={(e) => setForm((prev) => ({ ...prev, image: e.target.value }))}
+                  className="mt-1 h-12 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all"
+                  placeholder="https://..."
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label
-                    htmlFor="product-price"
-                    className="text-sm text-foreground"
-                  >
-                    Price (KSh)
-                  </label>
+                  <label className="text-sm font-bold text-on-surface">Price (KSh)</label>
                   <input
-                    id="product-price"
                     type="number"
                     min={0}
                     value={form.price}
-                    onChange={(event) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        price: event.target.value,
-                      }))
-                    }
-                    className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))}
+                    className="mt-1 h-12 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all"
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="product-unit"
-                    className="text-sm text-foreground"
-                  >
-                    Unit
-                  </label>
+                  <label className="text-sm font-bold text-on-surface">Unit</label>
                   <select
-                    id="product-unit"
                     value={form.unit}
-                    onChange={(event) =>
-                      setForm((prev) => ({ ...prev, unit: event.target.value }))
-                    }
-                    className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    onChange={(e) => setForm((prev) => ({ ...prev, unit: e.target.value }))}
+                    className="mt-1 h-12 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all"
                   >
                     {UNIT_OPTIONS.map((unit) => (
-                      <option key={unit} value={unit}>
-                        {unit}
-                      </option>
+                      <option key={unit} value={unit}>{unit}</option>
                     ))}
                   </select>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label
-                    htmlFor="product-category"
-                    className="text-sm text-foreground"
-                  >
-                    Category
-                  </label>
+                  <label className="text-sm font-bold text-on-surface">Category</label>
                   <select
-                    id="product-category"
                     value={form.category}
-                    onChange={(event) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        category: event.target.value,
-                      }))
-                    }
-                    className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
+                    className="mt-1 h-12 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all"
                   >
-                    {CATEGORY_OPTIONS.map((category) => (
-                      <option key={category} value={category}>
-                        {categoryEmoji[category]} {category}
-                      </option>
+                    {CATEGORY_OPTIONS.map((cat) => (
+                      <option key={cat} value={cat}>{categoryLabels[cat] || cat}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label
-                    htmlFor="product-stock"
-                    className="text-sm text-foreground"
-                  >
-                    Stock Quantity
-                  </label>
+                  <label className="text-sm font-bold text-on-surface">Stock Quantity</label>
                   <input
-                    id="product-stock"
                     type="number"
                     min={0}
                     value={form.stockQuantity}
-                    onChange={(event) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        stockQuantity: event.target.value,
-                      }))
-                    }
-                    className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    onChange={(e) => setForm((prev) => ({ ...prev, stockQuantity: e.target.value }))}
+                    className="mt-1 h-12 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all"
                   />
                 </div>
               </div>
 
-              <label className="inline-flex items-center gap-2 text-sm text-foreground">
+              <label className="flex items-center gap-3 p-4 border border-outline-variant/30 rounded-xl bg-surface-container-lowest mt-4 cursor-pointer hover:bg-surface-container-low transition-colors">
                 <input
                   type="checkbox"
                   checked={form.inStock}
-                  onChange={(event) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      inStock: event.target.checked,
-                    }))
-                  }
-                  className="h-4 w-4"
+                  onChange={(e) => setForm((prev) => ({ ...prev, inStock: e.target.checked }))}
+                  className="w-5 h-5 rounded text-primary focus:ring-primary"
                 />
-                In stock
+                <span className="font-bold text-on-surface">Currently in stock</span>
               </label>
             </div>
 
-            <div className="mt-5 flex items-center justify-end gap-2">
+            <div className="mt-8 flex justify-end gap-3">
               <button
-                type="button"
-                onClick={() => {
-                  setIsDialogOpen(false);
-                }}
-                className="rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground"
+                onClick={() => setIsDialogOpen(false)}
+                className="px-6 py-3 rounded-full font-bold text-on-surface hover:bg-surface-container-high transition-colors"
               >
                 Cancel
               </button>
               <button
-                type="button"
                 disabled={saving}
-                onClick={() => {
-                  void handleSave();
-                }}
-                className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
+                onClick={() => void handleSave()}
+                className="bg-primary-container text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-primary-container/20 hover:opacity-90 transition-opacity disabled:opacity-50"
               >
-                {saving
-                  ? "Saving..."
-                  : isCreating
-                    ? "Add Product"
-                    : "Save Changes"}
+                {saving ? "Saving..." : isCreating ? "Add Product" : "Save Changes"}
               </button>
             </div>
           </div>
         </div>
       )}
-    </main>
+    </div>
   );
 }
