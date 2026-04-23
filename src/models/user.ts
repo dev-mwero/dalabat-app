@@ -6,7 +6,7 @@ import {
   Schema,
 } from "mongoose";
 
-const userRoleValues = ["customer", "vendor", "admin"] as const;
+const userRoleValues = ["customer", "vendor", "teller", "admin"] as const;
 
 const userSchema = new Schema(
   {

@@ -10,7 +10,8 @@ import {
   Settings, 
   Search, 
   Bell,
-  ArrowLeft
+  ArrowLeft,
+  Users
 } from "lucide-react";
 
 export default function VendorLayout({ children }: { children: React.ReactNode }) {
@@ -20,6 +21,7 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
     { href: "/vendor/dashboard", label: "Overview", icon: LayoutDashboard },
     { href: "/vendor/inventory", label: "Inventory", icon: Package },
     { href: "/vendor/orders", label: "Orders", icon: ShoppingBag },
+    { href: "/vendor/staff", label: "Staff", icon: Users },
     { href: "/vendor/analytics", label: "Analytics", icon: BarChart },
     { href: "/vendor/settings", label: "Settings", icon: Settings },
   ];
