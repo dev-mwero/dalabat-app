@@ -11,6 +11,7 @@ import {
   Truck,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -365,12 +366,13 @@ export default function CheckoutPage() {
                 <div className="space-y-6 mb-8 max-h-[400px] overflow-y-auto no-scrollbar">
                   {items.map((item: any) => (
                     <div key={item.product._id} className="flex gap-4">
-                      <div className="w-20 h-20 bg-surface-container-low rounded-xl overflow-hidden flex-shrink-0">
+                      <div className="w-20 h-20 bg-surface-container-low rounded-xl overflow-hidden flex-shrink-0 relative">
                         {/* Assuming item.product might have an image, but fallback to a placeholder if not */}
-                        <img 
-                          src={item.product.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuCvAckgekodswuNr8EJo4Xh6ySHQY84DJaZPFI8mNQ7_LrNgJZ3wVY03TjSQ-CEIYhGbgKJf5ahzwsfcfbeHJ9Qq0e70s3vXi_cF8enVYt15vdrhtRoHa1oYbWdeTDtp8kD-w9tUbeWmIN-hLAe6tBM-J1jgwGRdPnxThGoTXa9riFpbVAwNreKgwkBlwvGF-IAy4kjkipLAh19kKCSXZM9xiXScrY7iccddjYo_pYq0ZPPSKpSQTZLkqFtuo3rPHdSH8nRCS3VgFE"} 
+                        <Image 
+                          src={item.product.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuCvAckgekodswuNr8EJo4Xh6ySHQY84DJaZPFI8mNQ7_LrNgJZ3wVY03TjSQ-CEIYhGbgKJf5ahzwsfcfbeHJ9Qq0e70s3vXi_cF8enVYt15vdrhtRoHa1oYbWdeTDtp8kD-w9tUbeWmIN-hLAe6tBM-J1jgwGRdPnxThGoTXa9riFpbVAwNreKgwkBlwvGF-IAy4kjkipLAh19kKCSXZM9xiXScrY7iccddjYo_pYq0ZPPSKpSQTZLkqFtuo3rPHdSH8nRCS3VgFE"} 
                           alt={item.product.name} 
-                          className="w-full h-full object-cover" 
+                          fill
+                          className="object-cover" 
                         />
                       </div>
                       <div className="flex flex-col justify-center">

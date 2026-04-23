@@ -3,6 +3,7 @@
 import { UserButton, UserProfile, useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { LogOut, Mail, MapPin, Phone, Settings, User } from "lucide-react";
+import Image from "next/image";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -53,11 +54,12 @@ export default function ProfilePage() {
             <Card className="border-none shadow-lg overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-background to-secondary/30">
               <CardContent className="p-6 sm:p-8">
                 <div className="flex flex-col sm:flex-row items-center gap-6">
-                  <div className="relative">
-                    <img
+                  <div className="relative h-24 w-24 sm:h-32 sm:w-32 rounded-full border-4 border-background shadow-xl overflow-hidden">
+                    <Image
                       src={user.imageUrl}
                       alt={user.fullName || "User"}
-                      className="h-24 w-24 sm:h-32 sm:w-32 rounded-full border-4 border-background shadow-xl"
+                      fill
+                      className="object-cover"
                     />
                   </div>
                   <div className="text-center sm:text-left flex-1">

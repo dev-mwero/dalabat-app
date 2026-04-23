@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Heart, Plus, Minus } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
+import Image from "next/image";
 import type { Product } from "@/hooks/useProducts";
 import { formatPrice } from "@/lib/utils";
 import { ProductDetailModal } from "./ProductDetailModal";
@@ -44,7 +45,7 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
       >
         <div className={`relative w-full aspect-[4/3] overflow-hidden rounded-xl ${bgColor} flex items-center justify-center p-6`}>
           {product.image ? (
-            <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500" />
+            <Image src={product.image} alt={product.name} fill className="object-cover transition-transform group-hover:scale-110 duration-500" />
           ) : (
             <div className="text-6xl transition-transform group-hover:scale-110 duration-500 drop-shadow-md">
               {categoryEmoji[product.category.toLowerCase()] || "📦"}

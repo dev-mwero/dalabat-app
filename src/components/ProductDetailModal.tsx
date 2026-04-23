@@ -2,6 +2,7 @@
 
 import { MapPin, Minus, Plus, Star, Truck } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -58,10 +59,11 @@ export const ProductDetailModal = ({
       <DialogContent className="sm:max-w-lg p-0 overflow-hidden">
         {/* Product image header */}
         <div className="relative h-48 bg-muted flex items-center justify-center">
-          <img
+          <Image
             src={imageUrl}
             alt={product.name}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
           />
           <Badge className="absolute top-3 left-3 text-sm">
             {categoryEmoji[product.category.toLowerCase()] || "📦"}{" "}

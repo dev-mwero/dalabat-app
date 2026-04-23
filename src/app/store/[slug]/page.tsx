@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { ArrowLeft, Clock, MapPin, Star, Truck, Search, Store } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import CategoryFilter from "@/components/CategoryFilter";
@@ -130,10 +131,12 @@ export default function VendorStorePage() {
 
       {/* Hero Header Section */}
       <header className="relative h-[320px] md:h-[400px] overflow-hidden">
-        <img
+        <Image
           src={vendorImageUrl}
           alt={vendor.name}
-          className="w-full h-full object-cover"
+          fill
+          priority
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         <button
@@ -145,9 +148,9 @@ export default function VendorStorePage() {
         <div className="absolute bottom-0 left-0 w-full p-6 md:p-12 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div className="flex gap-6 items-center md:items-end">
             <div className="w-24 h-24 md:w-32 md:h-32 rounded-xl bg-surface-container-lowest p-1 shadow-2xl shrink-0">
-              <div className="w-full h-full bg-surface-container-high rounded-lg flex items-center justify-center text-4xl overflow-hidden">
+              <div className="w-full h-full bg-surface-container-high rounded-lg flex items-center justify-center text-4xl overflow-hidden relative">
                 {vendor.image ? (
-                  <img src={vendorImageUrl} className="w-full h-full object-cover" />
+                  <Image src={vendorImageUrl} alt={vendor.name} fill className="object-cover" />
                 ) : (
                   "🏪"
                 )}

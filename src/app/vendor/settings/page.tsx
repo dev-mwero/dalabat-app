@@ -2,6 +2,7 @@
 
 import { Bell, MapPin, Plus, Save, Store, X, Edit, Lightbulb } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -615,10 +616,11 @@ export default function VendorSettingsPage() {
         <div className="xl:col-span-4 space-y-6 hidden lg:block">
           <div className="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-outline-variant/10">
             <div className="h-48 relative bg-surface-container-low">
-              <img 
+              <Image 
                 src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1000&auto=format&fit=crop" 
                 alt="Storefront cover" 
-                className="w-full h-full object-cover opacity-80" 
+                fill
+                className="object-cover opacity-80" 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
               <div className="absolute bottom-4 left-6 pr-6">

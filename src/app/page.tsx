@@ -1,8 +1,9 @@
-"use client";
+"use client"; 
 
 import { motion } from "framer-motion";
 import { Search, ShoppingCart, Bell, Check, Star, Store, MapPin, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { useProducts } from "@/hooks/useProducts";
 import { useVendors } from "@/hooks/useVendors";
@@ -74,7 +75,7 @@ export default function Home() {
       <header className="bg-[#F8F9FF]/90 backdrop-blur-lg dark:bg-[#0B1C30]/90 sticky top-0 z-50 border-b border-outline-variant/10">
         <div className="flex justify-between items-center w-full px-6 py-4 max-w-screen-2xl mx-auto">
           <div className="text-2xl font-extrabold tracking-tighter text-[#9D4300] dark:text-[#F97316]">
-            Zest Marketplace
+            IISO Marketplace
           </div>
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
@@ -212,10 +213,11 @@ export default function Home() {
                       className="group flex flex-col bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 ring-1 ring-outline-variant/10"
                     >
                       <div className="relative h-64 overflow-hidden rounded-xl m-2 bg-surface-container-low">
-                        <img 
-                          src={product.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuAR178b1G0_N_uxEMY945SxZjvJzOZjvSe81wKFbjHW89bZzSSXdORps9jUmlmOSaITlQ3p_TbepKBof4woFYHI281amQ67IaDm6mFy4b0xC5agj0tdTU3OBVZ0v2I7rIZRO4PtRxqy9ix21MjhQwDv_CDtnW-Peeu0teQw-w0cONUZMkyAm72Sc9XW8opzwFuuQMTNnHQX8Fh7eeFS9TtRi5fQkrYDaFx3IFrf7NQG2A7DiF_9-jf-fNhrDllfI8XZI_1ojXNEQkk"} 
+                        <Image 
+                          src={product.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuAR178b1G0_N_uxEMY945SxZjvJzOZjvSe81wKFbjHW89bZzSSXdORps9jUmlmOSaITlQ3p_TbepKBof4woFYHI281amQ67IaDm6mFy4b0xC5agj0tdTU3OBVZ0v2I7rIZRO4PtRxqy9ix21MjhQwDv_CDtnW-Peeu0teQw-w0cONUZMkyAm72Sc9XW8opzwFuuQMTNnHQX8Fh7eeFS9TtRi5fQkrYDaFx3IFrf7NQG2A7DiF_9-jf-fNhrDllfI8XZI_1ojXNEQkk"} 
                           alt={product.name} 
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-110" 
                         />
                       </div>
                       <div className="p-6 pt-4 flex flex-col flex-1">

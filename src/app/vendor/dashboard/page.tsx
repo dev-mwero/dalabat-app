@@ -10,6 +10,7 @@ import {
   Plus
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 type Vendor = {
@@ -297,10 +298,11 @@ export default function VendorDashboardPage() {
           {/* Promo Card (Stitch Design feature) */}
           <div className="relative overflow-hidden bg-on-tertiary-fixed text-white p-6 rounded-xl min-h-[200px] flex flex-col justify-end">
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
-            <img 
+            <Image 
               className="absolute inset-0 w-full h-full object-cover opacity-80" 
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCd9_ixC6zBhtJkwogFJums3mER7L4FKTHS4qTs_cx9MOPQyDzzMdQ6O_W9Wy7fj_Oy12XdVqtLPO6t5mZaY7WsQixUcSZJDlOhM2a5mi5F12CppFWataVt008rb6slBzMdUMHdmJFSeL8835iViQZ3h-osfbETBxkVckKYxTHVKEkJgkPTXRZ0awdyaLI-Xq5jSsODryQO0jpu8Hg4Kj2ekQww4MSdaHn_FNsZgw4daX3DUgHhgrHc2X2NbL2A2CtRHWLQTF3LGnU" 
               alt="Promotion"
+              fill
             />
             <div className="relative z-20">
               <h4 className="text-lg font-extrabold leading-tight">Grow your business with Pantry Plus</h4>

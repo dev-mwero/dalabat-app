@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { MapPin, Star, Truck } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import type { Vendor } from "@/hooks/useVendors";
 
 interface VendorCardProps {
@@ -27,10 +28,11 @@ const VendorCard = ({ vendor, index }: VendorCardProps) => {
       <Link href={`/store/${vendor.slug || vendor._id}`} className="block group">
         <div className="bg-card rounded-lg overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow duration-300">
           <div className="relative h-40 overflow-hidden">
-            <img
+            <Image
               src={imageUrl}
               alt={vendor.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
             {vendor.deliveryFee > 0 && (
               <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1">

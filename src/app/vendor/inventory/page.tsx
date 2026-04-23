@@ -4,6 +4,7 @@ import { Package, Pencil, Plus, Search, Trash2, Download, MoreVertical, Eye, Ima
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 type Vendor = {
   _id: string;
@@ -455,10 +456,11 @@ export default function VendorInventoryPage() {
             className="bg-surface-container-lowest rounded-xl overflow-hidden group hover:-translate-y-1 transition-all duration-300 border border-outline-variant/10 shadow-sm"
           >
             <div className="relative h-64 w-full overflow-hidden bg-surface-container-low">
-              <img 
+              <Image 
                 src={product.image || "https://images.unsplash.com/photo-1563959834617-5f0f7f4e07a2?q=80&w=1200&auto=format&fit=crop"} 
                 alt={product.name} 
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-110" 
               />
               {!product.inStock && (
                 <div className="absolute top-4 left-4 bg-error-container text-error px-3 py-1 rounded-full text-xs font-bold shadow-sm">

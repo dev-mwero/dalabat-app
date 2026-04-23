@@ -4,6 +4,7 @@ import { useCart } from "@/contexts/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Minus, Plus, Trash2, Tag, ShoppingCart, ShieldCheck } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -67,10 +68,11 @@ export default function CartPage() {
                 className="bg-surface-container-lowest rounded-xl p-4 md:p-6 flex flex-col md:flex-row gap-6 items-center shadow-[0_4px_20px_0_rgba(11,28,48,0.02)] transition-all hover:translate-y-[-2px]"
               >
                 <div className="w-full md:w-32 h-32 flex-shrink-0 relative overflow-hidden rounded-xl">
-                  <img
+                  <Image
                     src={item.product.image || "https://placehold.co/400x400?text=Product"}
                     alt={item.product.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 shadow-[inset_0_0_12px_rgba(0,0,0,0.1)] rounded-xl pointer-events-none"></div>
                 </div>
@@ -132,11 +134,14 @@ export default function CartPage() {
               </button>
             </div>
             <div className="md:w-1/3 flex justify-center relative">
-              <img 
-                src="https://images.unsplash.com/photo-1621245051834-31b3e8c9c7f1?auto=format&fit=crop&q=80&w=500"
-                alt="Sea Salt" 
-                className="w-40 h-40 object-cover rounded-full shadow-2xl group-hover:scale-105 transition-transform duration-500"
-              />
+              <div className="w-40 h-40 relative">
+                <Image 
+                  src="https://images.unsplash.com/photo-1621245051834-31b3e8c9c7f1?auto=format&fit=crop&q=80&w=500"
+                  alt="Sea Salt" 
+                  fill
+                  className="object-cover rounded-full shadow-2xl group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
             </div>
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
           </div>
