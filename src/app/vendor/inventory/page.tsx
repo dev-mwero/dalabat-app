@@ -460,6 +460,7 @@ export default function VendorInventoryPage() {
                 src={product.image || "https://images.unsplash.com/photo-1563959834617-5f0f7f4e07a2?q=80&w=1200&auto=format&fit=crop"} 
                 alt={product.name} 
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover transition-transform duration-500 group-hover:scale-110" 
               />
               {!product.inStock && (

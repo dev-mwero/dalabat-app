@@ -72,6 +72,7 @@ export default function CartPage() {
                     src={item.product.image || "https://placehold.co/400x400?text=Product"}
                     alt={item.product.name}
                     fill
+                    sizes="(max-width: 768px) 100vw, 128px"
                     className="object-cover"
                   />
                   <div className="absolute inset-0 shadow-[inset_0_0_12px_rgba(0,0,0,0.1)] rounded-xl pointer-events-none"></div>
@@ -139,6 +140,7 @@ export default function CartPage() {
                   src="https://images.unsplash.com/photo-1621245051834-31b3e8c9c7f1?auto=format&fit=crop&q=80&w=500"
                   alt="Sea Salt" 
                   fill
+                  sizes="160px"
                   className="object-cover rounded-full shadow-2xl group-hover:scale-105 transition-transform duration-500"
                 />
               </div>

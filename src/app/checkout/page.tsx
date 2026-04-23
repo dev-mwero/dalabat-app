@@ -372,6 +372,7 @@ export default function CheckoutPage() {
                           src={item.product.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuCvAckgekodswuNr8EJo4Xh6ySHQY84DJaZPFI8mNQ7_LrNgJZ3wVY03TjSQ-CEIYhGbgKJf5ahzwsfcfbeHJ9Qq0e70s3vXi_cF8enVYt15vdrhtRoHa1oYbWdeTDtp8kD-w9tUbeWmIN-hLAe6tBM-J1jgwGRdPnxThGoTXa9riFpbVAwNreKgwkBlwvGF-IAy4kjkipLAh19kKCSXZM9xiXScrY7iccddjYo_pYq0ZPPSKpSQTZLkqFtuo3rPHdSH8nRCS3VgFE"} 
                           alt={item.product.name} 
                           fill
+                          sizes="80px"
                           className="object-cover" 
                         />
                       </div>

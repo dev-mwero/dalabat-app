@@ -136,6 +136,7 @@ export default function VendorStorePage() {
           alt={vendor.name}
           fill
           priority
+          sizes="100vw"
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -150,7 +151,13 @@ export default function VendorStorePage() {
             <div className="w-24 h-24 md:w-32 md:h-32 rounded-xl bg-surface-container-lowest p-1 shadow-2xl shrink-0">
               <div className="w-full h-full bg-surface-container-high rounded-lg flex items-center justify-center text-4xl overflow-hidden relative">
                 {vendor.image ? (
-                  <Image src={vendorImageUrl} alt={vendor.name} fill className="object-cover" />
+                  <Image 
+                    src={vendorImageUrl} 
+                    alt={vendor.name} 
+                    fill 
+                    sizes="(max-width: 768px) 96px, 128px"
+                    className="object-cover" 
+                  />
                 ) : (
                   "🏪"
                 )}

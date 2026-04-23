@@ -63,6 +63,7 @@ export const ProductDetailModal = ({
             src={imageUrl}
             alt={product.name}
             fill
+            sizes="(max-width: 768px) 100vw, 512px"
             className="object-cover"
           />
           <Badge className="absolute top-3 left-3 text-sm">

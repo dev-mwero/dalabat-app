@@ -303,6 +303,7 @@ export default function VendorDashboardPage() {
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCd9_ixC6zBhtJkwogFJums3mER7L4FKTHS4qTs_cx9MOPQyDzzMdQ6O_W9Wy7fj_Oy12XdVqtLPO6t5mZaY7WsQixUcSZJDlOhM2a5mi5F12CppFWataVt008rb6slBzMdUMHdmJFSeL8835iViQZ3h-osfbETBxkVckKYxTHVKEkJgkPTXRZ0awdyaLI-Xq5jSsODryQO0jpu8Hg4Kj2ekQww4MSdaHn_FNsZgw4daX3DUgHhgrHc2X2NbL2A2CtRHWLQTF3LGnU" 
               alt="Promotion"
               fill
+              sizes="(max-width: 1200px) 100vw, 400px"
             />
             <div className="relative z-20">
               <h4 className="text-lg font-extrabold leading-tight">Grow your business with Pantry Plus</h4>

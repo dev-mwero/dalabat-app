@@ -59,6 +59,7 @@ export default function ProfilePage() {
                       src={user.imageUrl}
                       alt={user.fullName || "User"}
                       fill
+                      sizes="(max-width: 768px) 96px, 128px"
                       className="object-cover"
                     />
                   </div>

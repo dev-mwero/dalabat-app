@@ -217,6 +217,7 @@ export default function Home() {
                           src={product.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuAR178b1G0_N_uxEMY945SxZjvJzOZjvSe81wKFbjHW89bZzSSXdORps9jUmlmOSaITlQ3p_TbepKBof4woFYHI281amQ67IaDm6mFy4b0xC5agj0tdTU3OBVZ0v2I7rIZRO4PtRxqy9ix21MjhQwDv_CDtnW-Peeu0teQw-w0cONUZMkyAm72Sc9XW8opzwFuuQMTNnHQX8Fh7eeFS9TtRi5fQkrYDaFx3IFrf7NQG2A7DiF_9-jf-fNhrDllfI8XZI_1ojXNEQkk"} 
                           alt={product.name} 
                           fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           className="object-cover transition-transform duration-500 group-hover:scale-110" 
                         />
                       </div>

@@ -620,6 +620,7 @@ export default function VendorSettingsPage() {
                 src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1000&auto=format&fit=crop" 
                 alt="Storefront cover" 
                 fill
+                sizes="400px"
                 className="object-cover opacity-80" 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
