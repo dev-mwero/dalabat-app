@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { UserPlus, Mail, Shield, Trash2, Search, UserCheck } from "lucide-react";
+import { UserPlus, Mail, Shield, Trash2, Search, UserCheck, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
@@ -9,7 +9,8 @@ type StaffMember = {
   _id: string;
   name: string;
   email: string;
-  role: "teller" | "vendor";
+  role: "teller" | "admin";
+  status: "pending" | "accepted";
   createdAt: string;
 };
 
@@ -19,37 +20,70 @@ export default function VendorStaffPage() {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteName, setInviteName] = useState("");
+  const [isInviting, setIsInviting] = useState(false);
+  const [generatedLink, setGeneratedLink] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    // Mock data for now until API is ready
-    const mockStaff: StaffMember[] = [
-      {
-        _id: "1",
-        name: "John Doe",
-        email: "john@example.com",
-        role: "teller",
-        createdAt: new Date().toISOString(),
-      },
-      {
-        _id: "2",
-        name: "Jane Smith",
-        email: "jane@example.com",
-        role: "teller",
-        createdAt: new Date().toISOString(),
-      }
-    ];
-    setStaff(mockStaff);
-    setLoading(false);
+    fetchInvites();
   }, []);
 
-  const handleInvite = (e: React.FormEvent) => {
+  const fetchInvites = async () => {
+    try {
+      const res = await fetch("/api/vendor/staff/invite");
+      if (res.ok) {
+        const result = await res.json();
+        setStaff(result.data || []);
+      }
+    } catch (e) {
+      toast.error("Failed to load staff");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inviteEmail || !inviteName) return;
     
-    toast.info("Integration pending: In a real app, this would create a user with 'teller' role linked to your vendorId.");
+    setIsInviting(true);
+    try {
+      const res = await fetch("/api/vendor/staff/invite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: inviteEmail, name: inviteName }),
+      });
+      const data = await res.json();
+      
+      if (!res.ok) {
+        toast.error(data.error || "Failed to send invite");
+        return;
+      }
+      
+      toast.success("Invite generated successfully!");
+      setGeneratedLink(data.inviteLink);
+      setInviteEmail("");
+      setInviteName("");
+      fetchInvites();
+    } catch (e) {
+      toast.error("An error occurred");
+    } finally {
+      setIsInviting(false);
+    }
+  };
+
+  const handleCopy = () => {
+    if (generatedLink) {
+      navigator.clipboard.writeText(generatedLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      toast.success("Link copied to clipboard");
+    }
+  };
+
+  const closeModals = () => {
     setIsInviteModalOpen(false);
-    setInviteEmail("");
-    setInviteName("");
+    setGeneratedLink(null);
   };
 
   return (
@@ -100,11 +134,16 @@ export default function VendorStaffPage() {
                   <Shield className="w-3 h-3" />
                   {member.role}
                 </span>
+                <span className={`px-3 py-1 text-[10px] font-bold uppercase rounded-full tracking-wider flex items-center gap-1 ${
+                  member.status === "accepted" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                }`}>
+                  {member.status}
+                </span>
               </div>
             </div>
 
             <div className="mt-6 pt-4 border-t border-outline-variant/10">
-              <p className="text-[10px] text-on-surface-variant uppercase font-bold">Added on</p>
+              <p className="text-[10px] text-on-surface-variant uppercase font-bold">Invited on</p>
               <p className="text-sm font-medium text-on-surface">{new Date(member.createdAt).toLocaleDateString()}</p>
             </div>
           </motion.div>
@@ -122,57 +161,81 @@ export default function VendorStaffPage() {
       </section>
 
       {/* Invite Modal */}
-      {isInviteModalOpen && (
+      {(isInviteModalOpen || generatedLink) && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             className="bg-surface rounded-3xl p-8 w-full max-w-md shadow-2xl border border-outline-variant/10"
           >
-            <h2 className="text-2xl font-extrabold text-on-surface mb-2">Invite Teller</h2>
-            <p className="text-on-surface-variant text-sm mb-6">Tellers can process orders and update stock but cannot change store settings.</p>
-            
-            <form onSubmit={handleInvite} className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-on-surface ml-1">Full Name</label>
-                <input 
-                  type="text" 
-                  value={inviteName}
-                  onChange={(e) => setInviteName(e.target.value)}
-                  placeholder="e.g. Michael Teller"
-                  className="w-full bg-surface-container-low border-none rounded-2xl px-4 py-4 text-sm focus:ring-2 focus:ring-primary transition-all"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-on-surface ml-1">Email Address</label>
-                <input 
-                  type="email" 
-                  value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
-                  placeholder="teller@example.com"
-                  className="w-full bg-surface-container-low border-none rounded-2xl px-4 py-4 text-sm focus:ring-2 focus:ring-primary transition-all"
-                  required
-                />
-              </div>
-              
-              <div className="flex gap-3 mt-8">
+            {generatedLink ? (
+              <>
+                <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Check className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl font-extrabold text-on-surface text-center mb-2">Invite Generated</h2>
+                <p className="text-on-surface-variant text-sm text-center mb-6">Copy this link and send it to your teller to grant them access to your store.</p>
+                <div className="bg-surface-container-low p-4 rounded-xl flex items-center gap-3 mb-8 border border-outline-variant/20">
+                  <span className="text-sm text-on-surface truncate flex-1">{generatedLink}</span>
+                  <button onClick={handleCopy} className="p-2 bg-surface-container-high hover:bg-surface-container-highest rounded-lg transition-colors">
+                    {copied ? <Check className="w-5 h-5 text-emerald-600" /> : <Copy className="w-5 h-5 text-on-surface-variant" />}
+                  </button>
+                </div>
                 <button 
-                  type="button"
-                  onClick={() => setIsInviteModalOpen(false)}
-                  className="flex-1 bg-surface-container-high text-on-surface font-bold py-4 rounded-2xl hover:bg-surface-container-highest transition-all"
+                  onClick={closeModals}
+                  className="w-full bg-primary text-white font-bold py-4 rounded-2xl hover:opacity-90 shadow-lg shadow-primary/20 transition-all"
                 >
-                  Cancel
+                  Done
                 </button>
-                <button 
-                  type="submit"
-                  className="flex-1 bg-primary text-white font-bold py-4 rounded-2xl hover:opacity-90 shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2"
-                >
-                  <UserCheck className="w-5 h-5" />
-                  Invite
-                </button>
-              </div>
-            </form>
+              </>
+            ) : (
+              <>
+                <h2 className="text-2xl font-extrabold text-on-surface mb-2">Invite Teller</h2>
+                <p className="text-on-surface-variant text-sm mb-6">Tellers can process orders and update stock but cannot change store settings.</p>
+                
+                <form onSubmit={handleInvite} className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-on-surface ml-1">Full Name</label>
+                    <input 
+                      type="text" 
+                      value={inviteName}
+                      onChange={(e) => setInviteName(e.target.value)}
+                      placeholder="e.g. Michael Teller"
+                      className="w-full bg-surface-container-low border-none rounded-2xl px-4 py-4 text-sm focus:ring-2 focus:ring-primary transition-all"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-on-surface ml-1">Email Address</label>
+                    <input 
+                      type="email" 
+                      value={inviteEmail}
+                      onChange={(e) => setInviteEmail(e.target.value)}
+                      placeholder="teller@example.com"
+                      className="w-full bg-surface-container-low border-none rounded-2xl px-4 py-4 text-sm focus:ring-2 focus:ring-primary transition-all"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="flex gap-3 mt-8">
+                    <button 
+                      type="button"
+                      onClick={closeModals}
+                      className="flex-1 bg-surface-container-high text-on-surface font-bold py-4 rounded-2xl hover:bg-surface-container-highest transition-all"
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      type="submit"
+                      disabled={isInviting}
+                      className="flex-1 bg-primary text-white font-bold py-4 rounded-2xl hover:opacity-90 shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                    >
+                      {isInviting ? "Creating..." : <><UserCheck className="w-5 h-5" /> Invite</>}
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
           </motion.div>
         </div>
       )}
