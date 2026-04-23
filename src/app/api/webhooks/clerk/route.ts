@@ -45,10 +45,15 @@ export async function POST(req: Request) {
         name: `${name}'s Store`,
         slug: `${slug}-${clerkId.slice(-4)}`,
         description: "Welcome to my IIBSO store!",
+        image: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?q=80&w=2070&auto=format&fit=crop", // Placeholder storefront image
+        location: "Nairobi, Kenya",
+        deliveryTime: "1 - 2 hours",
         deliveryFee: 0,
+        minimumOrder: 0,
         rating: 0,
-        ratingCount: 0,
-        isVerified: false,
+        reviewCount: 0,
+        isOpen: false, // Start closed until they set up
+        ownerClerkId: clerkId,
       });
 
       // Link vendorId back to the user
