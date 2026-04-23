@@ -1,11 +1,11 @@
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
-import { NextResponse } from "next/server";
-import { dbConnect } from "@/lib/mongodb";
+import { NextResponse, type NextRequest } from "next/server";
+import { connectToDatabase } from "@/lib/mongodb";
 import { User } from "@/models/user";
 import { Vendor } from "@/models/vendor";
 import { Invite } from "@/models/invite";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   let event;
 
   try {
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     let safeRole = validRoles.includes(requestedRole) ? requestedRole : "customer";
     let assignedVendorId = null;
 
-    await dbConnect();
+    await connectToDatabase();
 
     // Secure teller registrations
     if (safeRole === "teller") {

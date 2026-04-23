@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { dbConnect } from "@/lib/mongodb";
+import { connectToDatabase } from "@/lib/mongodb";
 import { Invite } from "@/models/invite";
 import { User } from "@/models/user";
 import { auth } from "@clerk/nextjs/server";
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await dbConnect();
+    await connectToDatabase();
     const currentUser = await User.findOne({ clerkId });
 
     if (!currentUser || currentUser.role !== "vendor" || !currentUser.vendorId) {
@@ -74,7 +74,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await dbConnect();
+    await connectToDatabase();
     const currentUser = await User.findOne({ clerkId });
 
     if (!currentUser || currentUser.role !== "vendor" || !currentUser.vendorId) {

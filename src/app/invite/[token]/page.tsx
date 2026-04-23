@@ -1,4 +1,4 @@
-import { dbConnect } from "@/lib/mongodb";
+import { connectToDatabase } from "@/lib/mongodb";
 import { Invite } from "@/models/invite";
 import { Vendor } from "@/models/vendor";
 import { redirect } from "next/navigation";
@@ -6,7 +6,7 @@ import { Zap, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 
 export default async function InvitePage({ params }: { params: { token: string } }) {
-  await dbConnect();
+  await connectToDatabase();
 
   const token = params.token;
   const invite = await Invite.findOne({ token, status: "pending" }).populate("vendorId");
