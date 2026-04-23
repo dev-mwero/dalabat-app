@@ -35,7 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <ShieldCheck className="text-white w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-black tracking-tight">Iibso</h1>
+            <h1 className="text-xl font-black tracking-tight">IIBSO</h1>
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Super Admin</p>
           </div>
         </div>

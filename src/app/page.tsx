@@ -51,7 +51,7 @@ export default function LandingPage() {
             <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
               <Zap className="text-white w-5 h-5 fill-white" />
             </div>
-            <span className="text-xl font-black tracking-tight">Iibso</span>
+            <span className="text-xl font-black tracking-tight">IIBSO</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm font-bold text-slate-500">
             <Link href="/market" className="hover:text-slate-900 transition-colors">Marketplace</Link>
@@ -247,7 +247,7 @@ export default function LandingPage() {
                   <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
                     <Zap className="text-white w-5 h-5 fill-white" />
                   </div>
-                  <span className="text-xl font-black tracking-tight">Iibso</span>
+                  <span className="text-xl font-black tracking-tight">IIBSO</span>
                </div>
                <p className="text-slate-500 font-medium max-w-sm">
                   Empowering artisanal producers and connecting them with the people who value quality above all else.
@@ -271,7 +271,7 @@ export default function LandingPage() {
             </div>
          </div>
          <div className="max-w-7xl mx-auto px-6 pt-10 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-sm font-bold text-slate-400">© 2026 Iibso Marketplace. All rights reserved.</p>
+            <p className="text-sm font-bold text-slate-400">© 2026 IIBSO Marketplace. All rights reserved.</p>
             <div className="flex items-center gap-6 text-slate-400">
                <TrendingUp className="w-5 h-5 hover:text-slate-900 cursor-pointer" />
                <Globe className="w-5 h-5 hover:text-slate-900 cursor-pointer" />
