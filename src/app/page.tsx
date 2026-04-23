@@ -1,291 +1,305 @@
-"use client"; 
+"use client";
 
 import { motion } from "framer-motion";
-import { Search, ShoppingCart, Bell, Check, Star, Store, MapPin, ArrowLeft } from "lucide-react";
+import { 
+  ShoppingBag, 
+  Store, 
+  Zap, 
+  ShieldCheck, 
+  TrendingUp, 
+  ArrowRight,
+  Globe,
+  Truck,
+  Heart,
+  ChevronRight
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
-import { useProducts } from "@/hooks/useProducts";
-import { useVendors } from "@/hooks/useVendors";
-import { useCart } from "@/contexts/CartContext";
 
-const PRODUCTS_PER_PAGE = 8;
+export default function LandingPage() {
+  const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+  };
 
-export default function Home() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [sortOption, setSortOption] = useState("default");
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const { items } = useCart();
-
-  const { data: vendors = [], isLoading: loadingVendors } = useVendors({
-    category: selectedCategory === "all" ? undefined : selectedCategory,
-    search: searchQuery,
-  });
-
-  const { data: products = [], isLoading: loadingProducts } = useProducts({
-    category: selectedCategory === "all" ? undefined : selectedCategory,
-    search: searchQuery,
-  });
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, selectedCategory, sortOption]);
-
-  const filteredProducts = useMemo(() => {
-    const result = [...products];
-    switch (sortOption) {
-      case "price-asc":
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case "price-desc":
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case "name":
-        result.sort((a, b) => a.name.localeCompare(b.name));
-        break;
+  const features = [
+    {
+      title: "For Buyers",
+      description: "Access a curated world of artisanal provisions. From small-batch sourdough to cold-pressed oils, delivered to your doorstep.",
+      icon: ShoppingBag,
+      color: "bg-orange-50 text-orange-600",
+      cta: "Explore Market",
+      link: "/market"
+    },
+    {
+      title: "For Vendors",
+      description: "Scale your artisanal business with professional tools. Manage inventory, staff, and analytics in one powerful dashboard.",
+      icon: Store,
+      color: "bg-blue-50 text-blue-600",
+      cta: "Start Selling",
+      link: "/sign-up?role=vendor"
     }
-    return result;
-  }, [products, sortOption]);
-
-  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
-  const paginatedProducts = useMemo(() => {
-    const start = (currentPage - 1) * PRODUCTS_PER_PAGE;
-    return filteredProducts.slice(start, start + PRODUCTS_PER_PAGE);
-  }, [filteredProducts, currentPage]);
-
-  const categories = [
-    { id: "all", name: "All Provisions" },
-    { id: "bakery", name: "Artisanal Breads" },
-    { id: "dairy", name: "Cheeses & Dairy" },
-    { id: "groceries", name: "Cold-Pressed Oils" },
-    { id: "fruits", name: "Fresh Produce" },
   ];
 
-  const currency = new Intl.NumberFormat("en-KE", {
-    style: "currency",
-    currency: "KES",
-    maximumFractionDigits: 0,
-  });
-
   return (
-    <div className="bg-surface text-on-surface min-h-screen font-sans">
-      {/* TopNavBar */}
-      <header className="bg-[#F8F9FF]/90 backdrop-blur-lg dark:bg-[#0B1C30]/90 sticky top-0 z-50 border-b border-outline-variant/10">
-        <div className="flex justify-between items-center w-full px-6 py-4 max-w-screen-2xl mx-auto">
-          <div className="text-2xl font-extrabold tracking-tighter text-[#9D4300] dark:text-[#F97316]">
-            IISO Marketplace
+    <div className="bg-white text-slate-900 font-sans overflow-x-hidden">
+      {/* Navigation */}
+      <nav className="fixed top-0 w-full z-[100] bg-white/80 backdrop-blur-md border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+              <Zap className="text-white w-5 h-5 fill-white" />
+            </div>
+            <span className="text-xl font-black tracking-tight">Dalabat</span>
           </div>
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="/" className="text-[#9D4300] font-bold border-b-2 border-[#F97316] pb-1 hover:text-[#F97316] transition-colors duration-200">Discover</Link>
-            <Link href="/vendors" className="text-[#584237] dark:text-slate-400 font-medium hover:text-[#F97316] transition-colors duration-200">Vendors</Link>
-          </nav>
-          <div className="flex items-center gap-6">
-            {/* Search Bar */}
-            <div className="hidden lg:flex items-center bg-surface-container-low px-4 py-2 rounded-full w-80 group focus-within:ring-2 ring-primary-container transition-all">
-              <Search className="text-on-surface-variant w-4 h-4 mr-2" />
-              <input 
-                className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-on-surface-variant/60 focus:outline-none" 
-                placeholder="Search artisanal provisions..." 
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <div className="flex items-center gap-4 text-[#9D4300] dark:text-[#F97316]">
-              <Link href="/checkout" className="active:opacity-80 active:scale-95 transition-all relative">
-                <ShoppingCart className="w-6 h-6" />
-                {items.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary-container text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
-                    {items.length}
-                  </span>
-                )}
-              </Link>
-              <Link href="/vendor/dashboard" className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container/20 flex items-center justify-center bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-colors">
-                <Store className="w-5 h-5" />
-              </Link>
-            </div>
+          <div className="hidden md:flex items-center gap-8 text-sm font-bold text-slate-500">
+            <Link href="/market" className="hover:text-slate-900 transition-colors">Marketplace</Link>
+            <Link href="#features" className="hover:text-slate-900 transition-colors">Features</Link>
+            <Link href="#how-it-works" className="hover:text-slate-900 transition-colors">How it Works</Link>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link href="/sign-in" className="text-sm font-bold text-slate-600 hover:text-slate-900">Login</Link>
+            <Link 
+              href="/sign-up" 
+              className="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:shadow-xl hover:shadow-slate-200 transition-all"
+            >
+              Get Started
+            </Link>
           </div>
         </div>
-      </header>
+      </nav>
 
-      <main className="max-w-screen-2xl mx-auto px-6 py-8">
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Filters Sidebar */}
-          <aside className="w-full md:w-64 flex-shrink-0 space-y-8">
-            <div>
-              <h3 className="text-on-surface font-extrabold text-lg mb-6 tracking-tight">Refine Results</h3>
-              
-              {/* Categories */}
-              <div className="space-y-4 mb-8">
-                <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/70">Category</p>
-                <div className="space-y-2">
-                  {categories.map((cat) => {
-                    const isSelected = selectedCategory === cat.id;
-                    return (
-                      <label key={cat.id} className="flex items-center gap-3 group cursor-pointer" onClick={() => setSelectedCategory(cat.id)}>
-                        <div className={`w-5 h-5 rounded-lg flex items-center justify-center transition-colors ${isSelected ? "bg-primary-container shadow-lg shadow-primary-container/20" : "bg-surface-container-high group-hover:bg-primary-container/20"}`}>
-                          <Check className={`w-3 h-3 ${isSelected ? "text-white" : "text-primary opacity-0 group-hover:opacity-100"}`} />
-                        </div>
-                        <span className={`text-sm ${isSelected ? "font-bold text-on-surface" : "font-medium text-on-surface-variant group-hover:text-on-surface"}`}>
-                          {cat.name}
-                        </span>
-                      </label>
-                    );
-                  })}
-                </div>
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div {...fadeIn}>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-50 text-orange-600 text-xs font-black uppercase tracking-widest mb-6">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                </span>
+                Now Live in Nairobi
               </div>
-
-              {/* Vendors List */}
-              <div className="space-y-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/70">Top Vendors</p>
-                <div className="space-y-3">
-                  {loadingVendors ? (
-                    Array.from({ length: 3 }).map((_, i) => (
-                      <div key={i} className="flex items-center gap-3 animate-pulse">
-                        <div className="w-8 h-8 rounded-full bg-surface-container-high" />
-                        <div className="h-4 bg-surface-container-high rounded w-24" />
-                      </div>
-                    ))
-                  ) : vendors.slice(0, 5).map(vendor => (
-                    <Link href={`/store/${vendor.slug || vendor._id}`} key={vendor._id} className="block group">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-primary group-hover:bg-primary-container group-hover:text-white transition-colors">
-                          <Store className="w-4 h-4" />
-                        </div>
-                        <span className="text-sm font-medium text-on-surface-variant group-hover:text-primary transition-colors">{vendor.name}</span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-            </div>
-          </aside>
-
-          {/* Results Grid */}
-          <section className="flex-1">
-            <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <div>
-                <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Artisanal Finds</h1>
-                <p className="text-on-surface-variant font-medium">
-                  Showing {filteredProducts.length} results
-                  {searchQuery && <span> for <span className="text-primary italic">&quot;{searchQuery}&quot;</span></span>}
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <select
-                  value={sortOption}
-                  onChange={(e) => setSortOption(e.target.value)}
-                  className="bg-surface-container-low px-5 py-2.5 rounded-full text-sm font-bold text-on-surface flex items-center gap-2 hover:bg-surface-container-high transition-colors focus:outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer border-none ring-0"
+              <h1 className="text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight text-slate-900 mb-8">
+                The Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-rose-500">Artisanal</span> Commerce.
+              </h1>
+              <p className="text-xl text-slate-500 font-medium leading-relaxed mb-10 max-w-lg">
+                Connecting discerning buyers with master producers. A complete ecosystem for artisanal provisions, built for speed and scale.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link 
+                  href="/market" 
+                  className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 hover:shadow-2xl hover:shadow-slate-300 transition-all group"
                 >
-                  <option value="default">Latest Arrivals</option>
-                  <option value="price-asc">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
-                  <option value="name">Name: A-Z</option>
-                </select>
+                  Start Shopping
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link 
+                  href="/sign-up?role=vendor" 
+                  className="bg-white text-slate-900 border-2 border-slate-100 px-10 py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 hover:border-slate-200 transition-all"
+                >
+                  Open Your Store
+                </Link>
               </div>
-            </header>
-
-            {loadingProducts ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="h-80 rounded-xl bg-surface-container-low animate-pulse" />
-                ))}
-              </div>
-            ) : paginatedProducts.length === 0 ? (
-              <div className="text-center py-20 bg-surface-container-lowest rounded-3xl ring-1 ring-outline-variant/10 shadow-sm">
-                <div className="text-5xl mb-4">🔍</div>
-                <h3 className="text-xl font-bold mb-2 text-on-surface">No results found</h3>
-                <p className="text-on-surface-variant">Try adjusting your filters or search query.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {paginatedProducts.map((product) => {
-                  const vendor = vendors.find(v => v._id === product.vendorId);
-                  return (
-                    <motion.div 
-                      key={product._id} 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="group flex flex-col bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 ring-1 ring-outline-variant/10"
-                    >
-                      <div className="relative h-64 overflow-hidden rounded-xl m-2 bg-surface-container-low">
-                        <Image 
-                          src={product.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuAR178b1G0_N_uxEMY945SxZjvJzOZjvSe81wKFbjHW89bZzSSXdORps9jUmlmOSaITlQ3p_TbepKBof4woFYHI281amQ67IaDm6mFy4b0xC5agj0tdTU3OBVZ0v2I7rIZRO4PtRxqy9ix21MjhQwDv_CDtnW-Peeu0teQw-w0cONUZMkyAm72Sc9XW8opzwFuuQMTNnHQX8Fh7eeFS9TtRi5fQkrYDaFx3IFrf7NQG2A7DiF_9-jf-fNhrDllfI8XZI_1ojXNEQkk"} 
-                          alt={product.name} 
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          className="object-cover transition-transform duration-500 group-hover:scale-110" 
-                        />
-                      </div>
-                      <div className="p-6 pt-4 flex flex-col flex-1">
-                        <div className="flex justify-between items-start mb-2 gap-4">
-                          <h3 className="text-xl font-bold text-on-surface tracking-tight leading-tight line-clamp-2">{product.name}</h3>
-                          <span className="text-lg font-extrabold text-primary shrink-0">{currency.format(product.price)}</span>
-                        </div>
-                        <p className="text-sm text-on-surface-variant line-clamp-2 mb-4 leading-relaxed flex-1">
-                          {product.description || "Authentic artisanal provision carefully crafted for the best quality."}
-                        </p>
-                        <div className="flex items-center justify-between pt-4 border-t border-surface-container-low mt-auto">
-                          {vendor ? (
-                            <Link href={`/store/${vendor.slug || vendor._id}`} className="text-xs font-bold text-on-surface-variant/80 hover:text-primary flex items-center gap-1 uppercase transition-colors">
-                              <Store className="w-3.5 h-3.5" />
-                              <span className="truncate max-w-[120px]">{vendor.name}</span>
-                            </Link>
-                          ) : <div />}
-                          <Link href={`/store/${vendor?.slug || product.vendorId}`} className="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center hover:bg-primary-container hover:text-white transition-all shadow-sm">
-                            <ShoppingCart className="w-4 h-4" />
-                          </Link>
-                        </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-16 flex justify-center">
-                <nav className="flex items-center gap-2 bg-surface-container-low p-2 rounded-full">
-                  <button 
-                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors disabled:opacity-50"
-                  >
-                    <ArrowLeft className="w-5 h-5" />
-                  </button>
-                  
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button 
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors ${page === currentPage ? "bg-primary-container text-white shadow-sm" : "text-on-surface hover:bg-surface-container-high"}`}
-                    >
-                      {page}
-                    </button>
+              <div className="mt-12 flex items-center gap-6">
+                <div className="flex -space-x-3">
+                  {[1,2,3,4].map(i => (
+                    <div key={i} className="w-10 h-10 rounded-full border-4 border-white bg-slate-100 overflow-hidden relative">
+                      <Image src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User" fill className="object-cover" />
+                    </div>
                   ))}
-                  
-                  <button 
-                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                    disabled={currentPage === totalPages}
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors disabled:opacity-50"
-                  >
-                    <ArrowLeft className="w-5 h-5 rotate-180" />
-                  </button>
-                </nav>
+                </div>
+                <p className="text-sm font-bold text-slate-400 italic">Trusted by 1,200+ food enthusiasts</p>
               </div>
-            )}
-          </section>
-        </div>
-      </main>
+            </motion.div>
 
-      {/* Background Decoration */}
-      <div className="fixed top-0 right-0 -z-10 w-[500px] h-[500px] bg-primary-container/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="fixed bottom-0 left-0 -z-10 w-[400px] h-[400px] bg-secondary-container/10 blur-[100px] rounded-full pointer-events-none" />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8, x: 50 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative aspect-square lg:aspect-auto lg:h-[600px] rounded-[40px] overflow-hidden shadow-2xl border-8 border-white"
+            >
+              <Image 
+                src="/market_hero_banner_1776932975946.png" 
+                alt="Artisanal Marketplace" 
+                fill 
+                priority
+                className="object-cover" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
+              
+              {/* Floating UI Elements */}
+              <div className="absolute bottom-8 left-8 right-8 bg-white/80 backdrop-blur-xl p-6 rounded-3xl border border-white/50 shadow-2xl">
+                 <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                       <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white">
+                          <CheckCircle className="w-6 h-6" />
+                       </div>
+                       <div>
+                          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Order Status</p>
+                          <p className="text-sm font-black text-slate-900">Out for Delivery</p>
+                       </div>
+                    </div>
+                    <div className="text-right">
+                       <p className="text-lg font-black text-slate-900">KES 4,500</p>
+                       <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-tighter">Paid via M-Pesa</p>
+                    </div>
+                 </div>
+                 <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <motion.div 
+                       initial={{ width: 0 }}
+                       animate={{ width: "75%" }}
+                       transition={{ duration: 1.5, delay: 1 }}
+                       className="h-full bg-emerald-500" 
+                    />
+                 </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Background Gradients */}
+        <div className="absolute top-0 right-0 -z-10 w-[800px] h-[800px] bg-orange-100/30 blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 left-0 -z-10 w-[600px] h-[600px] bg-blue-100/20 blur-[100px] rounded-full -translate-x-1/2 translate-y-1/2"></div>
+      </section>
+
+      {/* Feature Split */}
+      <section id="features" className="py-24 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl font-black tracking-tight text-slate-900 mb-4">Dual-Powered Experience</h2>
+            <p className="text-slate-500 font-medium max-w-xl mx-auto text-lg">Whether you are curating your kitchen or building your brand, we provide the ultimate platform for artisanal success.</p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            {features.map((feature, i) => (
+              <motion.div
+                key={feature.title}
+                whileHover={{ y: -10 }}
+                className="bg-white p-12 rounded-[40px] border border-slate-200 shadow-sm flex flex-col justify-between group"
+              >
+                <div>
+                  <div className={`w-16 h-16 rounded-3xl flex items-center justify-center mb-8 ${feature.color}`}>
+                    <feature.icon className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-3xl font-black text-slate-900 mb-6">{feature.title}</h3>
+                  <p className="text-lg text-slate-500 leading-relaxed mb-10">
+                    {feature.description}
+                  </p>
+                </div>
+                <Link 
+                  href={feature.link}
+                  className="inline-flex items-center gap-2 text-slate-900 font-black group-hover:text-orange-500 transition-colors"
+                >
+                  {feature.cta}
+                  <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Bar */}
+      <section className="py-12 border-y border-slate-100 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-wrap justify-center gap-12 opacity-30 grayscale hover:grayscale-0 transition-all duration-500">
+             <div className="flex items-center gap-2 font-black text-2xl tracking-tighter"><Globe className="w-6 h-6" /> LocalFirst</div>
+             <div className="flex items-center gap-2 font-black text-2xl tracking-tighter"><ShieldCheck className="w-6 h-6" /> SecureTrade</div>
+             <div className="flex items-center gap-2 font-black text-2xl tracking-tighter"><Truck className="w-6 h-6" /> FastDeli</div>
+             <div className="flex items-center gap-2 font-black text-2xl tracking-tighter"><Heart className="w-6 h-6" /> PureQuality</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="py-32 relative">
+         <div className="max-w-5xl mx-auto px-6 text-center">
+            <div className="bg-slate-900 rounded-[50px] p-16 md:p-24 relative overflow-hidden">
+               <div className="relative z-10 space-y-8">
+                  <h2 className="text-4xl md:text-6xl font-black text-white leading-tight">Ready to taste the <br/><span className="text-orange-400">Extraordinary?</span></h2>
+                  <p className="text-slate-400 text-lg md:text-xl font-medium max-w-2xl mx-auto">
+                    Join the thousands of shoppers and hundreds of vendors building the future of the Kenyan artisanal food scene.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                     <Link href="/market" className="bg-white text-slate-900 px-10 py-5 rounded-2xl font-black text-lg hover:bg-orange-50 transition-all">
+                        Shop the Market
+                     </Link>
+                     <Link href="/sign-up?role=vendor" className="bg-slate-800 text-white border border-slate-700 px-10 py-5 rounded-2xl font-black text-lg hover:bg-slate-700 transition-all">
+                        Become a Vendor
+                     </Link>
+                  </div>
+               </div>
+               {/* Decorative Background */}
+               <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+               <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+            </div>
+         </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-slate-50 pt-20 pb-10 border-t border-slate-200">
+         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12 mb-20">
+            <div className="col-span-2">
+               <div className="flex items-center gap-2 mb-6">
+                  <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+                    <Zap className="text-white w-5 h-5 fill-white" />
+                  </div>
+                  <span className="text-xl font-black tracking-tight">Dalabat</span>
+               </div>
+               <p className="text-slate-500 font-medium max-w-sm">
+                  Empowering artisanal producers and connecting them with the people who value quality above all else.
+               </p>
+            </div>
+            <div>
+               <h4 className="font-black text-slate-900 mb-6">Platform</h4>
+               <ul className="space-y-4 text-sm font-bold text-slate-500">
+                  <li><Link href="/market" className="hover:text-slate-900">Marketplace</Link></li>
+                  <li><Link href="/vendors" className="hover:text-slate-900">Vendor Directory</Link></li>
+                  <li><Link href="/sign-up" className="hover:text-slate-900">Registration</Link></li>
+               </ul>
+            </div>
+            <div>
+               <h4 className="font-black text-slate-900 mb-6">Company</h4>
+               <ul className="space-y-4 text-sm font-bold text-slate-500">
+                  <li><Link href="#" className="hover:text-slate-900">About Us</Link></li>
+                  <li><Link href="#" className="hover:text-slate-900">Privacy Policy</Link></li>
+                  <li><Link href="#" className="hover:text-slate-900">Terms of Service</Link></li>
+               </ul>
+            </div>
+         </div>
+         <div className="max-w-7xl mx-auto px-6 pt-10 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-sm font-bold text-slate-400">© 2026 Dalabat Marketplace. All rights reserved.</p>
+            <div className="flex items-center gap-6 text-slate-400">
+               <TrendingUp className="w-5 h-5 hover:text-slate-900 cursor-pointer" />
+               <Globe className="w-5 h-5 hover:text-slate-900 cursor-pointer" />
+               <Truck className="w-5 h-5 hover:text-slate-900 cursor-pointer" />
+            </div>
+         </div>
+      </footer>
     </div>
+  );
+}
+
+// Mock icon missing in lucide
+function CheckCircle(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+      <polyline points="22 4 12 14.01 9 11.01" />
+    </svg>
   );
 }

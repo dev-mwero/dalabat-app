@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/contexts/CartContext";
+import { Zap } from "lucide-react";
 
 interface HeaderProps {
   searchQuery?: string;
@@ -26,8 +27,15 @@ export const Header = ({
     <header className="sticky top-0 z-50 glass border-b border-border">
       <div className="container mx-auto max-w-7xl flex items-center justify-between h-16 gap-4 px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2 shrink-0">
-          <span className="text-2xl font-extrabold text-primary">Dalabat</span>
+          <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+            <Zap className="text-white w-5 h-5 fill-white" />
+          </div>
+          <span className="text-2xl font-extrabold text-primary tracking-tighter">Dalabat</span>
         </Link>
+
+        <nav className="hidden md:flex items-center gap-6 ml-4">
+          <Link href="/market" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors">Marketplace</Link>
+        </nav>
 
         {showSearch && (
           <div className="relative flex-1 max-w-md hidden sm:block">
