@@ -38,7 +38,7 @@ export default function LandingPage() {
       icon: Store,
       color: "bg-blue-50 text-blue-600",
       cta: "Start Selling",
-      link: "/sign-up?role=vendor"
+      link: "/register?role=vendor"
     }
   ];
 
@@ -61,7 +61,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-4">
             <Link href="/sign-in" className="text-sm font-bold text-slate-600 hover:text-slate-900">Login</Link>
             <Link 
-              href="/sign-up" 
+              href="/register" 
               className="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:shadow-xl hover:shadow-slate-200 transition-all"
             >
               Get Started
@@ -97,7 +97,7 @@ export default function LandingPage() {
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link 
-                  href="/sign-up?role=vendor" 
+                  href="/register?role=vendor" 
                   className="bg-white text-slate-900 border-2 border-slate-100 px-10 py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 hover:border-slate-200 transition-all"
                 >
                   Open Your Store
@@ -227,7 +227,7 @@ export default function LandingPage() {
                      <Link href="/market" className="bg-white text-slate-900 px-10 py-5 rounded-2xl font-black text-lg hover:bg-orange-50 transition-all">
                         Shop the Market
                      </Link>
-                     <Link href="/sign-up?role=vendor" className="bg-slate-800 text-white border border-slate-700 px-10 py-5 rounded-2xl font-black text-lg hover:bg-slate-700 transition-all">
+                     <Link href="/register?role=vendor" className="bg-slate-800 text-white border border-slate-700 px-10 py-5 rounded-2xl font-black text-lg hover:bg-slate-700 transition-all">
                         Become a Vendor
                      </Link>
                   </div>
@@ -258,7 +258,7 @@ export default function LandingPage() {
                <ul className="space-y-4 text-sm font-bold text-slate-500">
                   <li><Link href="/market" className="hover:text-slate-900">Marketplace</Link></li>
                   <li><Link href="/vendors" className="hover:text-slate-900">Vendor Directory</Link></li>
-                  <li><Link href="/sign-up" className="hover:text-slate-900">Registration</Link></li>
+                  <li><Link href="/register" className="hover:text-slate-900">Registration</Link></li>
                </ul>
             </div>
             <div>
