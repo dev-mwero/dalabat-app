@@ -23,7 +23,7 @@ export default function TellerLayout({ children }: { children: React.ReactNode }
       {/* SideNavBar */}
       <aside className="h-screen w-64 fixed left-0 top-0 border-r border-outline-variant/10 bg-surface-container-lowest flex flex-col gap-2 p-4 z-50">
         <div className="mb-8 px-2">
-          <h1 className="text-lg font-extrabold text-primary">Dalabat</h1>
+          <h1 className="text-lg font-extrabold text-primary">Iibso</h1>
           <p className="text-xs text-on-surface-variant opacity-70 tracking-widest uppercase font-bold">Teller Terminal</p>
         </div>
         <nav className="flex flex-col gap-1">

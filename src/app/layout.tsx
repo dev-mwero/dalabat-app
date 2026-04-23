@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Daalabat",
-  description: "Daalabat marketplace on Next.js 16",
+  title: "Iibso — The Artisanal Marketplace",
+  description: "Iibso connects discerning buyers with master artisanal producers across Kenya.",
 };
 
 export default function RootLayout({

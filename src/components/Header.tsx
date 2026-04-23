@@ -30,7 +30,7 @@ export const Header = ({
           <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
             <Zap className="text-white w-5 h-5 fill-white" />
           </div>
-          <span className="text-2xl font-extrabold text-primary tracking-tighter">Dalabat</span>
+          <span className="text-2xl font-extrabold text-primary tracking-tighter">Iibso</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 ml-4">

@@ -75,7 +75,7 @@ export default function MarketPage() {
       <header className="bg-[#F8F9FF]/90 backdrop-blur-lg dark:bg-[#0B1C30]/90 sticky top-0 z-50 border-b border-outline-variant/10">
         <div className="flex justify-between items-center w-full px-6 py-4 max-w-screen-2xl mx-auto">
           <Link href="/" className="text-2xl font-extrabold tracking-tighter text-[#9D4300] dark:text-[#F97316]">
-            Dalabat
+            Iibso
           </Link>
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
