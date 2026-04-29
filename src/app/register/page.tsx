@@ -1,10 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ShoppingBag, Store, Zap, ArrowRight, CheckCircle } from "lucide-react";
+import { ArrowRight, CheckCircle, ShoppingBag, Store, Zap } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 type Role = "customer" | "vendor";
 
@@ -13,7 +13,8 @@ const roles = [
     id: "customer" as Role,
     title: "I'm a Buyer",
     subtitle: "Shop the Market",
-    description: "Discover and order artisanal provisions from the best local producers, delivered to your door.",
+    description:
+      "Discover and order artisanal provisions from the best local producers, delivered to your door.",
     icon: ShoppingBag,
     color: "from-orange-400 to-rose-500",
     bg: "bg-orange-50",
@@ -30,7 +31,8 @@ const roles = [
     id: "vendor" as Role,
     title: "I'm a Vendor",
     subtitle: "Open Your Store",
-    description: "Launch your artisanal storefront, manage inventory, and reach thousands of discerning buyers.",
+    description:
+      "Launch your artisanal storefront, manage inventory, and reach thousands of discerning buyers.",
     icon: Store,
     color: "from-blue-500 to-violet-600",
     bg: "bg-blue-50",
@@ -111,17 +113,28 @@ export default function RegisterPage() {
                 )}
 
                 {/* Icon */}
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${role.color} flex items-center justify-center mb-6 shadow-lg`}>
+                <div
+                  className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${role.color} flex items-center justify-center mb-6 shadow-lg`}
+                >
                   <role.icon className="w-8 h-8 text-white" />
                 </div>
 
-                <h2 className="text-2xl font-black text-slate-900 mb-1">{role.title}</h2>
-                <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">{role.subtitle}</p>
-                <p className="text-slate-500 font-medium mb-6 leading-relaxed">{role.description}</p>
+                <h2 className="text-2xl font-black text-slate-900 mb-1">
+                  {role.title}
+                </h2>
+                <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">
+                  {role.subtitle}
+                </p>
+                <p className="text-slate-500 font-medium mb-6 leading-relaxed">
+                  {role.description}
+                </p>
 
                 <ul className="space-y-2">
                   {role.perks.map((perk) => (
-                    <li key={perk} className="flex items-center gap-2 text-sm text-slate-600 font-medium">
+                    <li
+                      key={perk}
+                      className="flex items-center gap-2 text-sm text-slate-600 font-medium"
+                    >
                       <div className="w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                       </div>
@@ -150,7 +163,10 @@ export default function RegisterPage() {
           </button>
           <p className="text-sm text-slate-400 font-medium">
             Already have an account?{" "}
-            <Link href="/sign-in" className="text-slate-900 font-bold hover:underline">
+            <Link
+              href="/sign-in"
+              className="text-slate-900 font-bold hover:underline"
+            >
               Sign in
             </Link>
           </p>
@@ -158,7 +174,8 @@ export default function RegisterPage() {
 
         {/* Invite Note */}
         <p className="mt-8 text-center text-xs text-slate-300 font-medium max-w-sm">
-          Are you a store teller or admin? Access is by invitation only. Check your email for an invite link.
+          Are you a store teller or admin? Access is by invitation only. Check
+          your email for an invite link.
         </p>
       </div>
     </div>

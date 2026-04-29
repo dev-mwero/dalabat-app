@@ -1,21 +1,25 @@
 "use client";
 
+import { UserButton } from "@clerk/nextjs";
+import {
+  BarChart3,
+  Bell,
+  Globe,
+  LayoutDashboard,
+  Search,
+  Settings,
+  ShieldCheck,
+  Store,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  Store, 
-  Users, 
-  Settings, 
-  Search, 
-  Bell,
-  BarChart3,
-  ShieldCheck,
-  Globe
-} from "lucide-react";
-import { UserButton } from "@clerk/nextjs";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
 
   const links = [
@@ -36,20 +40,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
           <div>
             <h1 className="text-xl font-black tracking-tight">IIBSO</h1>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Super Admin</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              Super Admin
+            </p>
           </div>
         </div>
-        
+
         <nav className="flex flex-col gap-2">
           {links.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <Link 
-                key={item.href} 
+              <Link
+                key={item.href}
                 href={item.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive ? "bg-slate-900 text-white shadow-xl shadow-slate-200" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"}`}
               >
-                <item.icon className={`w-5 h-5 ${isActive ? "text-white" : "text-slate-400"}`} />
+                <item.icon
+                  className={`w-5 h-5 ${isActive ? "text-white" : "text-slate-400"}`}
+                />
                 <span className="font-bold text-sm">{item.label}</span>
               </Link>
             );
@@ -57,15 +65,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
 
         <div className="mt-auto pt-6 border-t border-slate-100">
-           <div className="bg-slate-50 rounded-2xl p-4 flex items-center justify-between">
-              <UserButton afterSignOutUrl="/" />
-              <div className="text-right">
-                 <p className="font-bold text-xs">Admin Panel</p>
-                 <Link href="/" className="text-[10px] text-slate-400 hover:text-slate-900 flex items-center gap-1 justify-end">
-                    <Globe className="w-3 h-3" /> Live Site
-                 </Link>
-              </div>
-           </div>
+          <div className="bg-slate-50 rounded-2xl p-4 flex items-center justify-between">
+            <UserButton afterSignOutUrl="/" />
+            <div className="text-right">
+              <p className="font-bold text-xs">Admin Panel</p>
+              <Link
+                href="/"
+                className="text-[10px] text-slate-400 hover:text-slate-900 flex items-center gap-1 justify-end"
+              >
+                <Globe className="w-3 h-3" /> Live Site
+              </Link>
+            </div>
+          </div>
         </div>
       </aside>
 
@@ -73,15 +84,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <main className="pl-72 min-h-screen">
         <header className="bg-white/80 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center w-full px-10 py-5 border-b border-slate-200">
           <div className="flex items-center gap-4">
-             <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">System Overlook</h2>
+            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">
+              System Overlook
+            </h2>
           </div>
           <div className="flex items-center gap-6">
             <div className="relative flex items-center bg-slate-100 rounded-full px-5 py-2.5 w-80 focus-within:ring-2 ring-slate-200 transition-all">
               <Search className="w-4 h-4 text-slate-400 mr-3" />
-              <input 
-                className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-slate-400 font-medium focus:outline-none" 
-                placeholder="Search vendors, users, orders..." 
-                type="text" 
+              <input
+                className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-slate-400 font-medium focus:outline-none"
+                placeholder="Search vendors, users, orders..."
+                type="text"
               />
             </div>
             <button className="p-2.5 text-slate-400 hover:bg-slate-50 transition-colors rounded-xl relative">
@@ -91,9 +104,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
 
-        <div className="p-10">
-          {children}
-        </div>
+        <div className="p-10">{children}</div>
       </main>
     </div>
   );

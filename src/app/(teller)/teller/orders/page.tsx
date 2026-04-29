@@ -1,15 +1,9 @@
 "use client";
 
-import {
-  ClipboardList,
-  Phone,
-  Truck,
-  MapPin,
-  RefreshCw
-} from "lucide-react";
+import { motion } from "framer-motion";
+import { ClipboardList, MapPin, Phone, RefreshCw, Truck } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
 
 type OrderItem = {
   productId: string;
@@ -105,7 +99,9 @@ export default function TellerOrdersPage() {
     async function loadOrders() {
       try {
         setLoading(true);
-        const response = await fetch(`/api/orders?vendorId=${vendorId}&limit=50&sort=newest`);
+        const response = await fetch(
+          `/api/orders?vendorId=${vendorId}&limit=50&sort=newest`,
+        );
         if (!response.ok) throw new Error();
         const result = await response.json();
         setOrders(result.data ?? []);
@@ -130,7 +126,11 @@ export default function TellerOrdersPage() {
 
       if (!response.ok) throw new Error();
 
-      setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: nextStatus as any } : o));
+      setOrders((prev) =>
+        prev.map((o) =>
+          o._id === orderId ? { ...o, status: nextStatus as any } : o,
+        ),
+      );
       toast.success("Order updated");
     } catch {
       toast.error("Failed to update status");
@@ -140,17 +140,23 @@ export default function TellerOrdersPage() {
   }
 
   if (loading && orders.length === 0) {
-    return <div className="p-8 text-on-surface-variant font-medium flex items-center gap-2">
-      <RefreshCw className="w-5 h-5 animate-spin" />
-      Loading live orders...
-    </div>;
+    return (
+      <div className="p-8 text-on-surface-variant font-medium flex items-center gap-2">
+        <RefreshCw className="w-5 h-5 animate-spin" />
+        Loading live orders...
+      </div>
+    );
   }
 
   return (
     <div className="p-8 space-y-8">
       <header>
-        <h1 className="text-3xl font-extrabold text-on-surface tracking-tight">Active Orders</h1>
-        <p className="text-on-surface-variant">Update order status as you prepare and ship them.</p>
+        <h1 className="text-3xl font-extrabold text-on-surface tracking-tight">
+          Active Orders
+        </h1>
+        <p className="text-on-surface-variant">
+          Update order status as you prepare and ship them.
+        </p>
       </header>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -159,7 +165,7 @@ export default function TellerOrdersPage() {
           const isUpdating = updatingOrderId === order._id;
 
           return (
-            <motion.div 
+            <motion.div
               layout
               key={order._id}
               className="bg-surface-container-lowest border border-outline-variant/10 rounded-2xl p-6 shadow-sm"
@@ -169,14 +175,21 @@ export default function TellerOrdersPage() {
                   <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">
                     Order #{order._id.slice(-6).toUpperCase()}
                   </p>
-                  <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${statusColors[order.status]}`}>
+                  <span
+                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${statusColors[order.status]}`}
+                  >
                     {statusLabels[order.status]}
                   </span>
                 </div>
                 <div className="text-right">
-                  <p className="text-xl font-extrabold text-on-surface">{currency.format(order.total)}</p>
+                  <p className="text-xl font-extrabold text-on-surface">
+                    {currency.format(order.total)}
+                  </p>
                   <p className="text-[10px] text-on-surface-variant font-bold uppercase">
-                    {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(order.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </p>
                 </div>
               </div>
@@ -185,7 +198,9 @@ export default function TellerOrdersPage() {
                 {order.items.map((item, i) => (
                   <div key={i} className="flex justify-between text-sm">
                     <span className="text-on-surface-variant">
-                      <span className="font-bold text-on-surface mr-2">{item.quantity}x</span>
+                      <span className="font-bold text-on-surface mr-2">
+                        {item.quantity}x
+                      </span>
                       {item.name}
                     </span>
                   </div>
@@ -202,25 +217,29 @@ export default function TellerOrdersPage() {
                     {isUpdating ? "..." : `Mark as ${statusLabels[nextStatus]}`}
                   </button>
                 )}
-                {order.status !== "cancelled" && order.status !== "delivered" && (
-                   <button
-                    disabled={isUpdating}
-                    onClick={() => updateStatus(order._id, "cancelled")}
-                    className="px-4 bg-error-container text-error font-bold py-3 rounded-xl hover:bg-error/10 transition-all text-sm"
-                  >
-                    Cancel
-                  </button>
-                )}
+                {order.status !== "cancelled" &&
+                  order.status !== "delivered" && (
+                    <button
+                      disabled={isUpdating}
+                      onClick={() => updateStatus(order._id, "cancelled")}
+                      className="px-4 bg-error-container text-error font-bold py-3 rounded-xl hover:bg-error/10 transition-all text-sm"
+                    >
+                      Cancel
+                    </button>
+                  )}
               </div>
             </motion.div>
-          ))}
+          );
+        })}
 
-          {orders.length === 0 && (
-            <div className="col-span-full py-20 text-center bg-surface-container-low rounded-3xl border-2 border-dashed border-outline-variant/30">
-              <ClipboardList className="w-12 h-12 text-on-surface-variant opacity-20 mx-auto mb-4" />
-              <p className="text-on-surface-variant font-bold">No active orders at the moment.</p>
-            </div>
-          )}
+        {orders.length === 0 && (
+          <div className="col-span-full py-20 text-center bg-surface-container-low rounded-3xl border-2 border-dashed border-outline-variant/30">
+            <ClipboardList className="w-12 h-12 text-on-surface-variant opacity-20 mx-auto mb-4" />
+            <p className="text-on-surface-variant font-bold">
+              No active orders at the moment.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

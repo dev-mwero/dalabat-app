@@ -1,4 +1,10 @@
-import { Schema, model, models, type Model, type InferSchemaType } from "mongoose";
+import {
+  type InferSchemaType,
+  type Model,
+  model,
+  models,
+  Schema,
+} from "mongoose";
 
 const inviteSchema = new Schema(
   {
@@ -37,12 +43,12 @@ const inviteSchema = new Schema(
       type: Date,
       required: true,
       // Automatically delete documents after they expire
-      index: { expires: 0 }, 
+      index: { expires: 0 },
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // Prevent duplicate pending invites for the same email + vendor

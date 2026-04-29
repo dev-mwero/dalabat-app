@@ -20,9 +20,7 @@ const FloatingCartBar = () => {
     >
       <div className="max-w-lg mx-auto pointer-events-auto">
         <Link href="/cart">
-          <Button
-            className="w-full h-14 rounded-2xl text-base font-bold shadow-lg flex items-center justify-between px-6 interactive-hover"
-          >
+          <Button className="w-full h-14 rounded-2xl text-base font-bold shadow-lg flex items-center justify-between px-6 interactive-hover">
             <span className="flex items-center gap-2">
               <span className="bg-primary-foreground/20 px-2 py-0.5 rounded-md text-sm">
                 {totalItems}

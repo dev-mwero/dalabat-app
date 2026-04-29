@@ -1,10 +1,19 @@
 "use client";
 
-import { Bell, MapPin, Plus, Save, Store, X, Edit, Lightbulb } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Bell,
+  Edit,
+  Lightbulb,
+  MapPin,
+  Plus,
+  Save,
+  Store,
+  X,
+} from "lucide-react";
 import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { motion, AnimatePresence } from "framer-motion";
 
 type Vendor = {
   _id: string;
@@ -81,7 +90,8 @@ export default function VendorSettingsPage() {
 
   const [profile, setProfile] = useState<ProfileState>(defaultProfile);
   const [zones, setZones] = useState<Zone[]>([]);
-  const [notifications, setNotifications] = useState<NotificationsState>(defaultNotifications);
+  const [notifications, setNotifications] =
+    useState<NotificationsState>(defaultNotifications);
   const [newZoneName, setNewZoneName] = useState("");
   const [newZoneFee, setNewZoneFee] = useState("");
 
@@ -305,8 +315,12 @@ export default function VendorSettingsPage() {
     <div className="p-8 max-w-7xl mx-auto pb-24">
       <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Store Management</h1>
-          <p className="text-on-surface-variant text-lg">Configure your digital storefront and preference profiles.</p>
+          <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">
+            Store Management
+          </h1>
+          <p className="text-on-surface-variant text-lg">
+            Configure your digital storefront and preference profiles.
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <select
@@ -332,8 +346,8 @@ export default function VendorSettingsPage() {
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`pb-4 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap ${
-                isActive 
-                  ? "text-primary border-b-2 border-primary-container" 
+                isActive
+                  ? "text-primary border-b-2 border-primary-container"
                   : "text-on-surface-variant hover:text-primary"
               }`}
             >
@@ -349,7 +363,7 @@ export default function VendorSettingsPage() {
         <div className="xl:col-span-8 space-y-8">
           <AnimatePresence mode="wait">
             {activeTab === "profile" && (
-              <motion.div 
+              <motion.div
                 key="profile"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -358,19 +372,30 @@ export default function VendorSettingsPage() {
               >
                 {/* Profile Section Card */}
                 <section className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
-                  <h3 className="text-xl font-bold mb-6 text-on-surface">Store Identity</h3>
+                  <h3 className="text-xl font-bold mb-6 text-on-surface">
+                    Store Identity
+                  </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="block text-sm font-semibold text-on-surface-variant px-1">Store Name</label>
-                      <input 
+                      <label className="block text-sm font-semibold text-on-surface-variant px-1">
+                        Store Name
+                      </label>
+                      <input
                         value={profile.storeName}
-                        onChange={(e) => setProfile(p => ({ ...p, storeName: e.target.value }))}
-                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium" 
-                        type="text" 
+                        onChange={(e) =>
+                          setProfile((p) => ({
+                            ...p,
+                            storeName: e.target.value,
+                          }))
+                        }
+                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium"
+                        type="text"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="block text-sm font-semibold text-on-surface-variant px-1">Primary Category</label>
+                      <label className="block text-sm font-semibold text-on-surface-variant px-1">
+                        Primary Category
+                      </label>
                       <select className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium">
                         <option>Bakery & Pastries</option>
                         <option>Organic Produce</option>
@@ -379,11 +404,18 @@ export default function VendorSettingsPage() {
                       </select>
                     </div>
                     <div className="md:col-span-2 space-y-2">
-                      <label className="block text-sm font-semibold text-on-surface-variant px-1">Description</label>
-                      <textarea 
+                      <label className="block text-sm font-semibold text-on-surface-variant px-1">
+                        Description
+                      </label>
+                      <textarea
                         value={profile.description}
-                        onChange={(e) => setProfile(p => ({ ...p, description: e.target.value }))}
-                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium resize-none" 
+                        onChange={(e) =>
+                          setProfile((p) => ({
+                            ...p,
+                            description: e.target.value,
+                          }))
+                        }
+                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium resize-none"
                         rows={4}
                       />
                     </div>
@@ -392,33 +424,47 @@ export default function VendorSettingsPage() {
 
                 {/* Contact & Location */}
                 <section className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
-                  <h3 className="text-xl font-bold mb-6 text-on-surface">Contact & Location</h3>
+                  <h3 className="text-xl font-bold mb-6 text-on-surface">
+                    Contact & Location
+                  </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="block text-sm font-semibold text-on-surface-variant px-1">Email Address</label>
-                      <input 
+                      <label className="block text-sm font-semibold text-on-surface-variant px-1">
+                        Email Address
+                      </label>
+                      <input
                         value={profile.email}
-                        onChange={(e) => setProfile(p => ({ ...p, email: e.target.value }))}
-                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium" 
-                        type="email" 
+                        onChange={(e) =>
+                          setProfile((p) => ({ ...p, email: e.target.value }))
+                        }
+                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium"
+                        type="email"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="block text-sm font-semibold text-on-surface-variant px-1">Phone Number</label>
-                      <input 
+                      <label className="block text-sm font-semibold text-on-surface-variant px-1">
+                        Phone Number
+                      </label>
+                      <input
                         value={profile.phone}
-                        onChange={(e) => setProfile(p => ({ ...p, phone: e.target.value }))}
-                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium" 
-                        type="tel" 
+                        onChange={(e) =>
+                          setProfile((p) => ({ ...p, phone: e.target.value }))
+                        }
+                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium"
+                        type="tel"
                       />
                     </div>
                     <div className="md:col-span-2 space-y-2">
-                      <label className="block text-sm font-semibold text-on-surface-variant px-1">Business Address</label>
-                      <input 
+                      <label className="block text-sm font-semibold text-on-surface-variant px-1">
+                        Business Address
+                      </label>
+                      <input
                         value={profile.address}
-                        onChange={(e) => setProfile(p => ({ ...p, address: e.target.value }))}
-                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium" 
-                        type="text" 
+                        onChange={(e) =>
+                          setProfile((p) => ({ ...p, address: e.target.value }))
+                        }
+                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium"
+                        type="text"
                       />
                     </div>
                   </div>
@@ -426,29 +472,49 @@ export default function VendorSettingsPage() {
 
                 {/* Operating Hours */}
                 <section className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
-                  <h3 className="text-xl font-bold mb-6 text-on-surface">Operating Hours</h3>
+                  <h3 className="text-xl font-bold mb-6 text-on-surface">
+                    Operating Hours
+                  </h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="bg-surface-container-low p-4 rounded-xl text-center">
-                      <span className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Open</span>
-                      <input 
-                        type="time" 
+                      <span className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
+                        Open
+                      </span>
+                      <input
+                        type="time"
                         value={profile.openTime}
-                        onChange={(e) => setProfile(p => ({ ...p, openTime: e.target.value }))}
-                        className="bg-transparent border-none text-sm font-semibold text-on-surface text-center p-0 focus:ring-0" 
+                        onChange={(e) =>
+                          setProfile((p) => ({
+                            ...p,
+                            openTime: e.target.value,
+                          }))
+                        }
+                        className="bg-transparent border-none text-sm font-semibold text-on-surface text-center p-0 focus:ring-0"
                       />
                     </div>
                     <div className="bg-surface-container-low p-4 rounded-xl text-center">
-                      <span className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Close</span>
-                      <input 
-                        type="time" 
+                      <span className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
+                        Close
+                      </span>
+                      <input
+                        type="time"
                         value={profile.closeTime}
-                        onChange={(e) => setProfile(p => ({ ...p, closeTime: e.target.value }))}
-                        className="bg-transparent border-none text-sm font-semibold text-on-surface text-center p-0 focus:ring-0" 
+                        onChange={(e) =>
+                          setProfile((p) => ({
+                            ...p,
+                            closeTime: e.target.value,
+                          }))
+                        }
+                        className="bg-transparent border-none text-sm font-semibold text-on-surface text-center p-0 focus:ring-0"
                       />
                     </div>
                     <div className="bg-surface-container-low p-4 rounded-xl text-center border-2 border-primary-container/20 opacity-50">
-                      <span className="block text-xs font-bold text-primary uppercase tracking-wider mb-2">Sunday</span>
-                      <span className="text-sm font-semibold text-on-surface">Closed</span>
+                      <span className="block text-xs font-bold text-primary uppercase tracking-wider mb-2">
+                        Sunday
+                      </span>
+                      <span className="text-sm font-semibold text-on-surface">
+                        Closed
+                      </span>
                     </div>
                     <div className="flex items-center justify-center border-2 border-dashed border-outline-variant rounded-xl cursor-pointer hover:bg-surface-container-low transition-colors text-primary-container flex-col gap-1">
                       <Edit className="w-5 h-5" />
@@ -458,7 +524,7 @@ export default function VendorSettingsPage() {
                 </section>
 
                 <div className="flex justify-end pt-4">
-                  <button 
+                  <button
                     onClick={() => saveProfile()}
                     disabled={savingProfile}
                     className="bg-primary-container text-white px-10 py-4 rounded-full font-bold shadow-lg shadow-primary-container/20 hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
@@ -471,7 +537,7 @@ export default function VendorSettingsPage() {
             )}
 
             {activeTab === "delivery" && (
-              <motion.div 
+              <motion.div
                 key="delivery"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -479,21 +545,40 @@ export default function VendorSettingsPage() {
                 className="space-y-8"
               >
                 <section className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
-                  <h3 className="text-xl font-bold mb-6 text-on-surface">Delivery Zones</h3>
+                  <h3 className="text-xl font-bold mb-6 text-on-surface">
+                    Delivery Zones
+                  </h3>
                   <div className="space-y-4">
                     {zones.map((zone) => (
-                      <div key={zone.id} className={`flex items-center justify-between p-4 rounded-xl border ${zone.active ? 'bg-surface-container-low border-transparent' : 'bg-transparent border-outline-variant/30 opacity-60'}`}>
+                      <div
+                        key={zone.id}
+                        className={`flex items-center justify-between p-4 rounded-xl border ${zone.active ? "bg-surface-container-low border-transparent" : "bg-transparent border-outline-variant/30 opacity-60"}`}
+                      >
                         <div className="flex items-center gap-4">
                           <label className="relative flex items-center cursor-pointer">
-                            <input type="checkbox" checked={zone.active} onChange={() => toggleZone(zone.id)} className="sr-only peer" />
+                            <input
+                              type="checkbox"
+                              checked={zone.active}
+                              onChange={() => toggleZone(zone.id)}
+                              className="sr-only peer"
+                            />
                             <div className="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:bg-primary-container transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
                           </label>
                           <div>
-                            <span className={`text-sm font-bold ${zone.active ? "text-on-surface" : "text-on-surface-variant line-through"}`}>{zone.name}</span>
-                            <p className="text-xs text-on-surface-variant font-medium mt-0.5">KSh {zone.fee} delivery fee</p>
+                            <span
+                              className={`text-sm font-bold ${zone.active ? "text-on-surface" : "text-on-surface-variant line-through"}`}
+                            >
+                              {zone.name}
+                            </span>
+                            <p className="text-xs text-on-surface-variant font-medium mt-0.5">
+                              KSh {zone.fee} delivery fee
+                            </p>
                           </div>
                         </div>
-                        <button onClick={() => removeZone(zone.id)} className="p-2 text-on-surface-variant hover:text-error hover:bg-error-container rounded-full transition-colors">
+                        <button
+                          onClick={() => removeZone(zone.id)}
+                          className="p-2 text-on-surface-variant hover:text-error hover:bg-error-container rounded-full transition-colors"
+                        >
                           <X className="w-4 h-4" />
                         </button>
                       </div>
@@ -514,7 +599,10 @@ export default function VendorSettingsPage() {
                       onChange={(e) => setNewZoneFee(e.target.value)}
                       className="w-32 bg-surface-container-low border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary-container"
                     />
-                    <button onClick={addZone} className="bg-secondary-container text-on-secondary-container px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+                    <button
+                      onClick={addZone}
+                      className="bg-secondary-container text-on-secondary-container px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                    >
                       <Plus className="w-4 h-4" />
                       Add
                     </button>
@@ -522,7 +610,7 @@ export default function VendorSettingsPage() {
                 </section>
 
                 <div className="flex justify-end pt-4">
-                  <button 
+                  <button
                     onClick={() => saveDelivery()}
                     disabled={savingDelivery}
                     className="bg-primary-container text-white px-10 py-4 rounded-full font-bold shadow-lg shadow-primary-container/20 hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
@@ -535,7 +623,7 @@ export default function VendorSettingsPage() {
             )}
 
             {activeTab === "notifications" && (
-              <motion.div 
+              <motion.div
                 key="notifications"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -543,24 +631,54 @@ export default function VendorSettingsPage() {
                 className="space-y-8"
               >
                 <section className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
-                  <h3 className="text-xl font-bold mb-6 text-on-surface">Order Alerts</h3>
+                  <h3 className="text-xl font-bold mb-6 text-on-surface">
+                    Order Alerts
+                  </h3>
                   <div className="space-y-6">
                     {[
-                      { key: "newOrder", label: "New Orders", desc: "Get notified when a new order is placed" },
-                      { key: "orderStatusChange", label: "Status Changes", desc: "Alerts when order status is updated" },
-                      { key: "lowStock", label: "Low Stock Warnings", desc: "Notify when product stock runs low" },
+                      {
+                        key: "newOrder",
+                        label: "New Orders",
+                        desc: "Get notified when a new order is placed",
+                      },
+                      {
+                        key: "orderStatusChange",
+                        label: "Status Changes",
+                        desc: "Alerts when order status is updated",
+                      },
+                      {
+                        key: "lowStock",
+                        label: "Low Stock Warnings",
+                        desc: "Notify when product stock runs low",
+                      },
                     ].map((item) => (
-                      <div key={item.key} className="flex items-center justify-between">
+                      <div
+                        key={item.key}
+                        className="flex items-center justify-between"
+                      >
                         <div>
-                          <p className="text-sm font-bold text-on-surface">{item.label}</p>
-                          <p className="text-xs text-on-surface-variant">{item.desc}</p>
+                          <p className="text-sm font-bold text-on-surface">
+                            {item.label}
+                          </p>
+                          <p className="text-xs text-on-surface-variant">
+                            {item.desc}
+                          </p>
                         </div>
                         <label className="relative flex items-center cursor-pointer">
-                          <input 
-                            type="checkbox" 
-                            checked={notifications[item.key as keyof NotificationsState]} 
-                            onChange={(e) => setNotifications(p => ({ ...p, [item.key]: e.target.checked }))} 
-                            className="sr-only peer" 
+                          <input
+                            type="checkbox"
+                            checked={
+                              notifications[
+                                item.key as keyof NotificationsState
+                              ]
+                            }
+                            onChange={(e) =>
+                              setNotifications((p) => ({
+                                ...p,
+                                [item.key]: e.target.checked,
+                              }))
+                            }
+                            className="sr-only peer"
                           />
                           <div className="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:bg-primary-container transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
                         </label>
@@ -570,25 +688,59 @@ export default function VendorSettingsPage() {
                 </section>
 
                 <section className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
-                  <h3 className="text-xl font-bold mb-6 text-on-surface">Reports & Channels</h3>
+                  <h3 className="text-xl font-bold mb-6 text-on-surface">
+                    Reports & Channels
+                  </h3>
                   <div className="space-y-6">
                     {[
-                      { key: "dailySummary", label: "Daily Summary", desc: "Receive a daily sales recap" },
-                      { key: "weeklySummary", label: "Weekly Summary", desc: "Receive a weekly performance report" },
-                      { key: "smsAlerts", label: "SMS Alerts", desc: "Receive critical notifications via SMS" },
-                      { key: "emailAlerts", label: "Email Alerts", desc: "Receive detailed notifications via email" },
+                      {
+                        key: "dailySummary",
+                        label: "Daily Summary",
+                        desc: "Receive a daily sales recap",
+                      },
+                      {
+                        key: "weeklySummary",
+                        label: "Weekly Summary",
+                        desc: "Receive a weekly performance report",
+                      },
+                      {
+                        key: "smsAlerts",
+                        label: "SMS Alerts",
+                        desc: "Receive critical notifications via SMS",
+                      },
+                      {
+                        key: "emailAlerts",
+                        label: "Email Alerts",
+                        desc: "Receive detailed notifications via email",
+                      },
                     ].map((item) => (
-                      <div key={item.key} className="flex items-center justify-between">
+                      <div
+                        key={item.key}
+                        className="flex items-center justify-between"
+                      >
                         <div>
-                          <p className="text-sm font-bold text-on-surface">{item.label}</p>
-                          <p className="text-xs text-on-surface-variant">{item.desc}</p>
+                          <p className="text-sm font-bold text-on-surface">
+                            {item.label}
+                          </p>
+                          <p className="text-xs text-on-surface-variant">
+                            {item.desc}
+                          </p>
                         </div>
                         <label className="relative flex items-center cursor-pointer">
-                          <input 
-                            type="checkbox" 
-                            checked={notifications[item.key as keyof NotificationsState]} 
-                            onChange={(e) => setNotifications(p => ({ ...p, [item.key]: e.target.checked }))} 
-                            className="sr-only peer" 
+                          <input
+                            type="checkbox"
+                            checked={
+                              notifications[
+                                item.key as keyof NotificationsState
+                              ]
+                            }
+                            onChange={(e) =>
+                              setNotifications((p) => ({
+                                ...p,
+                                [item.key]: e.target.checked,
+                              }))
+                            }
+                            className="sr-only peer"
                           />
                           <div className="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:bg-primary-container transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
                         </label>
@@ -598,7 +750,7 @@ export default function VendorSettingsPage() {
                 </section>
 
                 <div className="flex justify-end pt-4">
-                  <button 
+                  <button
                     onClick={() => saveNotifications()}
                     disabled={savingNotifications}
                     className="bg-primary-container text-white px-10 py-4 rounded-full font-bold shadow-lg shadow-primary-container/20 hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
@@ -616,12 +768,12 @@ export default function VendorSettingsPage() {
         <div className="xl:col-span-4 space-y-6 hidden lg:block">
           <div className="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-outline-variant/10">
             <div className="h-48 relative bg-surface-container-low">
-              <Image 
-                src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1000&auto=format&fit=crop" 
-                alt="Storefront cover" 
+              <Image
+                src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1000&auto=format&fit=crop"
+                alt="Storefront cover"
                 fill
                 sizes="400px"
-                className="object-cover opacity-80" 
+                className="object-cover opacity-80"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
               <div className="absolute bottom-4 left-6 pr-6">
@@ -640,11 +792,15 @@ export default function VendorSettingsPage() {
                 </div>
                 <div>
                   <h4 className="font-bold text-on-surface">Premium Vendor</h4>
-                  <p className="text-xs text-on-surface-variant">Active since 2024</p>
+                  <p className="text-xs text-on-surface-variant">
+                    Active since 2024
+                  </p>
                 </div>
               </div>
               <p className="text-sm text-on-surface-variant leading-relaxed">
-                This preview shows how your store appears to customers in the marketplace discovery feed. Make sure your profile details are accurate and up-to-date.
+                This preview shows how your store appears to customers in the
+                marketplace discovery feed. Make sure your profile details are
+                accurate and up-to-date.
               </p>
             </div>
           </div>
@@ -658,7 +814,8 @@ export default function VendorSettingsPage() {
               <div>
                 <h4 className="font-bold text-on-surface mb-1">Pro Tip</h4>
                 <p className="text-sm text-on-surface-variant leading-relaxed">
-                  Keeping your operating hours updated reduces missed orders and increases customer satisfaction by up to 40%.
+                  Keeping your operating hours updated reduces missed orders and
+                  increases customer satisfaction by up to 40%.
                 </p>
               </div>
             </div>

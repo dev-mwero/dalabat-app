@@ -1,10 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Heart, Plus, Minus } from "lucide-react";
+import { Heart, Minus, Plus } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
-import Image from "next/image";
 import type { Product } from "@/hooks/useProducts";
 import { formatPrice } from "@/lib/utils";
 import { ProductDetailModal } from "./ProductDetailModal";
@@ -31,7 +31,12 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
   };
 
   // Generate a predictable background color based on product ID or name
-  const bgColors = ["bg-[#E5EEFF]", "bg-[#FFDBC9]", "bg-[#DAE2FD]", "bg-[#F8F9FF]"];
+  const bgColors = [
+    "bg-[#E5EEFF]",
+    "bg-[#FFDBC9]",
+    "bg-[#DAE2FD]",
+    "bg-[#F8F9FF]",
+  ];
   const bgColor = bgColors[(product.name.length || 0) % bgColors.length];
 
   return (
@@ -43,16 +48,29 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
         className="bg-surface-container-lowest rounded-2xl p-4 flex flex-col gap-4 group transition-all hover:scale-[1.02] shadow-sm border border-outline-variant/10 cursor-pointer h-full"
         onClick={() => setModalOpen(true)}
       >
-        <div className={`relative w-full aspect-[4/3] overflow-hidden rounded-xl ${bgColor} flex items-center justify-center p-6`}>
+        <div
+          className={`relative w-full aspect-[4/3] overflow-hidden rounded-xl ${bgColor} flex items-center justify-center p-6`}
+        >
           {product.image ? (
-            <Image src={product.image} alt={product.name} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover transition-transform group-hover:scale-110 duration-500" />
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover transition-transform group-hover:scale-110 duration-500"
+            />
           ) : (
             <div className="text-6xl transition-transform group-hover:scale-110 duration-500 drop-shadow-md">
               {categoryEmoji[product.category.toLowerCase()] || "📦"}
             </div>
           )}
-          
-          <div className="absolute top-3 right-3 bg-white/80 backdrop-blur rounded-full p-2 shadow-sm cursor-pointer hover:text-error transition-colors z-10" onClick={(e) => { e.stopPropagation(); /* Add to wishlist logic */ }}>
+
+          <div
+            className="absolute top-3 right-3 bg-white/80 backdrop-blur rounded-full p-2 shadow-sm cursor-pointer hover:text-error transition-colors z-10"
+            onClick={(e) => {
+              e.stopPropagation(); /* Add to wishlist logic */
+            }}
+          >
             <Heart className="w-4 h-4 text-on-surface-variant" />
           </div>
 
@@ -67,12 +85,14 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
 
         <div className="flex flex-col flex-1 justify-between gap-4">
           <div>
-            <h3 className="text-lg font-bold text-on-surface leading-tight">{product.name}</h3>
+            <h3 className="text-lg font-bold text-on-surface leading-tight">
+              {product.name}
+            </h3>
             <p className="text-sm text-on-surface-variant line-clamp-2 mt-1.5 font-medium leading-relaxed">
               {product.description}
             </p>
           </div>
-          
+
           <div className="flex items-center justify-between pt-2 mt-auto">
             <span className="text-primary-container font-extrabold text-xl">
               {formatPrice(product.price)}
@@ -88,7 +108,11 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
                 <div className="flex items-center justify-between bg-primary-container text-white rounded-full p-1 shadow-lg shadow-primary-container/20 w-full">
                   <button
                     className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/20 active:scale-95 transition-all"
-                    onClick={() => quantity === 1 ? removeItem(product._id) : updateQuantity(product._id, quantity - 1)}
+                    onClick={() =>
+                      quantity === 1
+                        ? removeItem(product._id)
+                        : updateQuantity(product._id, quantity - 1)
+                    }
                   >
                     <Minus className="h-5 w-5" />
                   </button>

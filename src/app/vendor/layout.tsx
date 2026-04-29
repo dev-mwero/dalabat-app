@@ -1,20 +1,24 @@
 "use client";
 
+import {
+  ArrowLeft,
+  BarChart,
+  Bell,
+  LayoutDashboard,
+  Package,
+  Search,
+  Settings,
+  ShoppingBag,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  Package, 
-  ShoppingBag, 
-  BarChart, 
-  Settings, 
-  Search, 
-  Bell,
-  ArrowLeft,
-  Users
-} from "lucide-react";
 
-export default function VendorLayout({ children }: { children: React.ReactNode }) {
+export default function VendorLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
 
   const links = [
@@ -31,15 +35,19 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
       {/* SideNavBar */}
       <aside className="h-screen w-64 fixed left-0 top-0 border-r border-outline-variant/10 bg-surface-container-lowest flex flex-col gap-2 p-4 z-50">
         <div className="mb-8 px-2">
-          <h1 className="text-lg font-extrabold text-[#9D4300] dark:text-[#F97316]">Management</h1>
-          <p className="text-xs text-on-surface-variant opacity-70">Vendor Portal</p>
+          <h1 className="text-lg font-extrabold text-[#9D4300] dark:text-[#F97316]">
+            Management
+          </h1>
+          <p className="text-xs text-on-surface-variant opacity-70">
+            Vendor Portal
+          </p>
         </div>
         <nav className="flex flex-col gap-1">
           {links.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <Link 
-                key={item.href} 
+              <Link
+                key={item.href}
                 href={item.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-on-surface-variant hover:text-primary hover:bg-primary-container/10"}`}
               >
@@ -67,19 +75,24 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
         {/* TopNavBar */}
         <header className="bg-surface/80 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center w-full px-8 py-4 shadow-sm border-b border-outline-variant/10">
           <div className="flex items-center gap-4">
-            <span className="text-xl font-bold italic text-[#9D4300] dark:text-[#F97316]">The Digital Pantry</span>
+            <span className="text-xl font-bold italic text-[#9D4300] dark:text-[#F97316]">
+              The Digital Pantry
+            </span>
           </div>
           <div className="flex items-center gap-6">
             <div className="relative flex items-center bg-surface-container-low rounded-full px-4 py-2 w-64 focus-within:ring-2 ring-primary-container transition-all">
               <Search className="w-4 h-4 text-on-surface-variant mr-2" />
-              <input 
-                className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-on-surface-variant/50 focus:outline-none" 
-                placeholder="Search data..." 
-                type="text" 
+              <input
+                className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-on-surface-variant/50 focus:outline-none"
+                placeholder="Search data..."
+                type="text"
               />
             </div>
             <div className="flex items-center gap-4">
-              <Link href="/" className="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1">
+              <Link
+                href="/"
+                className="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1"
+              >
                 <ArrowLeft className="w-4 h-4" /> Market
               </Link>
               <button className="p-2 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-full relative">

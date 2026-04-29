@@ -28,7 +28,10 @@ export function AppProviders({ children }: AppProvidersProps) {
   );
 
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      
+    >
       <QueryClientProvider client={queryClient}>
         <CartProvider>
           {children}

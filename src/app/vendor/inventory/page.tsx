@@ -1,10 +1,20 @@
 "use client";
 
-import { Package, Pencil, Plus, Search, Trash2, Download, MoreVertical, Eye, ImagePlus } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  Download,
+  Eye,
+  ImagePlus,
+  MoreVertical,
+  Package,
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+} from "lucide-react";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
-import Image from "next/image";
 
 type Vendor = {
   _id: string;
@@ -389,17 +399,23 @@ export default function VendorInventoryPage() {
     );
   }
 
-  const lowStockItems = products.filter(p => p.stockQuantity < 10);
-  const totalValue = products.reduce((sum, p) => sum + (p.price * p.stockQuantity), 0);
+  const lowStockItems = products.filter((p) => p.stockQuantity < 10);
+  const totalValue = products.reduce(
+    (sum, p) => sum + p.price * p.stockQuantity,
+    0,
+  );
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8 bg-surface">
       {/* Editorial Header */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Curated Inventory</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">
+            Curated Inventory
+          </h1>
           <p className="text-on-surface-variant text-lg max-w-xl">
-            Manage your premium offerings and maintain the stock of your artisanal pantry staples.
+            Manage your premium offerings and maintain the stock of your
+            artisanal pantry staples.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
@@ -418,7 +434,10 @@ export default function VendorInventoryPage() {
             <Download className="w-5 h-5" />
             Export List
           </button>
-          <button onClick={openCreateDialog} className="bg-primary-container text-white px-6 py-3 rounded-full font-bold text-sm flex items-center gap-2 shadow-[0_8px_20px_rgba(249,115,22,0.3)] hover:scale-105 transition-transform shrink-0">
+          <button
+            onClick={openCreateDialog}
+            className="bg-primary-container text-white px-6 py-3 rounded-full font-bold text-sm flex items-center gap-2 shadow-[0_8px_20px_rgba(249,115,22,0.3)] hover:scale-105 transition-transform shrink-0"
+          >
             <Plus className="w-5 h-5" />
             New Product
           </button>
@@ -428,14 +447,14 @@ export default function VendorInventoryPage() {
       {/* Filter Chips Section */}
       <section className="mb-8 overflow-x-auto pb-2 scrollbar-hide">
         <div className="flex items-center gap-3">
-          <button 
+          <button
             onClick={() => setFilterCategory("all")}
             className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${filterCategory === "all" ? "bg-primary-container text-white shadow-lg shadow-primary-container/20" : "bg-surface-container-high text-on-surface hover:bg-surface-container-highest"}`}
           >
             All Items
           </button>
           {CATEGORY_OPTIONS.map((cat) => (
-            <button 
+            <button
               key={cat}
               onClick={() => setFilterCategory(cat)}
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${filterCategory === cat ? "bg-primary-container text-white shadow-lg shadow-primary-container/20" : "bg-surface-container-high text-on-surface hover:bg-surface-container-highest"}`}
@@ -449,19 +468,22 @@ export default function VendorInventoryPage() {
       {/* Inventory Grid: Bento Style */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {products.map((product) => (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            key={product._id} 
+            key={product._id}
             className="bg-surface-container-lowest rounded-xl overflow-hidden group hover:-translate-y-1 transition-all duration-300 border border-outline-variant/10 shadow-sm"
           >
             <div className="relative h-64 w-full overflow-hidden bg-surface-container-low">
-              <Image 
-                src={product.image || "https://images.unsplash.com/photo-1563959834617-5f0f7f4e07a2?q=80&w=1200&auto=format&fit=crop"} 
-                alt={product.name} 
+              <Image
+                src={
+                  product.image ||
+                  "https://images.unsplash.com/photo-1563959834617-5f0f7f4e07a2?q=80&w=1200&auto=format&fit=crop"
+                }
+                alt={product.name}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-cover transition-transform duration-500 group-hover:scale-110" 
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
               />
               {!product.inStock && (
                 <div className="absolute top-4 left-4 bg-error-container text-error px-3 py-1 rounded-full text-xs font-bold shadow-sm">
@@ -471,27 +493,50 @@ export default function VendorInventoryPage() {
             </div>
             <div className="p-6">
               <div className="flex justify-between items-start mb-2 gap-4">
-                <h3 className="text-xl font-bold text-on-surface line-clamp-1">{product.name}</h3>
-                <span className="text-primary-container font-extrabold text-lg shrink-0">{currency.format(product.price)}</span>
+                <h3 className="text-xl font-bold text-on-surface line-clamp-1">
+                  {product.name}
+                </h3>
+                <span className="text-primary-container font-extrabold text-lg shrink-0">
+                  {currency.format(product.price)}
+                </span>
               </div>
               <div className="flex items-center gap-2 mb-4">
                 {product.inStock ? (
-                  <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">In stock</span>
+                  <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
+                    In stock
+                  </span>
                 ) : (
-                  <span className="bg-error-container text-error px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Empty</span>
+                  <span className="bg-error-container text-error px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
+                    Empty
+                  </span>
                 )}
-                <span className="text-on-surface-variant text-xs font-medium">{product.stockQuantity} units available</span>
+                <span className="text-on-surface-variant text-xs font-medium">
+                  {product.stockQuantity} units available
+                </span>
               </div>
               <div className="flex items-center justify-between border-t border-surface-container pt-4">
-                <button onClick={() => openEditDialog(product)} className="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1">
+                <button
+                  onClick={() => openEditDialog(product)}
+                  className="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1"
+                >
                   <Pencil className="w-4 h-4" />
                   Edit
                 </button>
                 <div className="flex gap-2">
-                  <button onClick={() => toggleStock(product)} className="p-2 bg-surface-container-low rounded-full hover:bg-surface-container-high transition-colors" title="Toggle Stock">
-                    <Eye className={`w-5 h-5 ${product.inStock ? "text-primary" : "text-on-surface-variant"}`} />
+                  <button
+                    onClick={() => toggleStock(product)}
+                    className="p-2 bg-surface-container-low rounded-full hover:bg-surface-container-high transition-colors"
+                    title="Toggle Stock"
+                  >
+                    <Eye
+                      className={`w-5 h-5 ${product.inStock ? "text-primary" : "text-on-surface-variant"}`}
+                    />
                   </button>
-                  <button onClick={() => handleDelete(product._id)} className="p-2 bg-surface-container-low rounded-full hover:bg-error-container hover:text-error transition-colors" title="Delete">
+                  <button
+                    onClick={() => handleDelete(product._id)}
+                    className="p-2 bg-surface-container-low rounded-full hover:bg-error-container hover:text-error transition-colors"
+                    title="Delete"
+                  >
                     <Trash2 className="w-5 h-5 text-on-surface-variant hover:text-error" />
                   </button>
                 </div>
@@ -504,51 +549,98 @@ export default function VendorInventoryPage() {
         {products.length > 0 && (
           <div className="xl:col-span-2 bg-surface-container-low rounded-xl p-8 flex flex-col md:flex-row items-center gap-8 border border-surface-container">
             <div className="flex-1 w-full">
-              <h2 className="text-2xl font-extrabold text-on-surface mb-3">Inventory Health</h2>
+              <h2 className="text-2xl font-extrabold text-on-surface mb-3">
+                Inventory Health
+              </h2>
               <p className="text-on-surface-variant mb-6">
-                Your pantry is currently tracking {products.length} products. {lowStockItems.length} items are nearing low stock thresholds.
+                Your pantry is currently tracking {products.length} products.{" "}
+                {lowStockItems.length} items are nearing low stock thresholds.
               </p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/10">
-                  <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Total Value</p>
-                  <p className="text-2xl font-extrabold text-primary">{currency.format(totalValue)}</p>
+                  <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">
+                    Total Value
+                  </p>
+                  <p className="text-2xl font-extrabold text-primary">
+                    {currency.format(totalValue)}
+                  </p>
                 </div>
                 <div className="bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/10">
-                  <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Low Stock</p>
-                  <p className="text-2xl font-extrabold text-error">{lowStockItems.length}</p>
+                  <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">
+                    Low Stock
+                  </p>
+                  <p className="text-2xl font-extrabold text-error">
+                    {lowStockItems.length}
+                  </p>
                 </div>
               </div>
             </div>
             <div className="relative w-48 h-48 shrink-0">
               <svg className="w-full h-full transform -rotate-90">
-                <circle className="text-surface-container-high" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" strokeWidth="12"></circle>
-                <circle 
-                  className="text-primary-container" 
-                  cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" 
-                  strokeDasharray="502" 
-                  strokeDashoffset={products.length > 0 ? 502 - (502 * ((products.length - lowStockItems.length) / products.length)) : 502} 
+                <circle
+                  className="text-surface-container-high"
+                  cx="96"
+                  cy="96"
+                  fill="transparent"
+                  r="80"
+                  stroke="currentColor"
+                  strokeWidth="12"
+                ></circle>
+                <circle
+                  className="text-primary-container"
+                  cx="96"
+                  cy="96"
+                  fill="transparent"
+                  r="80"
+                  stroke="currentColor"
+                  strokeDasharray="502"
+                  strokeDashoffset={
+                    products.length > 0
+                      ? 502 -
+                        502 *
+                          ((products.length - lowStockItems.length) /
+                            products.length)
+                      : 502
+                  }
                   strokeWidth="12"
                 ></circle>
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-3xl font-extrabold text-on-surface">{products.length > 0 ? Math.round(((products.length - lowStockItems.length) / products.length) * 100) : 0}%</span>
-                <span className="text-[10px] font-bold text-on-surface-variant uppercase">Healthy</span>
+                <span className="text-3xl font-extrabold text-on-surface">
+                  {products.length > 0
+                    ? Math.round(
+                        ((products.length - lowStockItems.length) /
+                          products.length) *
+                          100,
+                      )
+                    : 0}
+                  %
+                </span>
+                <span className="text-[10px] font-bold text-on-surface-variant uppercase">
+                  Healthy
+                </span>
               </div>
             </div>
           </div>
         )}
 
         {/* Empty State / Add Suggestion */}
-        <div 
+        <div
           onClick={openCreateDialog}
           className="bg-surface-container-lowest rounded-xl border-2 border-dashed border-outline-variant flex flex-col items-center justify-center p-8 text-center min-h-[300px] group cursor-pointer hover:bg-surface-container-low transition-colors"
         >
           <div className="w-16 h-16 bg-surface-container-high rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
             <ImagePlus className="text-primary-container w-8 h-8" />
           </div>
-          <h3 className="text-lg font-bold text-on-surface">Expand Your Range</h3>
-          <p className="text-on-surface-variant text-sm mb-6 max-w-xs">New seasonal items arriving? Add them to your storefront now.</p>
-          <button className="text-primary-container font-bold text-sm underline-offset-4 hover:underline">Start listing</button>
+          <h3 className="text-lg font-bold text-on-surface">
+            Expand Your Range
+          </h3>
+          <p className="text-on-surface-variant text-sm mb-6 max-w-xs">
+            New seasonal items arriving? Add them to your storefront now.
+          </p>
+          <button className="text-primary-container font-bold text-sm underline-offset-4 hover:underline">
+            Start listing
+          </button>
         </div>
       </div>
 
@@ -562,20 +654,31 @@ export default function VendorInventoryPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-bold text-on-surface">Product Name</label>
+                <label className="text-sm font-bold text-on-surface">
+                  Product Name
+                </label>
                 <input
                   value={form.name}
-                  onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, name: e.target.value }))
+                  }
                   className="mt-1 h-12 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all"
                   placeholder="e.g. Artisan Sourdough Loaf"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-bold text-on-surface">Description</label>
+                <label className="text-sm font-bold text-on-surface">
+                  Description
+                </label>
                 <textarea
                   value={form.description}
-                  onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
                   rows={3}
                   className="mt-1 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 py-3 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all resize-none"
                   placeholder="Describe your product..."
@@ -583,10 +686,14 @@ export default function VendorInventoryPage() {
               </div>
 
               <div>
-                <label className="text-sm font-bold text-on-surface">Image URL</label>
+                <label className="text-sm font-bold text-on-surface">
+                  Image URL
+                </label>
                 <input
                   value={form.image}
-                  onChange={(e) => setForm((prev) => ({ ...prev, image: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, image: e.target.value }))
+                  }
                   className="mt-1 h-12 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all"
                   placeholder="https://..."
                 />
@@ -594,24 +701,34 @@ export default function VendorInventoryPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-bold text-on-surface">Price (KSh)</label>
+                  <label className="text-sm font-bold text-on-surface">
+                    Price (KSh)
+                  </label>
                   <input
                     type="number"
                     min={0}
                     value={form.price}
-                    onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, price: e.target.value }))
+                    }
                     className="mt-1 h-12 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-bold text-on-surface">Unit</label>
+                  <label className="text-sm font-bold text-on-surface">
+                    Unit
+                  </label>
                   <select
                     value={form.unit}
-                    onChange={(e) => setForm((prev) => ({ ...prev, unit: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, unit: e.target.value }))
+                    }
                     className="mt-1 h-12 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all"
                   >
                     {UNIT_OPTIONS.map((unit) => (
-                      <option key={unit} value={unit}>{unit}</option>
+                      <option key={unit} value={unit}>
+                        {unit}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -619,24 +736,37 @@ export default function VendorInventoryPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-bold text-on-surface">Category</label>
+                  <label className="text-sm font-bold text-on-surface">
+                    Category
+                  </label>
                   <select
                     value={form.category}
-                    onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, category: e.target.value }))
+                    }
                     className="mt-1 h-12 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all"
                   >
                     {CATEGORY_OPTIONS.map((cat) => (
-                      <option key={cat} value={cat}>{categoryLabels[cat] || cat}</option>
+                      <option key={cat} value={cat}>
+                        {categoryLabels[cat] || cat}
+                      </option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="text-sm font-bold text-on-surface">Stock Quantity</label>
+                  <label className="text-sm font-bold text-on-surface">
+                    Stock Quantity
+                  </label>
                   <input
                     type="number"
                     min={0}
                     value={form.stockQuantity}
-                    onChange={(e) => setForm((prev) => ({ ...prev, stockQuantity: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        stockQuantity: e.target.value,
+                      }))
+                    }
                     className="mt-1 h-12 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all"
                   />
                 </div>
@@ -646,10 +776,14 @@ export default function VendorInventoryPage() {
                 <input
                   type="checkbox"
                   checked={form.inStock}
-                  onChange={(e) => setForm((prev) => ({ ...prev, inStock: e.target.checked }))}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, inStock: e.target.checked }))
+                  }
                   className="w-5 h-5 rounded text-primary focus:ring-primary"
                 />
-                <span className="font-bold text-on-surface">Currently in stock</span>
+                <span className="font-bold text-on-surface">
+                  Currently in stock
+                </span>
               </label>
             </div>
 
@@ -665,7 +799,11 @@ export default function VendorInventoryPage() {
                 onClick={() => void handleSave()}
                 className="bg-primary-container text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-primary-container/20 hover:opacity-90 transition-opacity disabled:opacity-50"
               >
-                {saving ? "Saving..." : isCreating ? "Add Product" : "Save Changes"}
+                {saving
+                  ? "Saving..."
+                  : isCreating
+                    ? "Add Product"
+                    : "Save Changes"}
               </button>
             </div>
           </div>

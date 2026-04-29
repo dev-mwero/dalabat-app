@@ -1,16 +1,16 @@
 "use client";
 
+import { motion } from "framer-motion";
 import {
   ClipboardList,
   CreditCard,
+  Mail,
   MapPin,
   Phone,
   Truck,
-  Mail
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
 
 type Vendor = {
   _id: string;
@@ -77,15 +77,16 @@ const statusColors: Record<VendorOrder["status"], string> = {
   cancelled: "bg-rose-100 text-rose-700",
 };
 
-const statusFlow: Record<VendorOrder["status"], VendorOrder["status"] | null> = {
-  pending: "confirmed",
-  confirmed: "preparing",
-  preparing: "ready",
-  ready: "out_for_delivery",
-  out_for_delivery: "delivered",
-  delivered: null,
-  cancelled: null,
-};
+const statusFlow: Record<VendorOrder["status"], VendorOrder["status"] | null> =
+  {
+    pending: "confirmed",
+    confirmed: "preparing",
+    preparing: "ready",
+    ready: "out_for_delivery",
+    out_for_delivery: "delivered",
+    delivered: null,
+    cancelled: null,
+  };
 
 const filterStatuses = [
   "all",
@@ -170,7 +171,7 @@ export default function VendorOrdersPage() {
 
         const response = await fetch(
           `/api/orders?vendorId=${vendorId}&limit=100&sort=newest${statusQuery}`,
-          { signal: controller.signal }
+          { signal: controller.signal },
         );
 
         if (!response.ok) throw new Error("Failed to load orders");
@@ -260,8 +261,12 @@ export default function VendorOrdersPage() {
     <div className="p-8 max-w-6xl mx-auto">
       <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Order Management</h1>
-          <p className="text-on-surface-variant text-lg">Track and manage your customer orders with precision.</p>
+          <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">
+            Order Management
+          </h1>
+          <p className="text-on-surface-variant text-lg">
+            Track and manage your customer orders with precision.
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <select
@@ -283,7 +288,8 @@ export default function VendorOrdersPage() {
         {filterStatuses.map((status) => {
           const isActive = filterStatus === status;
           const label = status === "all" ? "All Orders" : statusLabels[status];
-          const count = status === "all" ? "" : ` (${statusCounts[status] ?? 0})`;
+          const count =
+            status === "all" ? "" : ` (${statusCounts[status] ?? 0})`;
 
           return (
             <button
@@ -295,7 +301,8 @@ export default function VendorOrdersPage() {
                   : "bg-surface-container-high text-on-surface-variant font-medium hover:bg-surface-container-highest"
               }`}
             >
-              {label}{count}
+              {label}
+              {count}
             </button>
           );
         })}
@@ -308,18 +315,24 @@ export default function VendorOrdersPage() {
           const isUpdating = updatingOrderId === order._id;
 
           return (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              key={order._id} 
+              key={order._id}
               className="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/10 transition-transform hover:-translate-y-1 duration-300"
             >
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <span className="text-xs text-on-surface-variant font-bold block mb-1 uppercase tracking-widest">{getOrderRef(order)} • {timeAgo(order.createdAt)}</span>
-                  <h3 className="text-xl font-bold text-on-surface">Guest Customer</h3>
+                  <span className="text-xs text-on-surface-variant font-bold block mb-1 uppercase tracking-widest">
+                    {getOrderRef(order)} • {timeAgo(order.createdAt)}
+                  </span>
+                  <h3 className="text-xl font-bold text-on-surface">
+                    Guest Customer
+                  </h3>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1 ${statusColors[order.status]}`}>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1 ${statusColors[order.status]}`}
+                >
                   <span className="w-1.5 h-1.5 bg-current rounded-full opacity-80"></span>
                   {statusLabels[order.status]}
                 </span>
@@ -330,25 +343,40 @@ export default function VendorOrdersPage() {
                   {order.contactPhone && (
                     <div className="flex flex-1 items-center gap-3 p-3 bg-surface-container-low rounded-lg">
                       <Phone className="w-4 h-4 text-primary-container" />
-                      <span className="text-sm text-on-surface-variant font-medium">{order.contactPhone}</span>
+                      <span className="text-sm text-on-surface-variant font-medium">
+                        {order.contactPhone}
+                      </span>
                     </div>
                   )}
                   <div className="flex flex-1 items-center gap-3 p-3 bg-surface-container-low rounded-lg">
-                    {order.deliveryMethod === "delivery" ? <Truck className="w-4 h-4 text-primary-container" /> : <MapPin className="w-4 h-4 text-primary-container" />}
+                    {order.deliveryMethod === "delivery" ? (
+                      <Truck className="w-4 h-4 text-primary-container" />
+                    ) : (
+                      <MapPin className="w-4 h-4 text-primary-container" />
+                    )}
                     <span className="text-sm text-on-surface-variant font-medium truncate max-w-[150px]">
-                      {order.deliveryMethod === "delivery" ? order.deliveryAddress || "Delivery" : "Pickup"}
+                      {order.deliveryMethod === "delivery"
+                        ? order.deliveryAddress || "Delivery"
+                        : "Pickup"}
                     </span>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   {order.items.map((item, idx) => (
-                    <div key={`${item.productId}-${idx}`} className="flex justify-between items-center text-sm border-b border-surface-container-low/50 pb-2 last:border-0 last:pb-0">
+                    <div
+                      key={`${item.productId}-${idx}`}
+                      className="flex justify-between items-center text-sm border-b border-surface-container-low/50 pb-2 last:border-0 last:pb-0"
+                    >
                       <span className="text-on-surface-variant">
-                        <span className="font-bold text-on-surface mr-2">{item.quantity}x</span>
+                        <span className="font-bold text-on-surface mr-2">
+                          {item.quantity}x
+                        </span>
                         {item.name}
                       </span>
-                      <span className="font-bold">{currency.format(item.lineTotal)}</span>
+                      <span className="font-bold">
+                        {currency.format(item.lineTotal)}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -356,21 +384,28 @@ export default function VendorOrdersPage() {
 
               <div className="flex items-center justify-between pt-4 border-t border-surface-container-low">
                 <div>
-                  <p className="text-xs text-on-surface-variant font-medium">Total Amount</p>
-                  <p className="text-xl font-extrabold text-on-surface">{currency.format(order.total)}</p>
+                  <p className="text-xs text-on-surface-variant font-medium">
+                    Total Amount
+                  </p>
+                  <p className="text-xl font-extrabold text-on-surface">
+                    {currency.format(order.total)}
+                  </p>
                 </div>
                 <div className="flex gap-2">
-                  {nextStatus && !["delivered", "cancelled"].includes(order.status) && (
-                    <button 
-                      disabled={isUpdating}
-                      onClick={() => patchOrderStatus(order._id, nextStatus)}
-                      className="px-6 py-2.5 rounded-full bg-primary-container text-white font-bold text-sm hover:opacity-90 transition-all disabled:opacity-50"
-                    >
-                      {isUpdating ? "Updating..." : `Mark as ${statusLabels[nextStatus]}`}
-                    </button>
-                  )}
+                  {nextStatus &&
+                    !["delivered", "cancelled"].includes(order.status) && (
+                      <button
+                        disabled={isUpdating}
+                        onClick={() => patchOrderStatus(order._id, nextStatus)}
+                        className="px-6 py-2.5 rounded-full bg-primary-container text-white font-bold text-sm hover:opacity-90 transition-all disabled:opacity-50"
+                      >
+                        {isUpdating
+                          ? "Updating..."
+                          : `Mark as ${statusLabels[nextStatus]}`}
+                      </button>
+                    )}
                   {!["delivered", "cancelled"].includes(order.status) && (
-                    <button 
+                    <button
                       disabled={isUpdating}
                       onClick={() => patchOrderStatus(order._id, "cancelled")}
                       className="px-4 py-2.5 rounded-full bg-error-container text-error font-bold text-sm hover:bg-error/20 transition-all disabled:opacity-50"
@@ -387,7 +422,9 @@ export default function VendorOrdersPage() {
         {orders.length === 0 && (
           <div className="lg:col-span-2 py-12 text-center text-muted-foreground bg-surface-container-lowest rounded-xl border border-dashed border-outline-variant/30">
             <ClipboardList className="mx-auto mb-3 h-12 w-12 opacity-40 text-on-surface-variant" />
-            <p className="font-medium text-on-surface-variant">No orders found</p>
+            <p className="font-medium text-on-surface-variant">
+              No orders found
+            </p>
           </div>
         )}
       </div>

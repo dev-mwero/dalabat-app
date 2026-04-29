@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
+import { connectToDatabase } from "@/lib/mongodb";
 import { User } from "@/models/user";
-import { dbConnect } from "@/lib/mongodb";
 
 export type UserRole = "customer" | "vendor" | "teller" | "admin";
 
@@ -12,11 +12,11 @@ export async function getCurrentUserRole() {
   const { userId: clerkId } = await auth();
   if (!clerkId) return { role: null, vendorId: null };
 
-  await dbConnect();
+  await connectToDatabase();
   const user = await User.findOne({ clerkId });
-  
+
   if (!user) return { role: null, vendorId: null };
-  
+
   return {
     role: user.role as UserRole,
     vendorId: user.vendorId?.toString() || null,

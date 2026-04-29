@@ -17,7 +17,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "IIBSO — The Artisanal Marketplace",
-  description: "IIBSO connects discerning buyers with master artisanal producers across Kenya.",
+  description:
+    "IIBSO connects discerning buyers with master artisanal producers across Kenya.",
 };
 
 export default function RootLayout({

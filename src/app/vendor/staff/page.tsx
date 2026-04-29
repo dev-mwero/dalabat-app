@@ -1,9 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { UserPlus, Mail, Shield, Trash2, Search, UserCheck, Copy, Check } from "lucide-react";
-import { toast } from "sonner";
 import { motion } from "framer-motion";
+import {
+  Check,
+  Copy,
+  Mail,
+  Search,
+  Shield,
+  Trash2,
+  UserCheck,
+  UserPlus,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 type StaffMember = {
   _id: string;
@@ -45,7 +54,7 @@ export default function VendorStaffPage() {
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inviteEmail || !inviteName) return;
-    
+
     setIsInviting(true);
     try {
       const res = await fetch("/api/vendor/staff/invite", {
@@ -54,12 +63,12 @@ export default function VendorStaffPage() {
         body: JSON.stringify({ email: inviteEmail, name: inviteName }),
       });
       const data = await res.json();
-      
+
       if (!res.ok) {
         toast.error(data.error || "Failed to send invite");
         return;
       }
-      
+
       toast.success("Invite generated successfully!");
       setGeneratedLink(data.inviteLink);
       setInviteEmail("");
@@ -91,10 +100,14 @@ export default function VendorStaffPage() {
       {/* Header */}
       <section className="flex flex-col md:flex-row justify-between md:items-end gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Staff Management</h1>
-          <p className="text-on-surface-variant text-lg">Manage your team of tellers and store assistants.</p>
+          <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">
+            Staff Management
+          </h1>
+          <p className="text-on-surface-variant text-lg">
+            Manage your team of tellers and store assistants.
+          </p>
         </div>
-        <button 
+        <button
           onClick={() => setIsInviteModalOpen(true)}
           className="bg-primary text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-primary/20 flex items-center justify-center gap-2 hover:opacity-90 transition-all shrink-0"
         >
@@ -122,9 +135,11 @@ export default function VendorStaffPage() {
                 </button>
               </div>
             </div>
-            
+
             <div className="space-y-1">
-              <h3 className="text-lg font-bold text-on-surface">{member.name}</h3>
+              <h3 className="text-lg font-bold text-on-surface">
+                {member.name}
+              </h3>
               <div className="flex items-center gap-2 text-sm text-on-surface-variant">
                 <Mail className="w-3.5 h-3.5" />
                 <span>{member.email}</span>
@@ -134,17 +149,25 @@ export default function VendorStaffPage() {
                   <Shield className="w-3 h-3" />
                   {member.role}
                 </span>
-                <span className={`px-3 py-1 text-[10px] font-bold uppercase rounded-full tracking-wider flex items-center gap-1 ${
-                  member.status === "accepted" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
-                }`}>
+                <span
+                  className={`px-3 py-1 text-[10px] font-bold uppercase rounded-full tracking-wider flex items-center gap-1 ${
+                    member.status === "accepted"
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-amber-100 text-amber-700"
+                  }`}
+                >
                   {member.status}
                 </span>
               </div>
             </div>
 
             <div className="mt-6 pt-4 border-t border-outline-variant/10">
-              <p className="text-[10px] text-on-surface-variant uppercase font-bold">Invited on</p>
-              <p className="text-sm font-medium text-on-surface">{new Date(member.createdAt).toLocaleDateString()}</p>
+              <p className="text-[10px] text-on-surface-variant uppercase font-bold">
+                Invited on
+              </p>
+              <p className="text-sm font-medium text-on-surface">
+                {new Date(member.createdAt).toLocaleDateString()}
+              </p>
             </div>
           </motion.div>
         ))}
@@ -154,8 +177,13 @@ export default function VendorStaffPage() {
             <div className="w-20 h-20 bg-surface-container-high rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="w-10 h-10 text-on-surface-variant opacity-30" />
             </div>
-            <h3 className="text-xl font-bold text-on-surface">No staff members found</h3>
-            <p className="text-on-surface-variant mt-2 max-w-xs mx-auto">Start building your team by inviting your first teller to help manage orders.</p>
+            <h3 className="text-xl font-bold text-on-surface">
+              No staff members found
+            </h3>
+            <p className="text-on-surface-variant mt-2 max-w-xs mx-auto">
+              Start building your team by inviting your first teller to help
+              manage orders.
+            </p>
           </div>
         )}
       </section>
@@ -163,7 +191,7 @@ export default function VendorStaffPage() {
       {/* Invite Modal */}
       {(isInviteModalOpen || generatedLink) && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <motion.div 
+          <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             className="bg-surface rounded-3xl p-8 w-full max-w-md shadow-2xl border border-outline-variant/10"
@@ -173,15 +201,29 @@ export default function VendorStaffPage() {
                 <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Check className="w-8 h-8" />
                 </div>
-                <h2 className="text-2xl font-extrabold text-on-surface text-center mb-2">Invite Generated</h2>
-                <p className="text-on-surface-variant text-sm text-center mb-6">Copy this link and send it to your teller to grant them access to your store.</p>
+                <h2 className="text-2xl font-extrabold text-on-surface text-center mb-2">
+                  Invite Generated
+                </h2>
+                <p className="text-on-surface-variant text-sm text-center mb-6">
+                  Copy this link and send it to your teller to grant them access
+                  to your store.
+                </p>
                 <div className="bg-surface-container-low p-4 rounded-xl flex items-center gap-3 mb-8 border border-outline-variant/20">
-                  <span className="text-sm text-on-surface truncate flex-1">{generatedLink}</span>
-                  <button onClick={handleCopy} className="p-2 bg-surface-container-high hover:bg-surface-container-highest rounded-lg transition-colors">
-                    {copied ? <Check className="w-5 h-5 text-emerald-600" /> : <Copy className="w-5 h-5 text-on-surface-variant" />}
+                  <span className="text-sm text-on-surface truncate flex-1">
+                    {generatedLink}
+                  </span>
+                  <button
+                    onClick={handleCopy}
+                    className="p-2 bg-surface-container-high hover:bg-surface-container-highest rounded-lg transition-colors"
+                  >
+                    {copied ? (
+                      <Check className="w-5 h-5 text-emerald-600" />
+                    ) : (
+                      <Copy className="w-5 h-5 text-on-surface-variant" />
+                    )}
                   </button>
                 </div>
-                <button 
+                <button
                   onClick={closeModals}
                   className="w-full bg-primary text-white font-bold py-4 rounded-2xl hover:opacity-90 shadow-lg shadow-primary/20 transition-all"
                 >
@@ -190,14 +232,21 @@ export default function VendorStaffPage() {
               </>
             ) : (
               <>
-                <h2 className="text-2xl font-extrabold text-on-surface mb-2">Invite Teller</h2>
-                <p className="text-on-surface-variant text-sm mb-6">Tellers can process orders and update stock but cannot change store settings.</p>
-                
+                <h2 className="text-2xl font-extrabold text-on-surface mb-2">
+                  Invite Teller
+                </h2>
+                <p className="text-on-surface-variant text-sm mb-6">
+                  Tellers can process orders and update stock but cannot change
+                  store settings.
+                </p>
+
                 <form onSubmit={handleInvite} className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-on-surface ml-1">Full Name</label>
-                    <input 
-                      type="text" 
+                    <label className="text-sm font-bold text-on-surface ml-1">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
                       value={inviteName}
                       onChange={(e) => setInviteName(e.target.value)}
                       placeholder="e.g. Michael Teller"
@@ -206,9 +255,11 @@ export default function VendorStaffPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-on-surface ml-1">Email Address</label>
-                    <input 
-                      type="email" 
+                    <label className="text-sm font-bold text-on-surface ml-1">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
                       value={inviteEmail}
                       onChange={(e) => setInviteEmail(e.target.value)}
                       placeholder="teller@example.com"
@@ -216,21 +267,27 @@ export default function VendorStaffPage() {
                       required
                     />
                   </div>
-                  
+
                   <div className="flex gap-3 mt-8">
-                    <button 
+                    <button
                       type="button"
                       onClick={closeModals}
                       className="flex-1 bg-surface-container-high text-on-surface font-bold py-4 rounded-2xl hover:bg-surface-container-highest transition-all"
                     >
                       Cancel
                     </button>
-                    <button 
+                    <button
                       type="submit"
                       disabled={isInviting}
                       className="flex-1 bg-primary text-white font-bold py-4 rounded-2xl hover:opacity-90 shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                     >
-                      {isInviting ? "Creating..." : <><UserCheck className="w-5 h-5" /> Invite</>}
+                      {isInviting ? (
+                        "Creating..."
+                      ) : (
+                        <>
+                          <UserCheck className="w-5 h-5" /> Invite
+                        </>
+                      )}
                     </button>
                   </div>
                 </form>

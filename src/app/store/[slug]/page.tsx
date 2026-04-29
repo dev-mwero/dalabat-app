@@ -2,9 +2,17 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ArrowLeft, Clock, MapPin, Star, Truck, Search, Store } from "lucide-react";
-import Link from "next/link";
+import {
+  ArrowLeft,
+  Clock,
+  MapPin,
+  Search,
+  Star,
+  Store,
+  Truck,
+} from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import CategoryFilter from "@/components/CategoryFilter";
@@ -57,7 +65,11 @@ export default function VendorStorePage() {
     }
     if (searchQuery.trim()) {
       const lowerQ = searchQuery.toLowerCase();
-      result = result.filter((p) => p.name.toLowerCase().includes(lowerQ) || p.description?.toLowerCase().includes(lowerQ));
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(lowerQ) ||
+          p.description?.toLowerCase().includes(lowerQ),
+      );
     }
     return result;
   }, [products, selectedCategory, searchQuery]);
@@ -98,7 +110,12 @@ export default function VendorStorePage() {
         <div className="h-64 bg-surface-container-low rounded-xl mb-8"></div>
         <div className="h-10 bg-surface-container-low rounded-full mb-8 w-1/2"></div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1,2,3,4].map(i => <div key={i} className="h-48 bg-surface-container-low rounded-xl"></div>)}
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="h-48 bg-surface-container-low rounded-xl"
+            ></div>
+          ))}
         </div>
       </div>
     );
@@ -110,10 +127,17 @@ export default function VendorStorePage() {
         <div className="w-24 h-24 bg-surface-container-high rounded-full flex items-center justify-center mb-6">
           <Store className="w-10 h-10 text-on-surface-variant" />
         </div>
-        <h1 className="text-2xl font-bold mb-2 text-on-surface">Store Not Found</h1>
-        <p className="text-on-surface-variant mb-6 text-center max-w-sm">The store you are looking for does not exist or is currently unavailable.</p>
+        <h1 className="text-2xl font-bold mb-2 text-on-surface">
+          Store Not Found
+        </h1>
+        <p className="text-on-surface-variant mb-6 text-center max-w-sm">
+          The store you are looking for does not exist or is currently
+          unavailable.
+        </p>
         <Link href="/">
-          <Button className="rounded-full px-8 py-6 font-bold bg-primary-container hover:bg-primary text-white">Back to Marketplace</Button>
+          <Button className="rounded-full px-8 py-6 font-bold bg-primary-container hover:bg-primary text-white">
+            Back to Marketplace
+          </Button>
         </Link>
       </div>
     );
@@ -123,7 +147,8 @@ export default function VendorStorePage() {
     ? `/assets/${vendor.image.split("/assets/")[1]}`
     : vendor.image?.startsWith("vendor-")
       ? `/assets/${vendor.image}`
-      : vendor.image || "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1000&auto=format&fit=crop";
+      : vendor.image ||
+        "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1000&auto=format&fit=crop";
 
   return (
     <div className="min-h-screen bg-surface pb-32">
@@ -151,12 +176,12 @@ export default function VendorStorePage() {
             <div className="w-24 h-24 md:w-32 md:h-32 rounded-xl bg-surface-container-lowest p-1 shadow-2xl shrink-0">
               <div className="w-full h-full bg-surface-container-high rounded-lg flex items-center justify-center text-4xl overflow-hidden relative">
                 {vendor.image ? (
-                  <Image 
-                    src={vendorImageUrl} 
-                    alt={vendor.name} 
-                    fill 
+                  <Image
+                    src={vendorImageUrl}
+                    alt={vendor.name}
+                    fill
                     sizes="(max-width: 768px) 96px, 128px"
-                    className="object-cover" 
+                    className="object-cover"
                   />
                 ) : (
                   "🏪"
@@ -169,14 +194,17 @@ export default function VendorStorePage() {
               </h1>
               <div className="flex flex-wrap items-center gap-3 text-white/90 font-medium">
                 <span className="flex items-center gap-1 bg-primary-container px-3 py-1 rounded-full text-xs md:text-sm">
-                  <Star className="w-4 h-4 fill-white" /> 
-                  {reviewSummary.averageRating.toFixed(1)} ({reviewSummary.total}+)
+                  <Star className="w-4 h-4 fill-white" />
+                  {reviewSummary.averageRating.toFixed(1)} (
+                  {reviewSummary.total}+)
                 </span>
                 <span className="flex items-center gap-1 text-xs md:text-sm">
-                  <Clock className="w-4 h-4" /> {vendor.deliveryTime || "25-35 min"}
+                  <Clock className="w-4 h-4" />{" "}
+                  {vendor.deliveryTime || "25-35 min"}
                 </span>
                 <span className="flex items-center gap-1 text-xs md:text-sm">
-                  <Truck className="w-4 h-4" /> {formatPrice(vendor.deliveryFee || 0)} Delivery
+                  <Truck className="w-4 h-4" />{" "}
+                  {formatPrice(vendor.deliveryFee || 0)} Delivery
                 </span>
                 <span className="flex items-center gap-1 text-xs md:text-sm">
                   <MapPin className="w-4 h-4" /> {vendor.location}
@@ -201,9 +229,9 @@ export default function VendorStorePage() {
           </div>
           <div className="hidden lg:flex items-center gap-2 px-4 py-2 bg-surface-container-low rounded-full w-64 shrink-0 focus-within:ring-2 focus-within:ring-primary-container transition-all">
             <Search className="w-4 h-4 text-on-surface-variant" />
-            <input 
-              className="bg-transparent border-none text-sm focus:ring-0 w-full p-0 text-on-surface placeholder:text-on-surface-variant" 
-              placeholder="Search menu..." 
+            <input
+              className="bg-transparent border-none text-sm focus:ring-0 w-full p-0 text-on-surface placeholder:text-on-surface-variant"
+              placeholder="Search menu..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               type="text"
@@ -221,13 +249,18 @@ export default function VendorStorePage() {
           {filteredProducts.length === 0 ? (
             <div className="text-center py-16 bg-surface-container-low rounded-2xl">
               <Search className="w-12 h-12 text-on-surface-variant mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-bold text-on-surface mb-1">No products found</h3>
+              <h3 className="text-lg font-bold text-on-surface mb-1">
+                No products found
+              </h3>
               <p className="text-on-surface-variant text-sm">
                 Try adjusting your search or category filter.
               </p>
               {(searchQuery || selectedCategory !== "all") && (
-                <button 
-                  onClick={() => { setSearchQuery(""); setSelectedCategory("all"); }}
+                <button
+                  onClick={() => {
+                    setSearchQuery("");
+                    setSelectedCategory("all");
+                  }}
                   className="mt-6 text-primary font-bold hover:underline"
                 >
                   Clear all filters
@@ -237,7 +270,11 @@ export default function VendorStorePage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredProducts.map((product, index) => (
-                <ProductCard key={product._id} product={product} index={index} />
+                <ProductCard
+                  key={product._id}
+                  product={product}
+                  index={index}
+                />
               ))}
             </div>
           )}
@@ -275,7 +312,9 @@ export default function VendorStorePage() {
                   onSubmit={handleReviewSubmit}
                   className="space-y-4 pt-6 border-t border-surface-container"
                 >
-                  <h3 className="font-bold text-lg text-on-surface">Leave a Review</h3>
+                  <h3 className="font-bold text-lg text-on-surface">
+                    Leave a Review
+                  </h3>
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-on-surface-variant">
                       Rating
@@ -323,7 +362,9 @@ export default function VendorStorePage() {
 
             {/* Review List */}
             <div className="lg:col-span-8">
-              <h3 className="text-xl font-extrabold text-on-surface mb-6">Recent Experiences</h3>
+              <h3 className="text-xl font-extrabold text-on-surface mb-6">
+                Recent Experiences
+              </h3>
               {reviews.length === 0 ? (
                 <div className="bg-surface-container-low p-12 rounded-2xl text-center border border-dashed border-outline-variant/30">
                   <Star className="w-12 h-12 text-on-surface-variant mx-auto mb-4 opacity-50" />
@@ -367,11 +408,14 @@ export default function VendorStorePage() {
                         </p>
                       </div>
                       <span className="text-xs text-on-surface-variant/70 font-semibold mt-4 block">
-                        {new Date(review.createdAt).toLocaleDateString(undefined, {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
+                        {new Date(review.createdAt).toLocaleDateString(
+                          undefined,
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          },
+                        )}
                       </span>
                     </motion.div>
                   ))}

@@ -6,11 +6,11 @@ import {
   Clock,
   DollarSign,
   Package,
+  Plus,
   TrendingUp,
-  Plus
 } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 type Vendor = {
@@ -105,9 +105,12 @@ export default function VendorDashboardPage() {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch(`/api/vendor/dashboard/summary?vendorId=${vendorId}`, {
-          signal: controller.signal,
-        });
+        const response = await fetch(
+          `/api/vendor/dashboard/summary?vendorId=${vendorId}`,
+          {
+            signal: controller.signal,
+          },
+        );
         if (!response.ok) throw new Error("Failed to load dashboard summary");
         const result = await response.json();
         setSummary(result.data as DashboardSummary);
@@ -122,16 +125,31 @@ export default function VendorDashboardPage() {
     return () => controller.abort();
   }, [vendorId]);
 
-  const currentVendorName = useMemo(() => vendors.find((v) => v._id === vendorId)?.name, [vendorId, vendors]);
+  const currentVendorName = useMemo(
+    () => vendors.find((v) => v._id === vendorId)?.name,
+    [vendorId, vendors],
+  );
 
   if (loading && !summary) {
-    return <div className="p-8 text-center text-on-surface-variant animate-pulse">Loading dashboard...</div>;
+    return (
+      <div className="p-8 text-center text-on-surface-variant animate-pulse">
+        Loading dashboard...
+      </div>
+    );
   }
   if (error) {
-    return <div className="p-8 text-center text-error bg-error-container rounded-xl">{error}</div>;
+    return (
+      <div className="p-8 text-center text-error bg-error-container rounded-xl">
+        {error}
+      </div>
+    );
   }
   if (!vendorId || !summary) {
-    return <div className="p-8 text-center text-on-surface-variant">No vendor data found yet.</div>;
+    return (
+      <div className="p-8 text-center text-on-surface-variant">
+        No vendor data found yet.
+      </div>
+    );
   }
 
   return (
@@ -139,10 +157,14 @@ export default function VendorDashboardPage() {
       {/* Greeting & Editorial Header */}
       <section className="flex flex-col md:flex-row justify-between md:items-end gap-4">
         <div>
-          <h2 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Welcome back{currentVendorName ? `, ${currentVendorName}` : ""}</h2>
-          <p className="text-on-surface-variant text-lg">Your pantry is buzzing today. Here’s what’s happening.</p>
+          <h2 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">
+            Welcome back{currentVendorName ? `, ${currentVendorName}` : ""}
+          </h2>
+          <p className="text-on-surface-variant text-lg">
+            Your pantry is buzzing today. Here’s what’s happening.
+          </p>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4">
           <select
             value={vendorId}
@@ -171,40 +193,54 @@ export default function VendorDashboardPage() {
           </div>
           <div>
             <p className="text-sm opacity-80 font-medium">Total Revenue</p>
-            <h3 className="text-3xl font-extrabold">{currency.format(summary.stats.revenue)}</h3>
+            <h3 className="text-3xl font-extrabold">
+              {currency.format(summary.stats.revenue)}
+            </h3>
           </div>
         </div>
-        
+
         {/* Active Orders */}
         <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10 shadow-sm flex flex-col justify-between min-h-[160px]">
           <div className="flex justify-between items-start">
             <Clock className="w-8 h-8 text-primary bg-primary-fixed p-1.5 rounded-lg" />
           </div>
           <div>
-            <p className="text-sm text-on-surface-variant font-medium">Active Orders</p>
-            <h3 className="text-3xl font-extrabold text-on-surface">{summary.stats.activeOrders}</h3>
+            <p className="text-sm text-on-surface-variant font-medium">
+              Active Orders
+            </p>
+            <h3 className="text-3xl font-extrabold text-on-surface">
+              {summary.stats.activeOrders}
+            </h3>
           </div>
         </div>
-        
+
         {/* Products */}
         <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10 shadow-sm flex flex-col justify-between min-h-[160px]">
           <div className="flex justify-between items-start">
             <Package className="w-8 h-8 text-tertiary bg-tertiary-fixed p-1.5 rounded-lg" />
           </div>
           <div>
-            <p className="text-sm text-on-surface-variant font-medium">Live Products</p>
-            <h3 className="text-3xl font-extrabold text-on-surface">{summary.stats.productCount}</h3>
+            <p className="text-sm text-on-surface-variant font-medium">
+              Live Products
+            </p>
+            <h3 className="text-3xl font-extrabold text-on-surface">
+              {summary.stats.productCount}
+            </h3>
           </div>
         </div>
-        
+
         {/* Completed */}
         <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10 shadow-sm flex flex-col justify-between min-h-[160px]">
           <div className="flex justify-between items-start">
             <CheckCircle className="w-8 h-8 text-secondary bg-secondary-fixed p-1.5 rounded-lg" />
           </div>
           <div>
-            <p className="text-sm text-on-surface-variant font-medium">Completed</p>
-            <h3 className="text-3xl font-extrabold text-on-surface">{summary.stats.completedOrders}</h3>
+            <p className="text-sm text-on-surface-variant font-medium">
+              Completed
+            </p>
+            <h3 className="text-3xl font-extrabold text-on-surface">
+              {summary.stats.completedOrders}
+            </h3>
           </div>
         </div>
       </section>
@@ -218,7 +254,10 @@ export default function VendorDashboardPage() {
               <ClipboardList className="w-5 h-5 text-primary" />
               Recent Orders
             </h3>
-            <Link href="/vendor/orders" className="text-sm font-semibold text-primary hover:underline">
+            <Link
+              href="/vendor/orders"
+              className="text-sm font-semibold text-primary hover:underline"
+            >
               View All
             </Link>
           </div>
@@ -226,27 +265,59 @@ export default function VendorDashboardPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-surface-container-low">
-                  <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Order ID</th>
-                  <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Items</th>
-                  <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Amount</th>
-                  <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                    Order ID
+                  </th>
+                  <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                    Items
+                  </th>
+                  <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                    Amount
+                  </th>
+                  <th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                    Status
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-surface-container-low">
                 {summary.recentOrders.slice(0, 5).map((order) => {
-                  const itemCount = order.items.reduce((sum, item) => sum + item.quantity, 0);
-                  const statusLabel = statusLabels[order.status] || order.status;
-                  const statusColor = statusColors[order.status] || "bg-surface-container-high text-on-surface-variant";
+                  const itemCount = order.items.reduce(
+                    (sum, item) => sum + item.quantity,
+                    0,
+                  );
+                  const statusLabel =
+                    statusLabels[order.status] || order.status;
+                  const statusColor =
+                    statusColors[order.status] ||
+                    "bg-surface-container-high text-on-surface-variant";
                   return (
-                    <tr key={order._id} className="hover:bg-surface-container-low/30 transition-colors">
-                      <td className="px-6 py-4 text-sm font-medium">#{order._id.slice(-6).toUpperCase()}</td>
-                      <td className="px-6 py-4 text-sm font-semibold">{itemCount} items</td>
-                      <td className="px-6 py-4 text-sm text-on-surface-variant">{new Date(order.createdAt).toLocaleDateString()}</td>
-                      <td className="px-6 py-4 text-sm font-bold">{currency.format(order.total)}</td>
+                    <tr
+                      key={order._id}
+                      className="hover:bg-surface-container-low/30 transition-colors"
+                    >
+                      <td className="px-6 py-4 text-sm font-medium">
+                        #{order._id.slice(-6).toUpperCase()}
+                      </td>
+                      <td className="px-6 py-4 text-sm font-semibold">
+                        {itemCount} items
+                      </td>
+                      <td className="px-6 py-4 text-sm text-on-surface-variant">
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 text-sm font-bold">
+                        {currency.format(order.total)}
+                      </td>
                       <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold flex items-center w-fit gap-1 uppercase ${statusColor}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full bg-current opacity-80`}></span> {statusLabel}
+                        <span
+                          className={`px-3 py-1 rounded-full text-[10px] font-bold flex items-center w-fit gap-1 uppercase ${statusColor}`}
+                        >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full bg-current opacity-80`}
+                          ></span>{" "}
+                          {statusLabel}
                         </span>
                       </td>
                     </tr>
@@ -254,7 +325,10 @@ export default function VendorDashboardPage() {
                 })}
                 {summary.recentOrders.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-sm text-on-surface-variant">
+                    <td
+                      colSpan={5}
+                      className="p-8 text-center text-sm text-on-surface-variant"
+                    >
                       No recent orders yet.
                     </td>
                   </tr>
@@ -273,18 +347,28 @@ export default function VendorDashboardPage() {
             </h3>
             {summary.lowStock.length > 0 ? (
               <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2">
-                {summary.lowStock.map(product => (
-                  <div key={product._id} className="flex items-center gap-4 border-b border-surface-container-low pb-3 last:border-0 last:pb-0">
+                {summary.lowStock.map((product) => (
+                  <div
+                    key={product._id}
+                    className="flex items-center gap-4 border-b border-surface-container-low pb-3 last:border-0 last:pb-0"
+                  >
                     <div className="w-10 h-10 rounded-lg bg-error-container/20 flex items-center justify-center text-error font-bold text-xs">
                       {product.stockQuantity}
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-bold line-clamp-1">{product.name}</p>
-                      <p className="text-xs text-error font-medium">Critical Stock</p>
+                      <p className="text-sm font-bold line-clamp-1">
+                        {product.name}
+                      </p>
+                      <p className="text-xs text-error font-medium">
+                        Critical Stock
+                      </p>
                     </div>
                   </div>
                 ))}
-                <Link href="/vendor/inventory" className="block w-full text-center text-xs font-bold text-primary mt-4 hover:underline">
+                <Link
+                  href="/vendor/inventory"
+                  className="block w-full text-center text-xs font-bold text-primary mt-4 hover:underline"
+                >
                   Manage Inventory →
                 </Link>
               </div>
@@ -298,17 +382,24 @@ export default function VendorDashboardPage() {
           {/* Promo Card (Stitch Design feature) */}
           <div className="relative overflow-hidden bg-on-tertiary-fixed text-white p-6 rounded-xl min-h-[200px] flex flex-col justify-end">
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
-            <Image 
-              className="absolute inset-0 w-full h-full object-cover opacity-80" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCd9_ixC6zBhtJkwogFJums3mER7L4FKTHS4qTs_cx9MOPQyDzzMdQ6O_W9Wy7fj_Oy12XdVqtLPO6t5mZaY7WsQixUcSZJDlOhM2a5mi5F12CppFWataVt008rb6slBzMdUMHdmJFSeL8835iViQZ3h-osfbETBxkVckKYxTHVKEkJgkPTXRZ0awdyaLI-Xq5jSsODryQO0jpu8Hg4Kj2ekQww4MSdaHn_FNsZgw4daX3DUgHhgrHc2X2NbL2A2CtRHWLQTF3LGnU" 
+            <Image
+              className="absolute inset-0 w-full h-full object-cover opacity-80"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCd9_ixC6zBhtJkwogFJums3mER7L4FKTHS4qTs_cx9MOPQyDzzMdQ6O_W9Wy7fj_Oy12XdVqtLPO6t5mZaY7WsQixUcSZJDlOhM2a5mi5F12CppFWataVt008rb6slBzMdUMHdmJFSeL8835iViQZ3h-osfbETBxkVckKYxTHVKEkJgkPTXRZ0awdyaLI-Xq5jSsODryQO0jpu8Hg4Kj2ekQww4MSdaHn_FNsZgw4daX3DUgHhgrHc2X2NbL2A2CtRHWLQTF3LGnU"
               alt="Promotion"
               fill
               sizes="(max-width: 1200px) 100vw, 400px"
             />
             <div className="relative z-20">
-              <h4 className="text-lg font-extrabold leading-tight">Grow your business with Pantry Plus</h4>
-              <p className="text-xs opacity-80 mt-2 mb-4">Get featured in our daily editorial newsletters reaching 100k+ foodies.</p>
-              <button className="bg-white text-on-tertiary-fixed text-xs font-bold py-2 px-4 rounded-full w-fit hover:bg-opacity-90 transition-all">Learn More</button>
+              <h4 className="text-lg font-extrabold leading-tight">
+                Grow your business with Pantry Plus
+              </h4>
+              <p className="text-xs opacity-80 mt-2 mb-4">
+                Get featured in our daily editorial newsletters reaching 100k+
+                foodies.
+              </p>
+              <button className="bg-white text-on-tertiary-fixed text-xs font-bold py-2 px-4 rounded-full w-fit hover:bg-opacity-90 transition-all">
+                Learn More
+              </button>
             </div>
           </div>
         </div>

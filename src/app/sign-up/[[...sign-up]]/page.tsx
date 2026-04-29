@@ -1,9 +1,9 @@
 "use client";
 
 import { SignUp } from "@clerk/nextjs";
-import { useSearchParams } from "next/navigation";
-import { Zap, ShoppingBag, Store } from "lucide-react";
+import { ShoppingBag, Store, Zap } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 function SignUpContent() {
@@ -27,29 +27,57 @@ function SignUpContent() {
 
       <div className="flex-1 flex flex-col md:flex-row">
         {/* Left — Context Panel */}
-        <div className={`hidden md:flex flex-col justify-center px-16 py-20 w-[420px] flex-shrink-0 ${isVendor ? "bg-gradient-to-br from-blue-600 to-violet-700" : isTeller ? "bg-gradient-to-br from-emerald-500 to-teal-600" : "bg-gradient-to-br from-orange-500 to-rose-500"}`}>
+        <div
+          className={`hidden md:flex flex-col justify-center px-16 py-20 w-[420px] flex-shrink-0 ${isVendor ? "bg-gradient-to-br from-blue-600 to-violet-700" : isTeller ? "bg-gradient-to-br from-emerald-500 to-teal-600" : "bg-gradient-to-br from-orange-500 to-rose-500"}`}
+        >
           <div className="w-16 h-16 bg-white/20 rounded-3xl flex items-center justify-center mb-8">
-            {isVendor || isTeller ? <Store className="w-8 h-8 text-white" /> : <ShoppingBag className="w-8 h-8 text-white" />}
+            {isVendor || isTeller ? (
+              <Store className="w-8 h-8 text-white" />
+            ) : (
+              <ShoppingBag className="w-8 h-8 text-white" />
+            )}
           </div>
           <h2 className="text-3xl font-black text-white mb-4 leading-tight">
-            {isVendor ? "Launch your artisanal storefront." : isTeller ? "Join your team's storefront." : "Discover the finest artisanal provisions."}
+            {isVendor
+              ? "Launch your artisanal storefront."
+              : isTeller
+                ? "Join your team's storefront."
+                : "Discover the finest artisanal provisions."}
           </h2>
           <p className="text-white/70 font-medium text-lg leading-relaxed">
             {isVendor
               ? "Join hundreds of producers connecting with thousands of buyers across Kenya."
-              : isTeller 
-              ? "You've been invited to manage orders and inventory as a Teller."
-              : "Support local producers and enjoy premium artisanal goods delivered to your doorstep."}
+              : isTeller
+                ? "You've been invited to manage orders and inventory as a Teller."
+                : "Support local producers and enjoy premium artisanal goods delivered to your doorstep."}
           </p>
 
           <div className="mt-12 space-y-4">
             {(isVendor
-              ? ["Professional storefront", "Inventory & order tools", "Staff management", "Revenue analytics"]
+              ? [
+                  "Professional storefront",
+                  "Inventory & order tools",
+                  "Staff management",
+                  "Revenue analytics",
+                ]
               : isTeller
-              ? ["Process active orders", "Manage stock levels", "Access teller terminal", "Secure role-based access"]
-              : ["Browse 1,000+ products", "Multi-store cart", "Real-time order tracking", "Saved favourites"]
+                ? [
+                    "Process active orders",
+                    "Manage stock levels",
+                    "Access teller terminal",
+                    "Secure role-based access",
+                  ]
+                : [
+                    "Browse 1,000+ products",
+                    "Multi-store cart",
+                    "Real-time order tracking",
+                    "Saved favourites",
+                  ]
             ).map((item) => (
-              <div key={item} className="flex items-center gap-3 text-white/80 font-medium">
+              <div
+                key={item}
+                className="flex items-center gap-3 text-white/80 font-medium"
+              >
                 <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                   <div className="w-2 h-2 rounded-full bg-white" />
                 </div>
@@ -62,7 +90,10 @@ function SignUpContent() {
             <div className="mt-16 pt-8 border-t border-white/20">
               <p className="text-white/50 text-sm font-medium">
                 Not {isVendor ? "a vendor" : "a buyer"}?{" "}
-                <Link href={`/sign-up?role=${isVendor ? "customer" : "vendor"}`} className="text-white font-bold hover:underline">
+                <Link
+                  href={`/sign-up?role=${isVendor ? "customer" : "vendor"}`}
+                  className="text-white font-bold hover:underline"
+                >
                   Switch role
                 </Link>
               </p>
@@ -78,8 +109,19 @@ function SignUpContent() {
                 Create your account
               </h1>
               <p className="text-slate-500 font-medium">
-                Joining as a <span className="font-bold text-slate-900">{isVendor ? "Vendor" : isTeller ? "Teller" : "Buyer"}</span>.{" "}
-                {!isTeller && <Link href="/register" className="text-blue-600 hover:underline">Change</Link>}
+                Joining as a{" "}
+                <span className="font-bold text-slate-900">
+                  {isVendor ? "Vendor" : isTeller ? "Teller" : "Buyer"}
+                </span>
+                .{" "}
+                {!isTeller && (
+                  <Link
+                    href="/register"
+                    className="text-blue-600 hover:underline"
+                  >
+                    Change
+                  </Link>
+                )}
               </p>
             </div>
 

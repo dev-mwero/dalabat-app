@@ -1,9 +1,9 @@
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
-import { NextResponse, type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
+import { Invite } from "@/models/invite";
 import { User } from "@/models/user";
 import { Vendor } from "@/models/vendor";
-import { Invite } from "@/models/invite";
 
 export async function POST(req: NextRequest) {
   let event;
@@ -11,20 +11,32 @@ export async function POST(req: NextRequest) {
   try {
     event = await verifyWebhook(req);
   } catch {
-    return NextResponse.json({ error: "Invalid webhook signature" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid webhook signature" },
+      { status: 400 },
+    );
   }
 
   if (event.type === "user.created") {
-    const { id: clerkId, email_addresses, first_name, last_name, unsafe_metadata } = event.data;
+    const {
+      id: clerkId,
+      email_addresses,
+      first_name,
+      last_name,
+      unsafe_metadata,
+    } = event.data;
 
     const email = email_addresses[0]?.email_address ?? "";
-    const name = [first_name, last_name].filter(Boolean).join(" ") || "IIBSO User";
+    const name =
+      [first_name, last_name].filter(Boolean).join(" ") || "IIBSO User";
 
     // Role and token were passed via SignUp's unsafeMetadata
     const requestedRole = (unsafe_metadata?.role as string) ?? "customer";
     const token = unsafe_metadata?.token as string | undefined;
     const validRoles = ["customer", "vendor", "teller", "admin"];
-    let safeRole = validRoles.includes(requestedRole) ? requestedRole : "customer";
+    let safeRole = validRoles.includes(requestedRole)
+      ? requestedRole
+      : "customer";
     let assignedVendorId = null;
 
     await connectToDatabase();
@@ -32,17 +44,21 @@ export async function POST(req: NextRequest) {
     // Secure teller registrations
     if (safeRole === "teller") {
       if (!token) {
-        console.warn(`[Webhook] Teller registration attempted without token for ${email}. Falling back to customer.`);
+        console.warn(
+          `[Webhook] Teller registration attempted without token for ${email}. Falling back to customer.`,
+        );
         safeRole = "customer";
       } else {
         const invite = await Invite.findOne({ token, status: "pending" });
         if (!invite) {
-          console.warn(`[Webhook] Teller registration attempted with invalid token ${token} for ${email}. Falling back to customer.`);
+          console.warn(
+            `[Webhook] Teller registration attempted with invalid token ${token} for ${email}. Falling back to customer.`,
+          );
           safeRole = "customer";
         } else {
           // Token is valid. Approve the teller role and link the vendor.
           assignedVendorId = invite.vendorId;
-          
+
           // Mark invite as accepted
           invite.status = "accepted";
           await invite.save();
@@ -70,7 +86,8 @@ export async function POST(req: NextRequest) {
         name: `${name}'s Store`,
         slug: `${slug}-${clerkId.slice(-4)}`,
         description: "Welcome to my IIBSO store!",
-        image: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?q=80&w=2070&auto=format&fit=crop", // Placeholder storefront image
+        image:
+          "https://images.unsplash.com/photo-1472851294608-062f824d29cc?q=80&w=2070&auto=format&fit=crop", // Placeholder storefront image
         location: "Nairobi, Kenya",
         deliveryTime: "1 - 2 hours",
         deliveryFee: 0,
