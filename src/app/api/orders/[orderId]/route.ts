@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { connectToDatabase } from "@/lib/mongodb";
+import { getOrderRefNote } from "@/lib/order";
 import { getCurrentUserIdentity } from "@/lib/roles";
 import { Order } from "@/models/order";
 
@@ -23,10 +24,6 @@ const patchOrderSchema = z.object({
   deliveryAddress: z.string().trim().min(3).nullable().optional(),
   contactPhone: z.string().trim().min(7).nullable().optional(),
 });
-
-function getOrderRefNote(orderRef: string) {
-  return `order-ref:${orderRef}`;
-}
 
 function findOrderByParam(orderId: string) {
   if (Types.ObjectId.isValid(orderId)) {

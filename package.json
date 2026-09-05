@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
+    "test": "vitest run",
     "seed": "tsx scripts/seed.ts",
     "seed:reset": "tsx scripts/seed.ts --reset"
   },
@@ -70,13 +71,14 @@
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "tailwindcss": "^4",
     "tsx": "^4.20.5",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.0.0"
   },
   "allowScripts": {
     "@clerk/shared@3.47.2": true,

@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main, feat/iibso-revitalization]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_placeholder
+      CLERK_SECRET_KEY: sk_test_placeholder
+      MONGODB_URI: mongodb://localhost:27017/iibso-ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Test
+        run: npm test
+      - name: Build
+        run: npm run build
