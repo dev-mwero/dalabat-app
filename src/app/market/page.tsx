@@ -26,17 +26,21 @@ export default function MarketPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortOption, setSortOption] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
+  const [inStockOnly, setInStockOnly] = useState(false);
+  const [freeDeliveryOnly, setFreeDeliveryOnly] = useState(false);
 
   const { items } = useCart();
 
   const { data: vendors = [], isLoading: loadingVendors } = useVendors({
     category: selectedCategory === "all" ? undefined : selectedCategory,
     search: searchQuery,
+    limit: 100,
   });
 
   const { data: products = [], isLoading: loadingProducts } = useProducts({
     category: selectedCategory === "all" ? undefined : selectedCategory,
     search: searchQuery,
+    inStock: inStockOnly || undefined,
   });
 
   useEffect(() => {
@@ -50,7 +54,17 @@ export default function MarketPage() {
   }, []);
 
   const filteredProducts = useMemo(() => {
-    const result = [...products];
+    let result = [...products];
+
+    if (freeDeliveryOnly) {
+      const vendorFee = new Map(
+        vendors.map((vendor) => [vendor._id, vendor.deliveryFee]),
+      );
+      result = result.filter(
+        (product) => (vendorFee.get(product.vendorId) ?? Infinity) === 0,
+      );
+    }
+
     switch (sortOption) {
       case "price-asc":
         result.sort((a, b) => a.price - b.price);
@@ -63,7 +77,7 @@ export default function MarketPage() {
         break;
     }
     return result;
-  }, [products, sortOption]);
+  }, [products, vendors, freeDeliveryOnly, sortOption]);
 
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
   const paginatedProducts = useMemo(() => {
@@ -178,6 +192,49 @@ export default function MarketPage() {
                     );
                   })}
                 </div>
+              </div>
+
+              {/* Availability */}
+              <div className="space-y-4 mb-8">
+                <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/70">
+                  Availability
+                </p>
+                <label className="flex items-center justify-between gap-3 cursor-pointer group">
+                  <span className="text-sm font-medium text-on-surface-variant group-hover:text-on-surface transition-colors">
+                    In stock only
+                  </span>
+                  <input
+                    type="checkbox"
+                    checked={inStockOnly}
+                    onChange={(e) => setInStockOnly(e.target.checked)}
+                    className="sr-only"
+                  />
+                  <span
+                    className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors ${inStockOnly ? "bg-primary-container" : "bg-surface-container-high group-hover:bg-on-surface-variant/20"}`}
+                  >
+                    <span
+                      className={`inline-block w-4 h-4 rounded-full bg-white shadow transform transition-transform ${inStockOnly ? "translate-x-6" : "translate-x-1"}`}
+                    />
+                  </span>
+                </label>
+                <label className="flex items-center justify-between gap-3 cursor-pointer group">
+                  <span className="text-sm font-medium text-on-surface-variant group-hover:text-on-surface transition-colors">
+                    Free delivery
+                  </span>
+                  <input
+                    type="checkbox"
+                    checked={freeDeliveryOnly}
+                    onChange={(e) => setFreeDeliveryOnly(e.target.checked)}
+                    className="sr-only"
+                  />
+                  <span
+                    className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors ${freeDeliveryOnly ? "bg-primary-container" : "bg-surface-container-high group-hover:bg-on-surface-variant/20"}`}
+                  >
+                    <span
+                      className={`inline-block w-4 h-4 rounded-full bg-white shadow transform transition-transform ${freeDeliveryOnly ? "translate-x-6" : "translate-x-1"}`}
+                    />
+                  </span>
+                </label>
               </div>
 
               {/* Vendors List */}

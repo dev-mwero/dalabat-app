@@ -18,6 +18,7 @@ type UseProductsOptions = {
   category?: string;
   search?: string;
   sort?: string;
+  inStock?: boolean;
   limit?: number;
 };
 
@@ -34,6 +35,9 @@ async function fetchProducts(options: UseProductsOptions = {}) {
   }
   if (options.sort) {
     params.set("sort", options.sort);
+  }
+  if (options.inStock) {
+    params.set("inStock", "true");
   }
   if (options.limit) {
     params.set("limit", options.limit.toString());
