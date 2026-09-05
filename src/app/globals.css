@@ -5,142 +5,86 @@
     var(--font-jakarta), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
-  --color-background: oklch(0.98 0.01 70);
-  --color-foreground: oklch(0.25 0.02 20);
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
 
+  /* Base neutrals (shadcn/ui component mapping) */
+  --color-background: oklch(0.983 0.008 279);
+  --color-foreground: oklch(0.223 0.045 254);
   --color-card: oklch(1 0 0);
-  --color-card-foreground: oklch(0.25 0.02 20);
-
+  --color-card-foreground: oklch(0.223 0.045 254);
   --color-popover: oklch(1 0 0);
-  --color-popover-foreground: oklch(0.25 0.02 20);
+  --color-popover-foreground: oklch(0.223 0.045 254);
+  --color-muted: oklch(0.967 0.016 266);
+  --color-muted-foreground: oklch(0.505 0.036 269);
+  --color-accent: oklch(0.967 0.016 266);
+  --color-accent-foreground: oklch(0.495 0.136 47);
+  --color-border: oklch(0.831 0.042 47);
+  --color-input: oklch(0.831 0.042 47);
+  --color-ring: oklch(0.495 0.136 47);
 
-  --color-primary: oklch(0.7 0.2 45);
+  /* Brand — warm orange on cool neutral surfaces */
+  --color-primary: oklch(0.495 0.136 47);
   --color-primary-foreground: oklch(1 0 0);
+  --color-primary-container: oklch(0.705 0.187 48);
+  --color-on-primary-container: oklch(0.327 0.09 47);
+  --color-primary-fixed: oklch(0.917 0.046 47);
+  --color-primary-fixed-dim: oklch(0.836 0.099 48);
+  --color-on-primary-fixed: oklch(0.231 0.064 47);
+  --color-on-primary-fixed-variant: oklch(0.408 0.112 48);
+  --color-inverse-primary: oklch(0.836 0.099 48);
+  --color-surface-tint: oklch(0.495 0.136 47);
 
-  --color-secondary: oklch(0.95 0.02 75);
-  --color-secondary-foreground: oklch(0.25 0.02 20);
+  /* Secondary / tertiary — cool slate */
+  --color-secondary: oklch(0.483 0.037 269);
+  --color-secondary-foreground: oklch(1 0 0);
+  --color-secondary-container: oklch(0.915 0.038 273);
+  --color-on-secondary-container: oklch(0.505 0.036 269);
+  --color-on-secondary: oklch(1 0 0);
+  --color-secondary-fixed: oklch(0.915 0.038 273);
+  --color-secondary-fixed-dim: oklch(0.829 0.037 272);
+  --color-on-secondary-fixed: oklch(0.225 0.039 266);
+  --color-on-secondary-fixed-variant: oklch(0.35 0.03 269);
 
-  --color-muted: oklch(0.97 0.01 75);
-  --color-muted-foreground: oklch(0.5 0.01 25);
+  --color-tertiary: oklch(0.482 0.042 259);
+  --color-on-tertiary: oklch(1 0 0);
+  --color-tertiary-container: oklch(0.688 0.04 258);
+  --color-on-tertiary-container: oklch(0.318 0.043 257);
+  --color-tertiary-fixed: oklch(0.914 0.04 259);
+  --color-tertiary-fixed-dim: oklch(0.83 0.04 260);
+  --color-on-tertiary-fixed: oklch(0.225 0.039 266);
+  --color-on-tertiary-fixed-variant: oklch(0.33 0.04 260);
 
-  --color-accent: oklch(0.97 0.03 50);
-  --color-accent-foreground: oklch(0.55 0.18 45);
-
-  --color-destructive: oklch(0.6 0.2 25);
+  /* Error / destructive */
+  --color-error: oklch(0.506 0.193 28);
+  --color-on-error: oklch(1 0 0);
+  --color-error-container: oklch(0.918 0.042 25);
+  --color-on-error-container: oklch(0.417 0.17 27);
+  --color-destructive: oklch(0.506 0.193 28);
   --color-destructive-foreground: oklch(1 0 0);
 
-  --color-border: oklch(0.92 0.01 75);
-  --color-input: oklch(0.92 0.01 75);
-  --color-ring: oklch(0.7 0.2 45);
+  /* Surfaces — cool blue-tinted whites */
+  --color-surface: oklch(0.983 0.008 279);
+  --color-surface-bright: oklch(0.983 0.008 279);
+  --color-surface-dim: oklch(0.914 0.04 259);
+  --color-on-surface: oklch(0.223 0.045 254);
+  --color-on-background: oklch(0.223 0.045 254);
+  --color-surface-variant: oklch(0.914 0.04 259);
+  --color-on-surface-variant: oklch(0.4 0.036 48);
+  --color-surface-container: oklch(0.947 0.025 263);
+  --color-surface-container-low: oklch(0.967 0.016 266);
+  --color-surface-container-lowest: oklch(1 0 0);
+  --color-surface-container-high: oklch(0.931 0.033 261);
+  --color-surface-container-highest: oklch(0.914 0.04 259);
+
+  /* Outline / inverse */
+  --color-outline: oklch(0.571 0.039 47);
+  --color-outline-variant: oklch(0.831 0.042 47);
+  --color-inverse-surface: oklch(0.309 0.042 254);
+  --color-inverse-on-surface: oklch(0.957 0.02 264);
 
   --radius-lg: 0.75rem;
   --radius-md: calc(0.75rem - 2px);
   --radius-sm: calc(0.75rem - 4px);
-
-  /* Google Stitch Theme Colors */
-  --color-surface-container-highest: #d3e4fe;
-  --color-primary-fixed-dim: #ffb690;
-  --color-surface-container-low: #eff4ff;
-  --color-outline-variant: #e0c0b1;
-  --color-on-surface: #0b1c30;
-  --color-on-primary-fixed: #341100;
-  --color-on-error-container: #93000a;
-  --color-surface-tint: #9d4300;
-  --color-primary-fixed: #ffdbca;
-  --color-secondary-container: #dae2fd;
-  --color-surface-container-high: #dce9ff;
-  --color-error: #ba1a1a;
-  --color-inverse-primary: #ffb690;
-  --color-primary: #9d4300;
-  --color-on-primary: #ffffff;
-  --color-surface-bright: #f8f9ff;
-  --color-background: #f8f9ff;
-  --color-outline: #8c7164;
-  --color-on-tertiary-fixed: #0b1c30;
-  --color-on-surface-variant: #584237;
-  --color-on-primary-container: #582200;
-  --color-on-secondary-container: #5c647a;
-  --color-on-background: #0b1c30;
-  --color-tertiary-fixed-dim: #b7c8e1;
-  --color-surface-dim: #cbdbf5;
-  --color-surface-container-lowest: #ffffff;
-  --color-on-tertiary-container: #243348;
-  --color-on-secondary: #ffffff;
-  --color-secondary-fixed-dim: #bec6e0;
-  --color-inverse-surface: #213145;
-  --color-tertiary-container: #8c9cb4;
-  --color-on-secondary-fixed: #131b2e;
-  --color-surface: #f8f9ff;
-  --color-on-primary-fixed-variant: #783200;
-  --color-tertiary-fixed: #d3e4fe;
-  --color-primary-container: #f97316;
-  --color-surface-variant: #d3e4fe;
-  --color-tertiary: #505f76;
-  --color-on-tertiary: #ffffff;
-  --color-on-error: #ffffff;
-  --color-secondary: #565e74;
-  --color-on-tertiary-fixed-variant: #38485d;
-  --color-error-container: #ffdad6;
-  --color-on-secondary-fixed-variant: #3f465c;
-  --color-inverse-on-surface: #eaf1ff;
-  --color-surface-container: #e5eeff;
-  --color-secondary-fixed: #dae2fd;
-}
-
-@layer base {
-  :root {
-    --background: 30 100% 97%;
-    --foreground: 20 10% 15%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 20 10% 15%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 20 10% 15%;
-
-    --primary: 25 95% 53%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 30 50% 93%;
-    --secondary-foreground: 20 10% 15%;
-
-    --muted: 30 20% 95%;
-    --muted-foreground: 20 5% 45%;
-
-    --accent: 25 100% 95%;
-    --accent-foreground: 25 95% 40%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 30 20% 90%;
-    --input: 30 20% 90%;
-    --ring: 25 95% 53%;
-
-    --radius: 0.75rem;
-  }
-
-  .dark {
-    --background: 20 14% 8%;
-    --foreground: 30 20% 95%;
-    --card: 20 14% 12%;
-    --card-foreground: 30 20% 95%;
-    --popover: 20 14% 12%;
-    --popover-foreground: 30 20% 95%;
-    --primary: 25 95% 53%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 20 14% 16%;
-    --secondary-foreground: 30 20% 95%;
-    --muted: 20 14% 16%;
-    --muted-foreground: 30 10% 55%;
-    --accent: 25 40% 18%;
-    --accent-foreground: 25 95% 70%;
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 20 14% 18%;
-    --input: 20 14% 18%;
-    --ring: 25 95% 53%;
-  }
 }
 
 @layer base {
@@ -148,14 +92,62 @@
     @apply border-border;
   }
 
+  html {
+    color-scheme: light;
+    scroll-padding-top: 5rem;
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    caret-color: var(--color-primary);
+  }
+
+  ::selection {
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(
+      in oklch,
+      var(--color-outline-variant) 65%,
+      transparent
+    );
+    border-radius: 9999px;
+    border: 2px solid var(--color-background);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-outline);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-outline-variant) transparent;
   }
 }
 
 @layer utilities {
   .glass {
-    @apply bg-[hsl(var(--card)/0.8)] backdrop-blur-lg;
+    @apply bg-card/80 backdrop-blur-lg;
   }
 
   .scrollbar-hide::-webkit-scrollbar {

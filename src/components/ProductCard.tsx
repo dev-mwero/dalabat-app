@@ -32,10 +32,10 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
 
   // Generate a predictable background color based on product ID or name
   const bgColors = [
-    "bg-[#E5EEFF]",
-    "bg-[#FFDBC9]",
-    "bg-[#DAE2FD]",
-    "bg-[#F8F9FF]",
+    "bg-surface-container",
+    "bg-primary-fixed",
+    "bg-secondary-container",
+    "bg-surface",
   ];
   const bgColor = bgColors[(product.name.length || 0) % bgColors.length];
 
@@ -65,14 +65,16 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
             </div>
           )}
 
-          <div
+          <button
+            type="button"
+            aria-label="Add to wishlist"
             className="absolute top-3 right-3 bg-white/80 backdrop-blur rounded-full p-2 shadow-sm cursor-pointer hover:text-error transition-colors z-10"
             onClick={(e) => {
-              e.stopPropagation(); /* Add to wishlist logic */
+              e.stopPropagation();
             }}
           >
             <Heart className="w-4 h-4 text-on-surface-variant" />
-          </div>
+          </button>
 
           {!product.inStock && (
             <div className="absolute inset-0 bg-background/50 backdrop-blur-[2px] flex items-center justify-center z-10">
@@ -103,16 +105,19 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
           </div>
 
           {product.inStock && (
-            <div className="mt-2" onClick={(e) => e.stopPropagation()}>
+            <div className="mt-2">
               {quantity > 0 ? (
                 <div className="flex items-center justify-between bg-primary-container text-white rounded-full p-1 shadow-lg shadow-primary-container/20 w-full">
                   <button
                     className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/20 active:scale-95 transition-all"
-                    onClick={() =>
+                    onClick={(e) => {
+                      e.stopPropagation();
                       quantity === 1
                         ? removeItem(product._id)
-                        : updateQuantity(product._id, quantity - 1)
-                    }
+                        : updateQuantity(product._id, quantity - 1);
+                    }}
+                    type="button"
+                    aria-label="Decrease quantity"
                   >
                     <Minus className="h-5 w-5" />
                   </button>
@@ -121,7 +126,12 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
                   </span>
                   <button
                     className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/20 active:scale-95 transition-all"
-                    onClick={() => addItem(product)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addItem(product);
+                    }}
+                    type="button"
+                    aria-label="Increase quantity"
                   >
                     <Plus className="h-5 w-5" />
                   </button>
@@ -130,6 +140,7 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
                 <button
                   className="w-full py-3.5 bg-secondary-container text-on-secondary-container rounded-full font-bold flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-secondary-container/80"
                   onClick={() => addItem(product)}
+                  type="button"
                 >
                   <Plus className="w-5 h-5" />
                   Add to Cart

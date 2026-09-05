@@ -7,7 +7,7 @@ import { useCart } from "@/contexts/CartContext";
 import { formatPrice } from "@/lib/utils";
 
 const FloatingCartBar = () => {
-  const { totalItems, totalPrice, setIsOpen } = useCart();
+  const { totalItems, totalPrice } = useCart();
 
   if (totalItems === 0) return null;
 

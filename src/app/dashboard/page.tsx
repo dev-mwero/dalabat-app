@@ -15,11 +15,13 @@ export default async function DashboardRedirectorPage() {
   switch (role) {
     case "admin":
       redirect("/admin/dashboard");
+      break;
     case "vendor":
       redirect("/vendor/dashboard");
+      break;
     case "teller":
       redirect("/teller/orders");
-    case "customer":
+      break;
     default:
       redirect("/profile");
   }

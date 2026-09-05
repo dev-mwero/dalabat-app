@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ClipboardList, MapPin, Phone, RefreshCw, Truck } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { ClipboardList, RefreshCw } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 type OrderItem = {
@@ -85,7 +85,7 @@ export default function TellerOrdersPage() {
           toast.error("You are not assigned to a vendor store.");
           setLoading(false);
         }
-      } catch (err) {
+      } catch (_err) {
         toast.error("Failed to load user profile");
         setLoading(false);
       }
@@ -105,7 +105,7 @@ export default function TellerOrdersPage() {
         if (!response.ok) throw new Error();
         const result = await response.json();
         setOrders(result.data ?? []);
-      } catch (err) {
+      } catch (_err) {
         toast.error("Failed to load orders");
       } finally {
         setLoading(false);
@@ -128,7 +128,9 @@ export default function TellerOrdersPage() {
 
       setOrders((prev) =>
         prev.map((o) =>
-          o._id === orderId ? { ...o, status: nextStatus as any } : o,
+          o._id === orderId
+            ? { ...o, status: nextStatus as VendorOrder["status"] }
+            : o,
         ),
       );
       toast.success("Order updated");
@@ -195,8 +197,11 @@ export default function TellerOrdersPage() {
               </div>
 
               <div className="space-y-3 mb-6">
-                {order.items.map((item, i) => (
-                  <div key={i} className="flex justify-between text-sm">
+                {order.items.map((item) => (
+                  <div
+                    key={item.productId}
+                    className="flex justify-between text-sm"
+                  >
                     <span className="text-on-surface-variant">
                       <span className="font-bold text-on-surface mr-2">
                         {item.quantity}x
@@ -210,6 +215,7 @@ export default function TellerOrdersPage() {
               <div className="flex gap-2 pt-4 border-t border-outline-variant/10">
                 {nextStatus && (
                   <button
+                    type="button"
                     disabled={isUpdating}
                     onClick={() => updateStatus(order._id, nextStatus)}
                     className="flex-1 bg-primary text-white font-bold py-3 rounded-xl hover:opacity-90 transition-all text-sm shadow-lg shadow-primary/10"
@@ -220,6 +226,7 @@ export default function TellerOrdersPage() {
                 {order.status !== "cancelled" &&
                   order.status !== "delivered" && (
                     <button
+                      type="button"
                       disabled={isUpdating}
                       onClick={() => updateStatus(order._id, "cancelled")}
                       className="px-4 bg-error-container text-error font-bold py-3 rounded-xl hover:bg-error/10 transition-all text-sm"

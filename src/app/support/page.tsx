@@ -1,0 +1,71 @@
+import { ArrowLeft, Mail, MapPin, PackageSearch } from "lucide-react";
+import Link from "next/link";
+
+const channels = [
+  {
+    icon: Mail,
+    title: "Email support",
+    detail: "Order or account questions answered within one business day.",
+    action: "support@iibso.co.ke",
+    href: "mailto:support@iibso.co.ke",
+  },
+  {
+    icon: PackageSearch,
+    title: "Track an order",
+    detail: "Use the order ID from your confirmation to see live status.",
+    action: "Go to order tracking",
+    href: "/track-order",
+  },
+  {
+    icon: MapPin,
+    title: "Find a store",
+    detail: "Browse the market and reach out to a specific store directly.",
+    action: "View the market",
+    href: "/market",
+  },
+];
+
+export default function SupportPage() {
+  return (
+    <main className="min-h-screen bg-background">
+      <div className="container max-w-3xl space-y-8 px-4 py-8">
+        <header>
+          <Link
+            href="/"
+            className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back to store
+          </Link>
+          <h1 className="font-display text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
+            How can we help?
+          </h1>
+          <p className="mt-1 text-muted-foreground">
+            Questions about an order, a delivery, or your account — we&apos;re
+            here for you.
+          </p>
+        </header>
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          {channels.map((channel) => (
+            <Link
+              key={channel.title}
+              href={channel.href}
+              className="group rounded-lg border border-border bg-card p-5 shadow-sm transition-shadow hover:shadow-md"
+            >
+              <channel.icon className="h-6 w-6 text-primary" />
+              <h2 className="mt-3 font-bold text-foreground transition-colors group-hover:text-primary">
+                {channel.title}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {channel.detail}
+              </p>
+              <p className="mt-3 text-sm font-semibold text-primary">
+                {channel.action}
+              </p>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+}

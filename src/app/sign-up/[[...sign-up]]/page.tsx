@@ -1,7 +1,7 @@
 "use client";
 
 import { SignUp } from "@clerk/nextjs";
-import { ShoppingBag, Store, Zap } from "lucide-react";
+import { ShoppingBag, Store } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -14,14 +14,16 @@ function SignUpContent() {
   const isTeller = role === "teller";
 
   return (
-    <div className="min-h-screen bg-white font-sans flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Nav */}
-      <nav className="h-20 flex items-center px-8 border-b border-slate-100">
+      <nav className="h-20 flex items-center px-8 border-b border-border">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
-            <Zap className="text-white w-5 h-5 fill-white" />
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <Store className="text-primary-foreground w-5 h-5" />
           </div>
-          <span className="text-xl font-black tracking-tighter">IIBSO</span>
+          <span className="font-display text-xl font-semibold tracking-tight">
+            IIBSO
+          </span>
         </Link>
       </nav>
 
@@ -37,19 +39,19 @@ function SignUpContent() {
               <ShoppingBag className="w-8 h-8 text-white" />
             )}
           </div>
-          <h2 className="text-3xl font-black text-white mb-4 leading-tight">
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-white mb-4 leading-tight">
             {isVendor
-              ? "Launch your artisanal storefront."
+              ? "Launch your provisions storefront."
               : isTeller
                 ? "Join your team's storefront."
-                : "Discover the finest artisanal provisions."}
+                : "Discover quality everyday staples."}
           </h2>
           <p className="text-white/70 font-medium text-lg leading-relaxed">
             {isVendor
-              ? "Join hundreds of producers connecting with thousands of buyers across Kenya."
+              ? "A dedicated dashboard for managing stock, staff, and orders."
               : isTeller
                 ? "You've been invited to manage orders and inventory as a Teller."
-                : "Support local producers and enjoy premium artisanal goods delivered to your doorstep."}
+                : "Support local vendors and enjoy quality provisions delivered to your doorstep."}
           </p>
 
           <div className="mt-12 space-y-4">
@@ -68,10 +70,10 @@ function SignUpContent() {
                     "Secure role-based access",
                   ]
                 : [
-                    "Browse 1,000+ products",
-                    "Multi-store cart",
+                    "Everyday staples from local stores",
+                    "Cash or M-Pesa payment",
                     "Real-time order tracking",
-                    "Saved favourites",
+                    "Pickup or doorstep delivery",
                   ]
             ).map((item) => (
               <div
@@ -105,19 +107,19 @@ function SignUpContent() {
         <div className="flex-1 flex items-center justify-center p-8">
           <div className="w-full max-w-md">
             <div className="mb-8 text-center">
-              <h1 className="text-3xl font-black text-slate-900 mb-2">
+              <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground mb-2">
                 Create your account
               </h1>
-              <p className="text-slate-500 font-medium">
+              <p className="text-muted-foreground font-medium">
                 Joining as a{" "}
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-foreground">
                   {isVendor ? "Vendor" : isTeller ? "Teller" : "Buyer"}
                 </span>
                 .{" "}
                 {!isTeller && (
                   <Link
                     href="/register"
-                    className="text-blue-600 hover:underline"
+                    className="text-primary hover:underline"
                   >
                     Change
                   </Link>

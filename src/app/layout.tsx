@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
-import { CartDrawer } from "@/components/CartDrawer";
-import { Header } from "@/components/Header";
+import { Fraunces, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { AppProviders } from "@/providers/AppProviders";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
+  subsets: ["latin"],
+});
+
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
 });
 
@@ -16,9 +19,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IIBSO — The Artisanal Marketplace",
+  title: "IIBSO — Everyday Provisions Marketplace",
   description:
-    "IIBSO connects discerning buyers with master artisanal producers across Kenya.",
+    "IIBSO connects families with trusted local vendors for quality everyday staples — rice, flour, oil, sugar and more — delivered to your doorstep.",
 };
 
 export default function RootLayout({
@@ -29,7 +32,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${jakarta.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${jakarta.variable} ${fraunces.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
         <AppProviders>

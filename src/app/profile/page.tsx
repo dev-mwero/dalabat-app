@@ -1,12 +1,12 @@
 "use client";
 
-import { UserButton, UserProfile, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
-import { LogOut, Mail, MapPin, Phone, Settings, User } from "lucide-react";
+import { Mail, Phone, Settings } from "lucide-react";
 import Image from "next/image";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { OrderHistory } from "./_components/OrderHistory";
 
 export default function ProfilePage() {
@@ -31,7 +31,11 @@ export default function ProfilePage() {
           <h1 className="text-2xl font-bold mb-4">
             Please sign in to view your profile
           </h1>
-          <Button onClick={() => (window.location.href = "/")}>
+          <Button
+            onClick={() => {
+              window.location.href = "/";
+            }}
+          >
             Back to Home
           </Button>
         </div>

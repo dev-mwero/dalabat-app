@@ -1,9 +1,8 @@
-import { AlertTriangle, Zap } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Invite } from "@/models/invite";
-import { Vendor } from "@/models/vendor";
 
 export default async function InvitePage({
   params,
@@ -19,20 +18,20 @@ export default async function InvitePage({
 
   if (!invite) {
     return (
-      <div className="min-h-screen bg-white font-sans flex flex-col items-center justify-center p-6">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
         <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mb-6">
           <AlertTriangle className="w-8 h-8" />
         </div>
-        <h1 className="text-3xl font-black text-slate-900 mb-2">
+        <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground mb-2">
           Invalid or Expired Invite
         </h1>
-        <p className="text-slate-500 font-medium text-center max-w-md mb-8">
+        <p className="text-muted-foreground font-medium text-center max-w-md mb-8">
           This invitation link is no longer valid. It may have expired or
           already been accepted.
         </p>
         <Link
           href="/"
-          className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold hover:shadow-lg transition-all"
+          className="bg-primary text-primary-foreground px-8 py-3 rounded-xl font-bold hover:shadow-lg hover:shadow-primary/20 transition-all"
         >
           Go to Homepage
         </Link>

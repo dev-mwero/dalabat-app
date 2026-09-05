@@ -1,16 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  ArrowLeft,
-  Bell,
-  Check,
-  MapPin,
-  Search,
-  ShoppingCart,
-  Star,
-  Store,
-} from "lucide-react";
+import { ArrowLeft, Check, Search, ShoppingCart, Store } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -20,30 +11,60 @@ import { useVendors } from "@/hooks/useVendors";
 
 const PRODUCTS_PER_PAGE = 8;
 
+const categories = [
+  { id: "all", name: "All Provisions" },
+  { id: "rice", name: "Rice & Grains" },
+  { id: "flour", name: "Flour & Baking" },
+  { id: "sugar", name: "Sugar & Sweeteners" },
+  { id: "salt", name: "Salt & Spices" },
+  { id: "oil", name: "Cooking Oils" },
+  { id: "general", name: "General Groceries" },
+];
+
 export default function MarketPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortOption, setSortOption] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
+  const [inStockOnly, setInStockOnly] = useState(false);
+  const [freeDeliveryOnly, setFreeDeliveryOnly] = useState(false);
 
   const { items } = useCart();
 
   const { data: vendors = [], isLoading: loadingVendors } = useVendors({
     category: selectedCategory === "all" ? undefined : selectedCategory,
     search: searchQuery,
+    limit: 100,
   });
 
   const { data: products = [], isLoading: loadingProducts } = useProducts({
     category: selectedCategory === "all" ? undefined : selectedCategory,
     search: searchQuery,
+    inStock: inStockOnly || undefined,
   });
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCategory, sortOption]);
+
+    const params = new URLSearchParams(window.location.search);
+    const category = params.get("category");
+    if (category && categories.some((c) => c.name === category)) {
+      setSelectedCategory(category);
+    }
+  }, []);
 
   const filteredProducts = useMemo(() => {
-    const result = [...products];
+    let result = [...products];
+
+    if (freeDeliveryOnly) {
+      const vendorFee = new Map(
+        vendors.map((vendor) => [vendor._id, vendor.deliveryFee]),
+      );
+      result = result.filter(
+        (product) => (vendorFee.get(product.vendorId) ?? Infinity) === 0,
+      );
+    }
+
     switch (sortOption) {
       case "price-asc":
         result.sort((a, b) => a.price - b.price);
@@ -56,21 +77,13 @@ export default function MarketPage() {
         break;
     }
     return result;
-  }, [products, sortOption]);
+  }, [products, vendors, freeDeliveryOnly, sortOption]);
 
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
   const paginatedProducts = useMemo(() => {
     const start = (currentPage - 1) * PRODUCTS_PER_PAGE;
     return filteredProducts.slice(start, start + PRODUCTS_PER_PAGE);
   }, [filteredProducts, currentPage]);
-
-  const categories = [
-    { id: "all", name: "All Provisions" },
-    { id: "bakery", name: "Artisanal Breads" },
-    { id: "dairy", name: "Cheeses & Dairy" },
-    { id: "groceries", name: "Cold-Pressed Oils" },
-    { id: "fruits", name: "Fresh Produce" },
-  ];
 
   const currency = new Intl.NumberFormat("en-KE", {
     style: "currency",
@@ -81,11 +94,11 @@ export default function MarketPage() {
   return (
     <div className="bg-surface text-on-surface min-h-screen font-sans">
       {/* TopNavBar */}
-      <header className="bg-[#F8F9FF]/90 backdrop-blur-lg dark:bg-[#0B1C30]/90 sticky top-0 z-50 border-b border-outline-variant/10">
+      <header className="bg-surface/90 backdrop-blur-lg sticky top-0 z-50 border-b border-outline-variant/10">
         <div className="flex justify-between items-center w-full px-6 py-4 max-w-screen-2xl mx-auto">
           <Link
             href="/"
-            className="text-2xl font-extrabold tracking-tighter text-[#9D4300] dark:text-[#F97316]"
+            className="text-2xl font-extrabold tracking-tighter text-primary"
           >
             IIBSO
           </Link>
@@ -93,13 +106,13 @@ export default function MarketPage() {
           <nav className="hidden md:flex items-center gap-8">
             <Link
               href="/market"
-              className="text-[#9D4300] font-bold border-b-2 border-[#F97316] pb-1 hover:text-[#F97316] transition-colors duration-200"
+              className="text-primary font-bold border-b-2 border-primary-container pb-1 hover:text-primary-container transition-colors duration-200"
             >
               Discover
             </Link>
             <Link
               href="/vendors"
-              className="text-[#584237] dark:text-slate-400 font-medium hover:text-[#F97316] transition-colors duration-200"
+              className="text-on-surface-variant font-medium hover:text-primary-container transition-colors duration-200"
             >
               Vendors
             </Link>
@@ -110,13 +123,13 @@ export default function MarketPage() {
               <Search className="text-on-surface-variant w-4 h-4 mr-2" />
               <input
                 className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-on-surface-variant/60 focus:outline-none"
-                placeholder="Search artisanal provisions..."
+                placeholder="Search provisions and staples..."
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-4 text-[#9D4300] dark:text-[#F97316]">
+            <div className="flex items-center gap-4 text-primary">
               <Link
                 href="/checkout"
                 className="active:opacity-80 active:scale-95 transition-all relative"
@@ -157,10 +170,11 @@ export default function MarketPage() {
                   {categories.map((cat) => {
                     const isSelected = selectedCategory === cat.id;
                     return (
-                      <label
+                      <button
                         key={cat.id}
-                        className="flex items-center gap-3 group cursor-pointer"
+                        type="button"
                         onClick={() => setSelectedCategory(cat.id)}
+                        className="w-full flex items-center gap-3 group cursor-pointer text-left"
                       >
                         <div
                           className={`w-5 h-5 rounded-lg flex items-center justify-center transition-colors ${isSelected ? "bg-primary-container shadow-lg shadow-primary-container/20" : "bg-surface-container-high group-hover:bg-primary-container/20"}`}
@@ -174,10 +188,53 @@ export default function MarketPage() {
                         >
                           {cat.name}
                         </span>
-                      </label>
+                      </button>
                     );
                   })}
                 </div>
+              </div>
+
+              {/* Availability */}
+              <div className="space-y-4 mb-8">
+                <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/70">
+                  Availability
+                </p>
+                <label className="flex items-center justify-between gap-3 cursor-pointer group">
+                  <span className="text-sm font-medium text-on-surface-variant group-hover:text-on-surface transition-colors">
+                    In stock only
+                  </span>
+                  <input
+                    type="checkbox"
+                    checked={inStockOnly}
+                    onChange={(e) => setInStockOnly(e.target.checked)}
+                    className="sr-only"
+                  />
+                  <span
+                    className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors ${inStockOnly ? "bg-primary-container" : "bg-surface-container-high group-hover:bg-on-surface-variant/20"}`}
+                  >
+                    <span
+                      className={`inline-block w-4 h-4 rounded-full bg-white shadow transform transition-transform ${inStockOnly ? "translate-x-6" : "translate-x-1"}`}
+                    />
+                  </span>
+                </label>
+                <label className="flex items-center justify-between gap-3 cursor-pointer group">
+                  <span className="text-sm font-medium text-on-surface-variant group-hover:text-on-surface transition-colors">
+                    Free delivery
+                  </span>
+                  <input
+                    type="checkbox"
+                    checked={freeDeliveryOnly}
+                    onChange={(e) => setFreeDeliveryOnly(e.target.checked)}
+                    className="sr-only"
+                  />
+                  <span
+                    className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors ${freeDeliveryOnly ? "bg-primary-container" : "bg-surface-container-high group-hover:bg-on-surface-variant/20"}`}
+                  >
+                    <span
+                      className={`inline-block w-4 h-4 rounded-full bg-white shadow transform transition-transform ${freeDeliveryOnly ? "translate-x-6" : "translate-x-1"}`}
+                    />
+                  </span>
+                </label>
               </div>
 
               {/* Vendors List */}
@@ -187,15 +244,17 @@ export default function MarketPage() {
                 </p>
                 <div className="space-y-3">
                   {loadingVendors
-                    ? Array.from({ length: 3 }).map((_, i) => (
-                        <div
-                          key={i}
-                          className="flex items-center gap-3 animate-pulse"
-                        >
-                          <div className="w-8 h-8 rounded-full bg-surface-container-high" />
-                          <div className="h-4 bg-surface-container-high rounded w-24" />
-                        </div>
-                      ))
+                    ? ["vendor-sk-1", "vendor-sk-2", "vendor-sk-3"].map(
+                        (skey) => (
+                          <div
+                            key={skey}
+                            className="flex items-center gap-3 animate-pulse"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-surface-container-high" />
+                            <div className="h-4 bg-surface-container-high rounded w-24" />
+                          </div>
+                        ),
+                      )
                     : vendors.slice(0, 5).map((vendor) => (
                         <Link
                           href={`/store/${vendor.slug || vendor._id}`}
@@ -221,8 +280,8 @@ export default function MarketPage() {
           <section className="flex-1">
             <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
-                <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">
-                  Artisanal Finds
+                <h1 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-on-surface mb-2">
+                  Everyday Provisions
                 </h1>
                 <p className="text-on-surface-variant font-medium">
                   Showing {filteredProducts.length} results
@@ -253,16 +312,23 @@ export default function MarketPage() {
 
             {loadingProducts ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {Array.from({ length: 6 }).map((_, i) => (
+                {[
+                  "product-sk-1",
+                  "product-sk-2",
+                  "product-sk-3",
+                  "product-sk-4",
+                  "product-sk-5",
+                  "product-sk-6",
+                ].map((skey) => (
                   <div
-                    key={i}
+                    key={skey}
                     className="h-80 rounded-xl bg-surface-container-low animate-pulse"
                   />
                 ))}
               </div>
             ) : paginatedProducts.length === 0 ? (
               <div className="text-center py-20 bg-surface-container-lowest rounded-3xl ring-1 ring-outline-variant/10 shadow-sm">
-                <div className="text-5xl mb-4">🔍</div>
+                <Search className="mx-auto h-12 w-12 text-on-surface-variant/40 mb-4" />
                 <h3 className="text-xl font-bold mb-2 text-on-surface">
                   No results found
                 </h3>
@@ -306,7 +372,7 @@ export default function MarketPage() {
                         </div>
                         <p className="text-sm text-on-surface-variant line-clamp-2 mb-4 leading-relaxed flex-1">
                           {product.description ||
-                            "Authentic artisanal provision carefully crafted for the best quality."}
+                            "Quality everyday staple, sourced and prepared with care."}
                         </p>
                         <div className="flex items-center justify-between pt-4 border-t border-surface-container-low mt-auto">
                           {vendor ? (
@@ -344,6 +410,7 @@ export default function MarketPage() {
                     onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
                     className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors disabled:opacity-50"
+                    type="button"
                   >
                     <ArrowLeft className="w-5 h-5" />
                   </button>
@@ -354,6 +421,7 @@ export default function MarketPage() {
                         key={page}
                         onClick={() => setCurrentPage(page)}
                         className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors ${page === currentPage ? "bg-primary-container text-white shadow-sm" : "text-on-surface hover:bg-surface-container-high"}`}
+                        type="button"
                       >
                         {page}
                       </button>
@@ -366,6 +434,7 @@ export default function MarketPage() {
                     }
                     disabled={currentPage === totalPages}
                     className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors disabled:opacity-50"
+                    type="button"
                   >
                     <ArrowLeft className="w-5 h-5 rotate-180" />
                   </button>

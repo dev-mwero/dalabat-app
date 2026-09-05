@@ -1,7 +1,15 @@
+import { auth } from "@clerk/nextjs/server";
 import { type FilterQuery, Types } from "mongoose";
 import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { connectToDatabase } from "@/lib/mongodb";
+import {
+  computePaymentStatus,
+  createOrderSchema,
+  generateOrderRef,
+  toPaymentMethod,
+  toPositiveInt,
+} from "@/lib/order";
+import { getCurrentUserIdentity } from "@/lib/roles";
 import { Order, type OrderDocument } from "@/models/order";
 import { Product } from "@/models/product";
 import { Vendor } from "@/models/vendor";
@@ -9,71 +17,6 @@ import { Vendor } from "@/models/vendor";
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
-
-const createOrderSchema = z.object({
-  vendorId: z.string().trim().min(1),
-  customerId: z.string().trim().min(1).optional(),
-  customerClerkId: z.string().trim().min(1).optional(),
-  contactPhone: z.string().trim().min(7).optional(),
-  items: z
-    .array(
-      z.object({
-        productId: z.string().trim().min(1),
-        quantity: z.number().int().min(1),
-      }),
-    )
-    .min(1),
-  paymentMethod: z.enum(["cash", "mpesa-auto", "mpesa-manual"]),
-  paymentStatus: z.enum(["pending", "paid", "failed"]).optional(),
-  mpesaCode: z.string().trim().min(3).optional(),
-  deliveryMethod: z.enum(["delivery", "pickup"]),
-  deliveryAddress: z.string().trim().min(3).optional(),
-  notes: z.string().trim().max(500).optional(),
-});
-
-type CreateOrderInput = z.infer<typeof createOrderSchema>;
-
-function toPositiveInt(value: string | null, fallback: number) {
-  if (!value) {
-    return fallback;
-  }
-
-  const parsed = Number.parseInt(value, 10);
-  if (Number.isNaN(parsed) || parsed <= 0) {
-    return fallback;
-  }
-
-  return parsed;
-}
-
-function toPaymentMethod(value: CreateOrderInput["paymentMethod"]) {
-  if (value === "mpesa-auto") {
-    return "mpesa_auto" as const;
-  }
-
-  if (value === "mpesa-manual") {
-    return "mpesa_manual" as const;
-  }
-
-  return "cash" as const;
-}
-
-function generateOrderRef() {
-  const now = Date.now().toString();
-  return `DLB-${now.slice(-6)}`;
-}
-
-function computePaymentStatus(input: CreateOrderInput) {
-  if (input.paymentStatus) {
-    return input.paymentStatus;
-  }
-
-  if (input.paymentMethod === "mpesa-manual" && input.mpesaCode) {
-    return "paid" as const;
-  }
-
-  return "pending" as const;
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -94,6 +37,8 @@ export async function GET(request: NextRequest) {
     const sort = params.get("sort")?.trim() ?? "newest";
 
     const filter: FilterQuery<OrderDocument> = {};
+    const session = await auth();
+    const viewer = session.userId ? await getCurrentUserIdentity() : null;
 
     if (vendorId) {
       if (!Types.ObjectId.isValid(vendorId)) {
@@ -102,11 +47,30 @@ export async function GET(request: NextRequest) {
           { status: 400 },
         );
       }
+      if (viewer?.role !== "admin" && viewer?.vendorId !== vendorId) {
+        return NextResponse.json(
+          { error: "You do not have access to this vendor's orders" },
+          { status: 403 },
+        );
+      }
       filter.vendorId = new Types.ObjectId(vendorId);
     }
 
     if (customerClerkId) {
+      if (customerClerkId !== session.userId) {
+        return NextResponse.json(
+          { error: "You can only view your own orders" },
+          { status: 403 },
+        );
+      }
       filter.customerClerkId = customerClerkId;
+    }
+
+    if (!vendorId && !customerClerkId && viewer?.role !== "admin") {
+      return NextResponse.json(
+        { error: "You are not allowed to list all orders" },
+        { status: 403 },
+      );
     }
 
     if (status) {
@@ -158,6 +122,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    if (!session.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     await connectToDatabase();
 
     const payload = await request.json();
@@ -244,7 +213,7 @@ export async function POST(request: NextRequest) {
         data.customerId && Types.ObjectId.isValid(data.customerId)
           ? new Types.ObjectId(data.customerId)
           : null,
-      customerClerkId: data.customerClerkId ?? null,
+      customerClerkId: session.userId,
       vendorId: vendorObjectId,
       items,
       subtotal,

@@ -51,9 +51,7 @@ export default function VendorStorePage() {
   const { data: products = [], isLoading: loadingProducts } = useProducts({
     vendorId: vendorId as string,
   });
-  const { data: reviewsData, isLoading: loadingReviews } = useReviews(
-    vendorId as string,
-  );
+  const { data: reviewsData } = useReviews(vendorId as string);
 
   const reviews = reviewsData?.data ?? [];
   const reviewSummary = reviewsData?.summary ?? { averageRating: 0, total: 0 };
@@ -168,6 +166,7 @@ export default function VendorStorePage() {
         <button
           onClick={() => router.back()}
           className="absolute top-4 left-4 md:top-8 md:left-8 z-10 bg-black/20 backdrop-blur-md rounded-full p-3 text-white hover:bg-black/40 transition-colors"
+          type="button"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
@@ -184,12 +183,12 @@ export default function VendorStorePage() {
                     className="object-cover"
                   />
                 ) : (
-                  "🏪"
+                  <Store className="w-12 h-12 text-on-surface-variant" />
                 )}
               </div>
             </div>
             <div>
-              <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-2">
+              <h1 className="font-display text-3xl md:text-5xl font-semibold text-white tracking-tight mb-2">
                 {vendor.name}
               </h1>
               <div className="flex flex-wrap items-center gap-3 text-white/90 font-medium">
@@ -262,6 +261,7 @@ export default function VendorStorePage() {
                     setSelectedCategory("all");
                   }}
                   className="mt-6 text-primary font-bold hover:underline"
+                  type="button"
                 >
                   Clear all filters
                 </button>
@@ -295,9 +295,15 @@ export default function VendorStorePage() {
                   </div>
                   <div>
                     <div className="flex gap-1 mb-1">
-                      {Array.from({ length: 5 }).map((_, i) => (
+                      {[
+                        "avg-star-1",
+                        "avg-star-2",
+                        "avg-star-3",
+                        "avg-star-4",
+                        "avg-star-5",
+                      ].map((starKey, i) => (
                         <Star
-                          key={i}
+                          key={starKey}
                           className={`h-5 w-5 ${i < Math.round(reviewSummary.averageRating) ? "fill-primary text-primary" : "fill-surface-container-high text-surface-container-high"}`}
                         />
                       ))}
@@ -316,10 +322,17 @@ export default function VendorStorePage() {
                     Leave a Review
                   </h3>
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-on-surface-variant">
+                    <span
+                      id="review-rating-label"
+                      className="text-sm font-semibold text-on-surface-variant"
+                    >
                       Rating
-                    </label>
-                    <div className="flex gap-2">
+                    </span>
+                    <div
+                      role="radiogroup"
+                      aria-labelledby="review-rating-label"
+                      className="flex gap-2"
+                    >
                       {[1, 2, 3, 4, 5].map((num) => (
                         <button
                           key={num}
@@ -339,10 +352,14 @@ export default function VendorStorePage() {
                     </div>
                   </div>
                   <div className="space-y-2 pt-2">
-                    <label className="text-sm font-semibold text-on-surface-variant">
+                    <label
+                      htmlFor="review-comments"
+                      className="text-sm font-semibold text-on-surface-variant"
+                    >
                       Comments
                     </label>
                     <textarea
+                      id="review-comments"
                       value={reviewComment}
                       onChange={(e) => setReviewComment(e.target.value)}
                       placeholder="Tell others about your experience..."
@@ -393,9 +410,15 @@ export default function VendorStorePage() {
                                 {review.userName || "Anonymous Customer"}
                               </p>
                               <div className="flex gap-0.5 mt-0.5">
-                                {Array.from({ length: 5 }).map((_, i) => (
+                                {[
+                                  "r-star-1",
+                                  "r-star-2",
+                                  "r-star-3",
+                                  "r-star-4",
+                                  "r-star-5",
+                                ].map((starKey, i) => (
                                   <Star
-                                    key={i}
+                                    key={`${review._id}-${starKey}`}
                                     className={`h-3 w-3 ${i < review.rating ? "fill-primary text-primary" : "fill-surface-container-high text-surface-container-high"}`}
                                   />
                                 ))}

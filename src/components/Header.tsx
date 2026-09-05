@@ -19,7 +19,7 @@ export const Header = ({
   onSearchChange,
   showSearch = true,
 }: HeaderProps) => {
-  const { totalItems, setIsOpen } = useCart();
+  const { totalItems } = useCart();
   const { isSignedIn } = useUser();
 
   return (

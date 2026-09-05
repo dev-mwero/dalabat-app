@@ -39,11 +39,11 @@ export default function CartPage() {
     <main className="max-w-screen-2xl mx-auto px-6 py-12 mb-24 md:mb-0">
       <div className="mb-10 flex items-center justify-between">
         <div>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface mb-2 flex items-center gap-4">
+          <h1 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-on-surface mb-2 flex items-center gap-4">
             Your Basket
           </h1>
           <p className="text-on-surface-variant font-medium">
-            Review your curated selection of artisanal provisions
+            Review your selection of everyday provisions
           </p>
         </div>
         <Link
@@ -64,7 +64,7 @@ export default function CartPage() {
             Your basket is empty
           </h2>
           <p className="text-on-surface-variant mb-8">
-            Looks like you haven't added any artisanal provisions yet.
+            Looks like you haven't added any provisions yet.
           </p>
           <Link
             href="/"
@@ -117,6 +117,7 @@ export default function CartPage() {
                     <div className="flex items-center justify-between md:justify-end gap-8 mt-4 md:mt-0">
                       <div className="flex items-center bg-surface-container-low rounded-full px-3 py-1">
                         <button
+                          type="button"
                           onClick={() =>
                             updateQuantity(item.product._id, item.quantity - 1)
                           }
@@ -128,6 +129,7 @@ export default function CartPage() {
                           {item.quantity}
                         </span>
                         <button
+                          type="button"
                           onClick={() =>
                             updateQuantity(item.product._id, item.quantity + 1)
                           }
@@ -141,6 +143,7 @@ export default function CartPage() {
                           ${(item.product.price * item.quantity).toFixed(2)}
                         </span>
                         <button
+                          type="button"
                           onClick={() => removeItem(item.product._id)}
                           className="text-error text-xs font-semibold hover:underline mt-1 flex items-center justify-end gap-1 ml-auto"
                         >
@@ -165,9 +168,10 @@ export default function CartPage() {
                     Smoked Sea Salt
                   </span>
                   —harvested by hand in small batches. It's the perfect pairing
-                  for your artisanal selection.
+                  for your everyday provisions.
                 </p>
                 <button
+                  type="button"
                   onClick={() => toast.success("Added to cart!")}
                   className="bg-white text-primary px-6 py-2 rounded-full font-bold shadow-sm active:scale-95 transition-all text-sm"
                 >
@@ -244,6 +248,7 @@ export default function CartPage() {
                     className="bg-transparent border-none focus:ring-0 text-sm flex-grow p-0 outline-none text-on-surface"
                   />
                   <button
+                    type="button"
                     onClick={() => toast.success("Promo code applied!")}
                     disabled={!promoCode}
                     className="text-primary font-bold text-sm px-2 disabled:opacity-50"
@@ -253,6 +258,7 @@ export default function CartPage() {
                 </div>
 
                 <button
+                  type="button"
                   onClick={handleCheckout}
                   className="w-full bg-primary-container text-white py-4 rounded-full font-bold text-lg shadow-lg shadow-primary-container/20 hover:opacity-90 active:scale-95 transition-all"
                 >
@@ -263,8 +269,8 @@ export default function CartPage() {
               <div className="pt-4 flex flex-col items-center gap-3">
                 <ShieldCheck className="w-6 h-6 text-primary/50" />
                 <p className="text-[10px] text-on-surface-variant text-center leading-tight">
-                  Your order is protected by our Curator Guarantee. <br />
-                  Secure transaction processed via Zest Pay.
+                  Your order is protected by our Quality Guarantee. <br />
+                  Secure transaction processed via IIBSO Pay.
                 </p>
               </div>
             </div>

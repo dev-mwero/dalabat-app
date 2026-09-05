@@ -8,6 +8,7 @@ import {
   CheckCircle,
   MapPin,
   Phone,
+  ShoppingCart,
   Truck,
 } from "lucide-react";
 import Image from "next/image";
@@ -43,6 +44,7 @@ export default function CheckoutPage() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [orderRef, setOrderRef] = useState("");
 
   useEffect(() => {
     if (!vendorId) return;
@@ -95,9 +97,15 @@ export default function CheckoutPage() {
     return (
       <div className="min-h-screen bg-surface text-on-surface">
         <div className="container flex flex-col items-center justify-center px-4 py-20 text-center">
-          <div className="mb-4 text-6xl">🛒</div>
-          <h2 className="mb-2 text-xl font-bold">Your cart is empty</h2>
-          <Link href="/" className="font-medium text-primary hover:underline">
+          <ShoppingCart className="mb-4 h-16 w-16 text-on-surface-variant/40" />
+          <h2 className="mb-2 text-2xl font-bold">Your cart is empty</h2>
+          <p className="mb-4 text-on-surface-variant">
+            Add some everyday provisions before checking out.
+          </p>
+          <Link
+            href="/"
+            className="rounded-full bg-primary-container text-white px-6 py-3 text-sm font-bold shadow-lg shadow-primary-container/20 hover:scale-[1.02] active:scale-95 transition-all"
+          >
             Browse vendors
           </Link>
         </div>
@@ -117,23 +125,38 @@ export default function CheckoutPage() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring" }}
-            className="mb-6 text-7xl"
+            className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-container/20"
           >
-            🎉
+            <CheckCircle className="h-10 w-10 text-primary" />
           </motion.div>
-          <CheckCircle className="mb-4 h-16 w-16 text-primary" />
-          <h2 className="mb-2 text-2xl font-extrabold">Order Placed!</h2>
-          <p className="mb-6 max-w-sm text-on-surface-variant">
-            Your order has been sent to {completedVendorName}. You&apos;ll be
-            notified when it&apos;s ready.
+          <h2 className="mb-2 text-3xl font-extrabold tracking-tight">
+            Order Placed!
+          </h2>
+          <p className="mb-2 max-w-sm text-on-surface-variant">
+            {paymentMethod === "mpesa-auto"
+              ? `Check your phone — an M-Pesa prompt was sent to ${phone}. You'll be notified when ${completedVendorName} confirms your order.`
+              : `Your order has been sent to ${completedVendorName}. You'll be notified when it's ready.`}
           </p>
-          <button
-            type="button"
-            onClick={() => router.push("/")}
-            className="rounded-full bg-primary-container text-white px-6 py-3 text-sm font-bold shadow-lg shadow-primary-container/20 hover:scale-[1.02] active:scale-95 transition-all"
-          >
-            Back to Marketplace
-          </button>
+          {orderRef && (
+            <p className="text-sm font-bold text-primary mb-6">
+              Order reference: {orderRef}
+            </p>
+          )}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link
+              href={orderRef ? `/track-order?id=${orderRef}` : "/track-order"}
+              className="rounded-full bg-primary text-white px-6 py-3 text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+            >
+              Track My Order
+            </Link>
+            <button
+              type="button"
+              onClick={() => router.push("/")}
+              className="rounded-full bg-surface-container-low text-on-surface px-6 py-3 text-sm font-bold hover:bg-surface-container-high transition-colors"
+            >
+              Back to Marketplace
+            </button>
+          </div>
         </motion.div>
       </div>
     );
@@ -190,6 +213,8 @@ export default function CheckoutPage() {
         return;
       }
 
+      const result = await response.json();
+      setOrderRef(result.tracking?.orderRef ?? "");
       setCompletedVendorName(vendor?.name || "the vendor");
       clearCart();
       setOrderPlaced(true);
@@ -203,10 +228,10 @@ export default function CheckoutPage() {
 
   return (
     <div className="bg-surface text-on-surface antialiased min-h-screen">
-      <header className="bg-[#F8F9FF]/90 backdrop-blur-lg sticky top-0 z-50 py-4 px-6 border-b border-outline-variant/10">
+      <header className="bg-surface/90 backdrop-blur-lg sticky top-0 z-50 py-4 px-6 border-b border-outline-variant/10">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="text-2xl font-extrabold tracking-tighter text-[#9D4300]">
-            Zest Marketplace
+          <div className="text-2xl font-extrabold tracking-tighter text-primary">
+            IIBSO
           </div>
           <Link
             href={vendor ? `/store/${vendor.slug || vendor._id}` : "/"}
@@ -222,11 +247,11 @@ export default function CheckoutPage() {
         <div className="flex flex-col lg:flex-row gap-12">
           <div className="flex-1 space-y-12">
             <div className="space-y-2">
-              <h1 className="text-4xl font-extrabold tracking-tight text-on-surface leading-tight">
+              <h1 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-on-surface leading-tight">
                 Complete your order
               </h1>
               <p className="text-on-surface-variant body-md">
-                Review your details and confirm your artisanal selection.
+                Review your details and confirm your provisions.
               </p>
             </div>
 
@@ -320,10 +345,14 @@ export default function CheckoutPage() {
                   </div>
                   <div className="bg-surface-container-low p-8 rounded-xl">
                     <div className="space-y-2">
-                      <label className="text-sm font-semibold text-on-surface-variant block px-1">
+                      <label
+                        htmlFor="checkout-address"
+                        className="text-sm font-semibold text-on-surface-variant block px-1"
+                      >
                         Full Address
                       </label>
                       <input
+                        id="checkout-address"
                         type="text"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
@@ -419,10 +448,14 @@ export default function CheckoutPage() {
                     className="bg-surface-container-low p-8 rounded-xl space-y-6 overflow-hidden"
                   >
                     <div className="space-y-2">
-                      <label className="text-sm font-semibold text-on-surface-variant block px-1">
+                      <label
+                        htmlFor="checkout-phone"
+                        className="text-sm font-semibold text-on-surface-variant block px-1"
+                      >
                         Phone Number
                       </label>
                       <input
+                        id="checkout-phone"
                         type="text"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
@@ -430,12 +463,27 @@ export default function CheckoutPage() {
                         className="w-full bg-surface-container-lowest border-0 rounded-lg p-4 focus:ring-2 focus:ring-primary transition-all placeholder:text-on-surface-variant/40"
                       />
                     </div>
+                    {paymentMethod === "mpesa-auto" ? (
+                      <p className="text-sm text-on-surface-variant">
+                        You&apos;ll receive an M-Pesa prompt on this number to
+                        approve payment before the store confirms your order.
+                      </p>
+                    ) : (
+                      <p className="text-sm text-on-surface-variant">
+                        Pay the store directly, then enter the transaction code
+                        you received from M-Pesa.
+                      </p>
+                    )}
                     {paymentMethod === "mpesa-manual" && (
                       <div className="space-y-2">
-                        <label className="text-sm font-semibold text-on-surface-variant block px-1">
+                        <label
+                          htmlFor="checkout-mpesa-code"
+                          className="text-sm font-semibold text-on-surface-variant block px-1"
+                        >
                           M-Pesa Transaction Code
                         </label>
                         <input
+                          id="checkout-mpesa-code"
                           type="text"
                           value={mpesaCode}
                           onChange={(e) => setMpesaCode(e.target.value)}
@@ -458,7 +506,7 @@ export default function CheckoutPage() {
                 </h3>
 
                 <div className="space-y-6 mb-8 max-h-[400px] overflow-y-auto no-scrollbar">
-                  {items.map((item: any) => (
+                  {items.map((item) => (
                     <div key={item.product._id} className="flex gap-4">
                       <div className="w-20 h-20 bg-surface-container-low rounded-xl overflow-hidden flex-shrink-0 relative">
                         {/* Assuming item.product might have an image, but fallback to a placeholder if not */}
@@ -509,6 +557,7 @@ export default function CheckoutPage() {
                   onClick={handlePlaceOrder}
                   disabled={isSubmitting}
                   className="w-full mt-10 flex justify-center items-center bg-primary-container text-white py-4 rounded-full font-bold text-lg shadow-lg shadow-primary-container/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-70 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                  type="button"
                 >
                   {isSubmitting ? "Processing..." : "Complete Purchase"}
                 </button>
@@ -544,7 +593,7 @@ export default function CheckoutPage() {
 
       <footer className="py-12 px-6 border-t border-outline-variant/10 text-center">
         <p className="text-sm text-on-surface-variant">
-          © {new Date().getFullYear()} Zest Marketplace. All transactions are
+          © {new Date().getFullYear()} IIBSO Marketplace. All transactions are
           encrypted.
         </p>
       </footer>

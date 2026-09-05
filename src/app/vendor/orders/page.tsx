@@ -1,14 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  ClipboardList,
-  CreditCard,
-  Mail,
-  MapPin,
-  Phone,
-  Truck,
-} from "lucide-react";
+import { ClipboardList, MapPin, Phone, Truck } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -300,6 +293,7 @@ export default function VendorOrdersPage() {
                   ? "bg-primary-container text-white font-bold shadow-md shadow-primary-container/10"
                   : "bg-surface-container-high text-on-surface-variant font-medium hover:bg-surface-container-highest"
               }`}
+              type="button"
             >
               {label}
               {count}
@@ -398,6 +392,7 @@ export default function VendorOrdersPage() {
                         disabled={isUpdating}
                         onClick={() => patchOrderStatus(order._id, nextStatus)}
                         className="px-6 py-2.5 rounded-full bg-primary-container text-white font-bold text-sm hover:opacity-90 transition-all disabled:opacity-50"
+                        type="button"
                       >
                         {isUpdating
                           ? "Updating..."
@@ -409,6 +404,7 @@ export default function VendorOrdersPage() {
                       disabled={isUpdating}
                       onClick={() => patchOrderStatus(order._id, "cancelled")}
                       className="px-4 py-2.5 rounded-full bg-error-container text-error font-bold text-sm hover:bg-error/20 transition-all disabled:opacity-50"
+                      type="button"
                     >
                       Cancel
                     </button>

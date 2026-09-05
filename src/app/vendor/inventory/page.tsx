@@ -1,19 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Download,
-  Eye,
-  ImagePlus,
-  MoreVertical,
-  Package,
-  Pencil,
-  Plus,
-  Search,
-  Trash2,
-} from "lucide-react";
+import { Download, Eye, ImagePlus, Pencil, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 type Vendor = {
@@ -414,8 +404,8 @@ export default function VendorInventoryPage() {
             Curated Inventory
           </h1>
           <p className="text-on-surface-variant text-lg max-w-xl">
-            Manage your premium offerings and maintain the stock of your
-            artisanal pantry staples.
+            Manage your offerings and maintain the stock of your everyday
+            staples.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
@@ -430,13 +420,17 @@ export default function VendorInventoryPage() {
               </option>
             ))}
           </select>
-          <button className="bg-surface-container-high text-on-surface px-6 py-3 rounded-full font-bold text-sm flex items-center gap-2 hover:bg-surface-container-highest transition-colors">
+          <button
+            className="bg-surface-container-high text-on-surface px-6 py-3 rounded-full font-bold text-sm flex items-center gap-2 hover:bg-surface-container-highest transition-colors"
+            type="button"
+          >
             <Download className="w-5 h-5" />
             Export List
           </button>
           <button
             onClick={openCreateDialog}
             className="bg-primary-container text-white px-6 py-3 rounded-full font-bold text-sm flex items-center gap-2 shadow-[0_8px_20px_rgba(249,115,22,0.3)] hover:scale-105 transition-transform shrink-0"
+            type="button"
           >
             <Plus className="w-5 h-5" />
             New Product
@@ -450,6 +444,7 @@ export default function VendorInventoryPage() {
           <button
             onClick={() => setFilterCategory("all")}
             className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${filterCategory === "all" ? "bg-primary-container text-white shadow-lg shadow-primary-container/20" : "bg-surface-container-high text-on-surface hover:bg-surface-container-highest"}`}
+            type="button"
           >
             All Items
           </button>
@@ -458,6 +453,7 @@ export default function VendorInventoryPage() {
               key={cat}
               onClick={() => setFilterCategory(cat)}
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${filterCategory === cat ? "bg-primary-container text-white shadow-lg shadow-primary-container/20" : "bg-surface-container-high text-on-surface hover:bg-surface-container-highest"}`}
+              type="button"
             >
               {categoryLabels[cat] || cat}
             </button>
@@ -518,6 +514,7 @@ export default function VendorInventoryPage() {
                 <button
                   onClick={() => openEditDialog(product)}
                   className="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1"
+                  type="button"
                 >
                   <Pencil className="w-4 h-4" />
                   Edit
@@ -527,6 +524,7 @@ export default function VendorInventoryPage() {
                     onClick={() => toggleStock(product)}
                     className="p-2 bg-surface-container-low rounded-full hover:bg-surface-container-high transition-colors"
                     title="Toggle Stock"
+                    type="button"
                   >
                     <Eye
                       className={`w-5 h-5 ${product.inStock ? "text-primary" : "text-on-surface-variant"}`}
@@ -536,6 +534,7 @@ export default function VendorInventoryPage() {
                     onClick={() => handleDelete(product._id)}
                     className="p-2 bg-surface-container-low rounded-full hover:bg-error-container hover:text-error transition-colors"
                     title="Delete"
+                    type="button"
                   >
                     <Trash2 className="w-5 h-5 text-on-surface-variant hover:text-error" />
                   </button>
@@ -576,7 +575,11 @@ export default function VendorInventoryPage() {
               </div>
             </div>
             <div className="relative w-48 h-48 shrink-0">
-              <svg className="w-full h-full transform -rotate-90">
+              <svg
+                className="w-full h-full transform -rotate-90"
+                role="img"
+                aria-label="Stock level"
+              >
                 <circle
                   className="text-surface-container-high"
                   cx="96"
@@ -625,9 +628,10 @@ export default function VendorInventoryPage() {
         )}
 
         {/* Empty State / Add Suggestion */}
-        <div
+        <button
+          type="button"
           onClick={openCreateDialog}
-          className="bg-surface-container-lowest rounded-xl border-2 border-dashed border-outline-variant flex flex-col items-center justify-center p-8 text-center min-h-[300px] group cursor-pointer hover:bg-surface-container-low transition-colors"
+          className="bg-surface-container-lowest rounded-xl border-2 border-dashed border-outline-variant flex flex-col items-center justify-center p-8 text-center min-h-[300px] group cursor-pointer hover:bg-surface-container-low transition-colors w-full"
         >
           <div className="w-16 h-16 bg-surface-container-high rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
             <ImagePlus className="text-primary-container w-8 h-8" />
@@ -638,10 +642,10 @@ export default function VendorInventoryPage() {
           <p className="text-on-surface-variant text-sm mb-6 max-w-xs">
             New seasonal items arriving? Add them to your storefront now.
           </p>
-          <button className="text-primary-container font-bold text-sm underline-offset-4 hover:underline">
+          <span className="text-primary-container font-bold text-sm underline-offset-4 hover:underline">
             Start listing
-          </button>
-        </div>
+          </span>
+        </button>
       </div>
 
       {/* Product Edit/Create Modal */}
@@ -654,24 +658,32 @@ export default function VendorInventoryPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-bold text-on-surface">
+                <label
+                  htmlFor="product-name"
+                  className="text-sm font-bold text-on-surface"
+                >
                   Product Name
                 </label>
                 <input
+                  id="product-name"
                   value={form.name}
                   onChange={(e) =>
                     setForm((prev) => ({ ...prev, name: e.target.value }))
                   }
                   className="mt-1 h-12 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all"
-                  placeholder="e.g. Artisan Sourdough Loaf"
+                  placeholder="e.g. 2kg Rice"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-bold text-on-surface">
+                <label
+                  htmlFor="product-description"
+                  className="text-sm font-bold text-on-surface"
+                >
                   Description
                 </label>
                 <textarea
+                  id="product-description"
                   value={form.description}
                   onChange={(e) =>
                     setForm((prev) => ({
@@ -686,10 +698,14 @@ export default function VendorInventoryPage() {
               </div>
 
               <div>
-                <label className="text-sm font-bold text-on-surface">
+                <label
+                  htmlFor="product-image"
+                  className="text-sm font-bold text-on-surface"
+                >
                   Image URL
                 </label>
                 <input
+                  id="product-image"
                   value={form.image}
                   onChange={(e) =>
                     setForm((prev) => ({ ...prev, image: e.target.value }))
@@ -701,10 +717,14 @@ export default function VendorInventoryPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-bold text-on-surface">
+                  <label
+                    htmlFor="product-price"
+                    className="text-sm font-bold text-on-surface"
+                  >
                     Price (KSh)
                   </label>
                   <input
+                    id="product-price"
                     type="number"
                     min={0}
                     value={form.price}
@@ -715,10 +735,14 @@ export default function VendorInventoryPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-bold text-on-surface">
+                  <label
+                    htmlFor="product-unit"
+                    className="text-sm font-bold text-on-surface"
+                  >
                     Unit
                   </label>
                   <select
+                    id="product-unit"
                     value={form.unit}
                     onChange={(e) =>
                       setForm((prev) => ({ ...prev, unit: e.target.value }))
@@ -736,10 +760,14 @@ export default function VendorInventoryPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-bold text-on-surface">
+                  <label
+                    htmlFor="product-category"
+                    className="text-sm font-bold text-on-surface"
+                  >
                     Category
                   </label>
                   <select
+                    id="product-category"
                     value={form.category}
                     onChange={(e) =>
                       setForm((prev) => ({ ...prev, category: e.target.value }))
@@ -754,10 +782,14 @@ export default function VendorInventoryPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-sm font-bold text-on-surface">
+                  <label
+                    htmlFor="product-stock"
+                    className="text-sm font-bold text-on-surface"
+                  >
                     Stock Quantity
                   </label>
                   <input
+                    id="product-stock"
                     type="number"
                     min={0}
                     value={form.stockQuantity}
@@ -791,6 +823,7 @@ export default function VendorInventoryPage() {
               <button
                 onClick={() => setIsDialogOpen(false)}
                 className="px-6 py-3 rounded-full font-bold text-on-surface hover:bg-surface-container-high transition-colors"
+                type="button"
               >
                 Cancel
               </button>
@@ -798,6 +831,7 @@ export default function VendorInventoryPage() {
                 disabled={saving}
                 onClick={() => void handleSave()}
                 className="bg-primary-container text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-primary-container/20 hover:opacity-90 transition-opacity disabled:opacity-50"
+                type="button"
               >
                 {saving
                   ? "Saving..."
