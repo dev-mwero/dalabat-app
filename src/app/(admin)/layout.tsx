@@ -97,7 +97,10 @@ export default function AdminLayout({
                 type="text"
               />
             </div>
-            <button className="p-2.5 text-slate-400 hover:bg-slate-50 transition-colors rounded-xl relative">
+            <button
+              type="button"
+              className="p-2.5 text-slate-400 hover:bg-slate-50 transition-colors rounded-xl relative"
+            >
               <Bell className="w-5 h-5" />
               <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
             </button>

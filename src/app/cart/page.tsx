@@ -117,6 +117,7 @@ export default function CartPage() {
                     <div className="flex items-center justify-between md:justify-end gap-8 mt-4 md:mt-0">
                       <div className="flex items-center bg-surface-container-low rounded-full px-3 py-1">
                         <button
+                          type="button"
                           onClick={() =>
                             updateQuantity(item.product._id, item.quantity - 1)
                           }
@@ -128,6 +129,7 @@ export default function CartPage() {
                           {item.quantity}
                         </span>
                         <button
+                          type="button"
                           onClick={() =>
                             updateQuantity(item.product._id, item.quantity + 1)
                           }
@@ -141,6 +143,7 @@ export default function CartPage() {
                           ${(item.product.price * item.quantity).toFixed(2)}
                         </span>
                         <button
+                          type="button"
                           onClick={() => removeItem(item.product._id)}
                           className="text-error text-xs font-semibold hover:underline mt-1 flex items-center justify-end gap-1 ml-auto"
                         >
@@ -168,6 +171,7 @@ export default function CartPage() {
                   for your artisanal selection.
                 </p>
                 <button
+                  type="button"
                   onClick={() => toast.success("Added to cart!")}
                   className="bg-white text-primary px-6 py-2 rounded-full font-bold shadow-sm active:scale-95 transition-all text-sm"
                 >
@@ -244,6 +248,7 @@ export default function CartPage() {
                     className="bg-transparent border-none focus:ring-0 text-sm flex-grow p-0 outline-none text-on-surface"
                   />
                   <button
+                    type="button"
                     onClick={() => toast.success("Promo code applied!")}
                     disabled={!promoCode}
                     className="text-primary font-bold text-sm px-2 disabled:opacity-50"
@@ -253,6 +258,7 @@ export default function CartPage() {
                 </div>
 
                 <button
+                  type="button"
                   onClick={handleCheckout}
                   className="w-full bg-primary-container text-white py-4 rounded-full font-bold text-lg shadow-lg shadow-primary-container/20 hover:opacity-90 active:scale-95 transition-all"
                 >

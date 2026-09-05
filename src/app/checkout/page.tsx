@@ -320,10 +320,14 @@ export default function CheckoutPage() {
                   </div>
                   <div className="bg-surface-container-low p-8 rounded-xl">
                     <div className="space-y-2">
-                      <label className="text-sm font-semibold text-on-surface-variant block px-1">
+                      <label
+                        htmlFor="checkout-address"
+                        className="text-sm font-semibold text-on-surface-variant block px-1"
+                      >
                         Full Address
                       </label>
                       <input
+                        id="checkout-address"
                         type="text"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
@@ -419,10 +423,14 @@ export default function CheckoutPage() {
                     className="bg-surface-container-low p-8 rounded-xl space-y-6 overflow-hidden"
                   >
                     <div className="space-y-2">
-                      <label className="text-sm font-semibold text-on-surface-variant block px-1">
+                      <label
+                        htmlFor="checkout-phone"
+                        className="text-sm font-semibold text-on-surface-variant block px-1"
+                      >
                         Phone Number
                       </label>
                       <input
+                        id="checkout-phone"
                         type="text"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
@@ -432,10 +440,14 @@ export default function CheckoutPage() {
                     </div>
                     {paymentMethod === "mpesa-manual" && (
                       <div className="space-y-2">
-                        <label className="text-sm font-semibold text-on-surface-variant block px-1">
+                        <label
+                          htmlFor="checkout-mpesa-code"
+                          className="text-sm font-semibold text-on-surface-variant block px-1"
+                        >
                           M-Pesa Transaction Code
                         </label>
                         <input
+                          id="checkout-mpesa-code"
                           type="text"
                           value={mpesaCode}
                           onChange={(e) => setMpesaCode(e.target.value)}
@@ -458,7 +470,7 @@ export default function CheckoutPage() {
                 </h3>
 
                 <div className="space-y-6 mb-8 max-h-[400px] overflow-y-auto no-scrollbar">
-                  {items.map((item: any) => (
+                  {items.map((item) => (
                     <div key={item.product._id} className="flex gap-4">
                       <div className="w-20 h-20 bg-surface-container-low rounded-xl overflow-hidden flex-shrink-0 relative">
                         {/* Assuming item.product might have an image, but fallback to a placeholder if not */}
@@ -509,6 +521,7 @@ export default function CheckoutPage() {
                   onClick={handlePlaceOrder}
                   disabled={isSubmitting}
                   className="w-full mt-10 flex justify-center items-center bg-primary-container text-white py-4 rounded-full font-bold text-lg shadow-lg shadow-primary-container/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-70 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                  type="button"
                 >
                   {isSubmitting ? "Processing..." : "Complete Purchase"}
                 </button>

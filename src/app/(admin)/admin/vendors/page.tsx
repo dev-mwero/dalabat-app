@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import {
-  AlertTriangle,
   CheckCircle2,
   ExternalLink,
   Filter,
@@ -10,7 +9,6 @@ import {
   Plus,
   Search,
   Star,
-  Store,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,12 +36,14 @@ export default function AdminVendorsPage() {
         const response = await fetch("/api/vendors?limit=100");
         const result = await response.json();
         // Enriching with some mock admin-only data
-        const enriched = result.data.map((v: any) => ({
-          ...v,
-          status: "active",
-          totalSales: Math.floor(Math.random() * 500) + 50,
-          isVerified: v.rating > 4.5,
-        }));
+        const enriched = result.data.map(
+          (v: Omit<Vendor, "status" | "totalSales" | "isVerified">) => ({
+            ...v,
+            status: "active",
+            totalSales: Math.floor(Math.random() * 500) + 50,
+            isVerified: v.rating > 4.5,
+          }),
+        );
         setVendors(enriched);
       } catch (err) {
         console.error(err);
@@ -65,7 +65,10 @@ export default function AdminVendorsPage() {
             Managing {vendors.length} storefronts across the platform.
           </p>
         </div>
-        <button className="bg-slate-900 text-white font-bold py-4 px-8 rounded-2xl shadow-xl shadow-slate-200 flex items-center gap-2 hover:bg-slate-800 transition-all">
+        <button
+          type="button"
+          className="bg-slate-900 text-white font-bold py-4 px-8 rounded-2xl shadow-xl shadow-slate-200 flex items-center gap-2 hover:bg-slate-800 transition-all"
+        >
           <Plus className="w-5 h-5" />
           Onboard Vendor
         </button>
@@ -80,7 +83,10 @@ export default function AdminVendorsPage() {
             placeholder="Search by store name or slug..."
           />
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 bg-slate-50 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100">
+        <button
+          type="button"
+          className="flex items-center gap-2 px-6 py-3 bg-slate-50 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100"
+        >
           <Filter className="w-4 h-4" />
           Filters
         </button>
@@ -183,7 +189,10 @@ export default function AdminVendorsPage() {
                       >
                         <ExternalLink className="w-4 h-4" />
                       </Link>
-                      <button className="p-2 text-slate-400 hover:text-slate-900 hover:bg-white rounded-lg border border-transparent hover:border-slate-200 transition-all">
+                      <button
+                        type="button"
+                        className="p-2 text-slate-400 hover:text-slate-900 hover:bg-white rounded-lg border border-transparent hover:border-slate-200 transition-all"
+                      >
                         <MoreHorizontal className="w-4 h-4" />
                       </button>
                     </div>

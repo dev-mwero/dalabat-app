@@ -11,7 +11,7 @@ import {
   UserCheck,
   UserPlus,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 type StaffMember = {
@@ -33,23 +33,23 @@ export default function VendorStaffPage() {
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    fetchInvites();
-  }, []);
-
-  const fetchInvites = async () => {
+  const fetchInvites = useCallback(async () => {
     try {
       const res = await fetch("/api/vendor/staff/invite");
       if (res.ok) {
         const result = await res.json();
         setStaff(result.data || []);
       }
-    } catch (e) {
+    } catch (_e) {
       toast.error("Failed to load staff");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchInvites();
+  }, [fetchInvites]);
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,7 +74,7 @@ export default function VendorStaffPage() {
       setInviteEmail("");
       setInviteName("");
       fetchInvites();
-    } catch (e) {
+    } catch (_e) {
       toast.error("An error occurred");
     } finally {
       setIsInviting(false);
@@ -110,6 +110,7 @@ export default function VendorStaffPage() {
         <button
           onClick={() => setIsInviteModalOpen(true)}
           className="bg-primary text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-primary/20 flex items-center justify-center gap-2 hover:opacity-90 transition-all shrink-0"
+          type="button"
         >
           <UserPlus className="w-5 h-5" />
           Add Teller
@@ -130,7 +131,10 @@ export default function VendorStaffPage() {
                 {member.name.charAt(0)}
               </div>
               <div className="flex gap-2">
-                <button className="p-2 text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded-full transition-all">
+                <button
+                  className="p-2 text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded-full transition-all"
+                  type="button"
+                >
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
@@ -215,6 +219,7 @@ export default function VendorStaffPage() {
                   <button
                     onClick={handleCopy}
                     className="p-2 bg-surface-container-high hover:bg-surface-container-highest rounded-lg transition-colors"
+                    type="button"
                   >
                     {copied ? (
                       <Check className="w-5 h-5 text-emerald-600" />
@@ -226,6 +231,7 @@ export default function VendorStaffPage() {
                 <button
                   onClick={closeModals}
                   className="w-full bg-primary text-white font-bold py-4 rounded-2xl hover:opacity-90 shadow-lg shadow-primary/20 transition-all"
+                  type="button"
                 >
                   Done
                 </button>
@@ -242,10 +248,14 @@ export default function VendorStaffPage() {
 
                 <form onSubmit={handleInvite} className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-on-surface ml-1">
+                    <label
+                      htmlFor="invite-name"
+                      className="text-sm font-bold text-on-surface ml-1"
+                    >
                       Full Name
                     </label>
                     <input
+                      id="invite-name"
                       type="text"
                       value={inviteName}
                       onChange={(e) => setInviteName(e.target.value)}
@@ -255,10 +265,14 @@ export default function VendorStaffPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-on-surface ml-1">
+                    <label
+                      htmlFor="invite-email"
+                      className="text-sm font-bold text-on-surface ml-1"
+                    >
                       Email Address
                     </label>
                     <input
+                      id="invite-email"
                       type="email"
                       value={inviteEmail}
                       onChange={(e) => setInviteEmail(e.target.value)}

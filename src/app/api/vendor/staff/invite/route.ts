@@ -1,5 +1,5 @@
+import crypto from "node:crypto";
 import { auth } from "@clerk/nextjs/server";
-import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Invite } from "@/models/invite";
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7); // Expires in 7 days
 
-    const invite = await Invite.create({
+    const _invite = await Invite.create({
       email,
       name,
       role: "teller",
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
       inviteLink,
       message: "Invite created successfully.",
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Invite generation error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET(_req: Request) {
   try {
     const { userId: clerkId } = await auth();
     if (!clerkId) {
@@ -108,7 +108,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ data: invites });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Fetch invites error:", error);
     return NextResponse.json(
       { error: "Internal server error" },

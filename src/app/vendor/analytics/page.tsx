@@ -6,11 +6,8 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Area,
   AreaChart,
-  Bar,
-  BarChart,
   CartesianGrid,
   Cell,
-  Legend,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -316,12 +313,14 @@ export default function VendorAnalyticsPage() {
             <button
               onClick={() => setPreset("30d")}
               className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors ${preset === "30d" ? "bg-primary text-on-primary" : "text-on-surface-variant hover:bg-surface-container-low"}`}
+              type="button"
             >
               Last 30 Days
             </button>
             <button
               onClick={() => setPreset("90d")}
               className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors ${preset === "90d" ? "bg-primary text-on-primary" : "text-on-surface-variant hover:bg-surface-container-low"}`}
+              type="button"
             >
               Quarterly
             </button>
@@ -329,6 +328,7 @@ export default function VendorAnalyticsPage() {
             <button
               onClick={handleExportCSV}
               className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors"
+              type="button"
             >
               <Download className="w-4 h-4" />
               Export
@@ -421,7 +421,10 @@ export default function VendorAnalyticsPage() {
                 Daily earnings for the current period
               </p>
             </div>
-            <button className="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg">
+            <button
+              className="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg"
+              type="button"
+            >
               <CalendarIcon className="w-5 h-5" />
             </button>
           </div>
@@ -559,7 +562,10 @@ export default function VendorAnalyticsPage() {
           <h4 className="text-xl font-bold text-on-surface">
             Top Selling Products
           </h4>
-          <button className="text-sm font-bold text-primary hover:underline">
+          <button
+            className="text-sm font-bold text-primary hover:underline"
+            type="button"
+          >
             View All Inventory
           </button>
         </div>

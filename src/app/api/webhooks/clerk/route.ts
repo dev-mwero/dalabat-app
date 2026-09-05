@@ -6,7 +6,7 @@ import { User } from "@/models/user";
 import { Vendor } from "@/models/vendor";
 
 export async function POST(req: NextRequest) {
-  let event;
+  let event: Awaited<ReturnType<typeof verifyWebhook>>;
 
   try {
     event = await verifyWebhook(req);

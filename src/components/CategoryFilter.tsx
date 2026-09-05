@@ -29,6 +29,7 @@ const CategoryFilter = ({ selected, onSelect }: CategoryFilterProps) => {
               ? "bg-primary text-primary-foreground shadow-sm"
               : "bg-secondary text-secondary-foreground hover:bg-secondary/80",
           )}
+          type="button"
         >
           <span>{cat.icon}</span>
           <span>{cat.name}</span>

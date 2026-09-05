@@ -177,7 +177,10 @@ export default function VendorDashboardPage() {
               </option>
             ))}
           </select>
-          <button className="bg-primary-container text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-primary-container/20 flex items-center justify-center gap-2 hover:opacity-90 transition-all shrink-0">
+          <button
+            className="bg-primary-container text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-primary-container/20 flex items-center justify-center gap-2 hover:opacity-90 transition-all shrink-0"
+            type="button"
+          >
             <Plus className="w-5 h-5" />
             New Product
           </button>
@@ -397,7 +400,10 @@ export default function VendorDashboardPage() {
                 Get featured in our daily editorial newsletters reaching 100k+
                 foodies.
               </p>
-              <button className="bg-white text-on-tertiary-fixed text-xs font-bold py-2 px-4 rounded-full w-fit hover:bg-opacity-90 transition-all">
+              <button
+                className="bg-white text-on-tertiary-fixed text-xs font-bold py-2 px-4 rounded-full w-fit hover:bg-opacity-90 transition-all"
+                type="button"
+              >
                 Learn More
               </button>
             </div>

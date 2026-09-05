@@ -1,16 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  ArrowLeft,
-  Bell,
-  Check,
-  MapPin,
-  Search,
-  ShoppingCart,
-  Star,
-  Store,
-} from "lucide-react";
+import { ArrowLeft, Check, Search, ShoppingCart, Store } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -40,7 +31,7 @@ export default function MarketPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCategory, sortOption]);
+  }, []);
 
   const filteredProducts = useMemo(() => {
     const result = [...products];
@@ -157,10 +148,11 @@ export default function MarketPage() {
                   {categories.map((cat) => {
                     const isSelected = selectedCategory === cat.id;
                     return (
-                      <label
+                      <button
                         key={cat.id}
-                        className="flex items-center gap-3 group cursor-pointer"
+                        type="button"
                         onClick={() => setSelectedCategory(cat.id)}
+                        className="w-full flex items-center gap-3 group cursor-pointer text-left"
                       >
                         <div
                           className={`w-5 h-5 rounded-lg flex items-center justify-center transition-colors ${isSelected ? "bg-primary-container shadow-lg shadow-primary-container/20" : "bg-surface-container-high group-hover:bg-primary-container/20"}`}
@@ -174,7 +166,7 @@ export default function MarketPage() {
                         >
                           {cat.name}
                         </span>
-                      </label>
+                      </button>
                     );
                   })}
                 </div>
@@ -187,15 +179,17 @@ export default function MarketPage() {
                 </p>
                 <div className="space-y-3">
                   {loadingVendors
-                    ? Array.from({ length: 3 }).map((_, i) => (
-                        <div
-                          key={i}
-                          className="flex items-center gap-3 animate-pulse"
-                        >
-                          <div className="w-8 h-8 rounded-full bg-surface-container-high" />
-                          <div className="h-4 bg-surface-container-high rounded w-24" />
-                        </div>
-                      ))
+                    ? ["vendor-sk-1", "vendor-sk-2", "vendor-sk-3"].map(
+                        (skey) => (
+                          <div
+                            key={skey}
+                            className="flex items-center gap-3 animate-pulse"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-surface-container-high" />
+                            <div className="h-4 bg-surface-container-high rounded w-24" />
+                          </div>
+                        ),
+                      )
                     : vendors.slice(0, 5).map((vendor) => (
                         <Link
                           href={`/store/${vendor.slug || vendor._id}`}
@@ -253,9 +247,16 @@ export default function MarketPage() {
 
             {loadingProducts ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {Array.from({ length: 6 }).map((_, i) => (
+                {[
+                  "product-sk-1",
+                  "product-sk-2",
+                  "product-sk-3",
+                  "product-sk-4",
+                  "product-sk-5",
+                  "product-sk-6",
+                ].map((skey) => (
                   <div
-                    key={i}
+                    key={skey}
                     className="h-80 rounded-xl bg-surface-container-low animate-pulse"
                   />
                 ))}
@@ -344,6 +345,7 @@ export default function MarketPage() {
                     onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
                     className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors disabled:opacity-50"
+                    type="button"
                   >
                     <ArrowLeft className="w-5 h-5" />
                   </button>
@@ -354,6 +356,7 @@ export default function MarketPage() {
                         key={page}
                         onClick={() => setCurrentPage(page)}
                         className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors ${page === currentPage ? "bg-primary-container text-white shadow-sm" : "text-on-surface hover:bg-surface-container-high"}`}
+                        type="button"
                       >
                         {page}
                       </button>
@@ -366,6 +369,7 @@ export default function MarketPage() {
                     }
                     disabled={currentPage === totalPages}
                     className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors disabled:opacity-50"
+                    type="button"
                   >
                     <ArrowLeft className="w-5 h-5 rotate-180" />
                   </button>

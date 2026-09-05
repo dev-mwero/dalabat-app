@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import {
   ArrowRight,
+  Check,
   ChevronRight,
   Globe,
   Heart,
@@ -172,7 +173,7 @@ export default function LandingPage() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white">
-                      <CheckCircle className="w-6 h-6" />
+                      <Check className="w-6 h-6" />
                     </div>
                     <div>
                       <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
@@ -224,7 +225,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {features.map((feature, i) => (
+            {features.map((feature, _i) => (
               <motion.div
                 key={feature.title}
                 whileHover={{ y: -10 }}
@@ -379,26 +380,5 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
-  );
-}
-
-// Mock icon missing in lucide
-function CheckCircle(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-      <polyline points="22 4 12 14.01 9 11.01" />
-    </svg>
   );
 }

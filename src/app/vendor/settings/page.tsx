@@ -350,6 +350,7 @@ export default function VendorSettingsPage() {
                   ? "text-primary border-b-2 border-primary-container"
                   : "text-on-surface-variant hover:text-primary"
               }`}
+              type="button"
             >
               <tab.icon className="w-4 h-4" />
               {tab.label}
@@ -377,10 +378,14 @@ export default function VendorSettingsPage() {
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="block text-sm font-semibold text-on-surface-variant px-1">
+                      <label
+                        htmlFor="profile-store-name"
+                        className="block text-sm font-semibold text-on-surface-variant px-1"
+                      >
                         Store Name
                       </label>
                       <input
+                        id="profile-store-name"
                         value={profile.storeName}
                         onChange={(e) =>
                           setProfile((p) => ({
@@ -393,10 +398,16 @@ export default function VendorSettingsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="block text-sm font-semibold text-on-surface-variant px-1">
+                      <label
+                        htmlFor="profile-category"
+                        className="block text-sm font-semibold text-on-surface-variant px-1"
+                      >
                         Primary Category
                       </label>
-                      <select className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium">
+                      <select
+                        id="profile-category"
+                        className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium"
+                      >
                         <option>Bakery & Pastries</option>
                         <option>Organic Produce</option>
                         <option>Artisan Cheese</option>
@@ -404,10 +415,14 @@ export default function VendorSettingsPage() {
                       </select>
                     </div>
                     <div className="md:col-span-2 space-y-2">
-                      <label className="block text-sm font-semibold text-on-surface-variant px-1">
+                      <label
+                        htmlFor="profile-description"
+                        className="block text-sm font-semibold text-on-surface-variant px-1"
+                      >
                         Description
                       </label>
                       <textarea
+                        id="profile-description"
                         value={profile.description}
                         onChange={(e) =>
                           setProfile((p) => ({
@@ -429,10 +444,14 @@ export default function VendorSettingsPage() {
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="block text-sm font-semibold text-on-surface-variant px-1">
+                      <label
+                        htmlFor="profile-email"
+                        className="block text-sm font-semibold text-on-surface-variant px-1"
+                      >
                         Email Address
                       </label>
                       <input
+                        id="profile-email"
                         value={profile.email}
                         onChange={(e) =>
                           setProfile((p) => ({ ...p, email: e.target.value }))
@@ -442,10 +461,14 @@ export default function VendorSettingsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="block text-sm font-semibold text-on-surface-variant px-1">
+                      <label
+                        htmlFor="profile-phone"
+                        className="block text-sm font-semibold text-on-surface-variant px-1"
+                      >
                         Phone Number
                       </label>
                       <input
+                        id="profile-phone"
                         value={profile.phone}
                         onChange={(e) =>
                           setProfile((p) => ({ ...p, phone: e.target.value }))
@@ -455,10 +478,14 @@ export default function VendorSettingsPage() {
                       />
                     </div>
                     <div className="md:col-span-2 space-y-2">
-                      <label className="block text-sm font-semibold text-on-surface-variant px-1">
+                      <label
+                        htmlFor="profile-address"
+                        className="block text-sm font-semibold text-on-surface-variant px-1"
+                      >
                         Business Address
                       </label>
                       <input
+                        id="profile-address"
                         value={profile.address}
                         onChange={(e) =>
                           setProfile((p) => ({ ...p, address: e.target.value }))
@@ -528,6 +555,7 @@ export default function VendorSettingsPage() {
                     onClick={() => saveProfile()}
                     disabled={savingProfile}
                     className="bg-primary-container text-white px-10 py-4 rounded-full font-bold shadow-lg shadow-primary-container/20 hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
+                    type="button"
                   >
                     <Save className="w-5 h-5" />
                     {savingProfile ? "Saving..." : "Save Profile Changes"}
@@ -578,6 +606,7 @@ export default function VendorSettingsPage() {
                         <button
                           onClick={() => removeZone(zone.id)}
                           className="p-2 text-on-surface-variant hover:text-error hover:bg-error-container rounded-full transition-colors"
+                          type="button"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -602,6 +631,7 @@ export default function VendorSettingsPage() {
                     <button
                       onClick={addZone}
                       className="bg-secondary-container text-on-secondary-container px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                      type="button"
                     >
                       <Plus className="w-4 h-4" />
                       Add
@@ -614,6 +644,7 @@ export default function VendorSettingsPage() {
                     onClick={() => saveDelivery()}
                     disabled={savingDelivery}
                     className="bg-primary-container text-white px-10 py-4 rounded-full font-bold shadow-lg shadow-primary-container/20 hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
+                    type="button"
                   >
                     <Save className="w-5 h-5" />
                     {savingDelivery ? "Saving..." : "Save Delivery Zones"}
@@ -754,6 +785,7 @@ export default function VendorSettingsPage() {
                     onClick={() => saveNotifications()}
                     disabled={savingNotifications}
                     className="bg-primary-container text-white px-10 py-4 rounded-full font-bold shadow-lg shadow-primary-container/20 hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
+                    type="button"
                   >
                     <Save className="w-5 h-5" />
                     {savingNotifications ? "Saving..." : "Save Preferences"}

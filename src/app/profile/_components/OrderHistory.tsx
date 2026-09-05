@@ -8,6 +8,7 @@ import {
   ChevronDown,
   ChevronUp,
   Clock,
+  type LucideIcon,
   Package,
   ShoppingBag,
   Truck,
@@ -17,7 +18,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface OrderItem {
@@ -45,7 +46,7 @@ const statusConfig: Record<
   {
     label: string;
     variant: "default" | "secondary" | "destructive" | "outline";
-    icon: any;
+    icon: LucideIcon;
   }
 > = {
   pending: { label: "Pending", variant: "outline", icon: Clock },
@@ -90,9 +91,11 @@ export function OrderHistory() {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-32 w-full rounded-xl" />
-        ))}
+        {["order-skeleton-1", "order-skeleton-2", "order-skeleton-3"].map(
+          (key) => (
+            <Skeleton key={key} className="h-32 w-full rounded-xl" />
+          ),
+        )}
       </div>
     );
   }
@@ -143,8 +146,9 @@ export function OrderHistory() {
             key={order._id}
             className="overflow-hidden border-border transition-all hover:border-primary/50"
           >
-            <div
-              className="p-4 flex items-center justify-between cursor-pointer select-none"
+            <button
+              type="button"
+              className="w-full p-4 flex items-center justify-between cursor-pointer select-none text-left"
               onClick={() => toggleOrder(order._id)}
             >
               <div className="flex items-center gap-4">
@@ -180,7 +184,7 @@ export function OrderHistory() {
                   <ChevronDown className="h-5 w-5 text-muted-foreground" />
                 )}
               </div>
-            </div>
+            </button>
 
             {/* Mobile-only status/total row (if collapsed) */}
             {!isExpanded && (
@@ -201,9 +205,9 @@ export function OrderHistory() {
                   Order Items
                 </h5>
                 <div className="space-y-3">
-                  {order.items.map((item, idx) => (
+                  {order.items.map((item) => (
                     <div
-                      key={idx}
+                      key={`${order._id}-${item.productId}-${item.name}`}
                       className="flex justify-between items-center text-sm"
                     >
                       <div className="flex gap-2">

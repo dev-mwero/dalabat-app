@@ -95,7 +95,10 @@ export default function VendorLayout({
               >
                 <ArrowLeft className="w-4 h-4" /> Market
               </Link>
-              <button className="p-2 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-full relative">
+              <button
+                className="p-2 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-full relative"
+                type="button"
+              >
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full" />
               </button>

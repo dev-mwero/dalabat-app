@@ -125,7 +125,10 @@ export default function AdminDashboardPage() {
         <section className="xl:col-span-2 bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
           <div className="p-8 border-b border-slate-100 flex justify-between items-center">
             <h3 className="text-xl font-bold">System Log</h3>
-            <button className="text-sm font-bold text-slate-400 hover:text-slate-900">
+            <button
+              type="button"
+              className="text-sm font-bold text-slate-400 hover:text-slate-900"
+            >
               View All
             </button>
           </div>

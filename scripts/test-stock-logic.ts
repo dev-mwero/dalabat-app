@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import mongoose, { Types } from "mongoose";
+import mongoose from "mongoose";
 import { connectToDatabase } from "../src/lib/mongodb";
 import { Order } from "../src/models/order";
 import { Product } from "../src/models/product";

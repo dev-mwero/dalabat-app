@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
-import { CartDrawer } from "@/components/CartDrawer";
-import { Header } from "@/components/Header";
 import { AppProviders } from "@/providers/AppProviders";
 import "./globals.css";
 

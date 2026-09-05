@@ -1,9 +1,8 @@
-import { AlertTriangle, Zap } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Invite } from "@/models/invite";
-import { Vendor } from "@/models/vendor";
 
 export default async function InvitePage({
   params,

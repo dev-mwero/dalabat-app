@@ -97,7 +97,7 @@ export default function RegisterPage() {
                 onClick={() => setSelected(role.id)}
                 className={`relative text-left p-8 rounded-3xl border-2 transition-all duration-300 cursor-pointer ${
                   isSelected
-                    ? role.selectedBorder + " shadow-xl"
+                    ? `${role.selectedBorder} shadow-xl`
                     : `${role.border} hover:shadow-lg hover:-translate-y-1`
                 } bg-white`}
               >
@@ -157,6 +157,7 @@ export default function RegisterPage() {
             onClick={handleContinue}
             disabled={!selected}
             className="bg-slate-900 text-white px-14 py-5 rounded-2xl font-black text-lg flex items-center gap-3 hover:shadow-2xl hover:shadow-slate-200 transition-all disabled:cursor-not-allowed disabled:opacity-40 group"
+            type="button"
           >
             Continue
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
