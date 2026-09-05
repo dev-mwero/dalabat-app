@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { connectToDatabase } from "@/lib/mongodb";
+import { getCurrentUserIdentity } from "@/lib/roles";
 import { Order } from "@/models/order";
 
 const patchOrderSchema = z.object({
@@ -88,6 +89,17 @@ export async function PATCH(
     const order = await findOrderByParam(orderId);
     if (!order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    }
+
+    const viewer = await getCurrentUserIdentity();
+    const isAdmin = viewer?.role === "admin";
+    const ownsVendor =
+      viewer?.vendorId != null && String(order.vendorId) === viewer.vendorId;
+    if (!isAdmin && !ownsVendor) {
+      return NextResponse.json(
+        { error: "You cannot update this order" },
+        { status: 403 },
+      );
     }
 
     const patch = parsed.data;

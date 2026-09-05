@@ -196,9 +196,7 @@ export default function TrackOrderPage() {
     setTrackingId(trimmed);
 
     try {
-      const response = await fetch(
-        `/api/orders/${encodeURIComponent(trimmed)}`,
-      );
+      const response = await fetch(`/api/track/${encodeURIComponent(trimmed)}`);
       if (!response.ok) {
         if (response.status === 404) {
           setOrder(null);

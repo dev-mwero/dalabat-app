@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import { connectToDatabase } from "@/lib/mongodb";
 import { User } from "@/models/user";
 
@@ -32,11 +33,26 @@ export async function hasRole(allowedRoles: UserRole[]) {
 }
 
 /**
- * Helper to protect routes at the page/layout level.
+ * Server-side route guard. Redirects unauthenticated users to sign-in and
+ * users with the wrong role to their own dashboard.
  */
-export async function protectRole(allowedRoles: UserRole[]) {
+export async function requireRole(allowedRoles: UserRole[]) {
   const { role } = await getCurrentUserRole();
-  if (!role || !allowedRoles.includes(role)) {
-    throw new Error("Unauthorized: Insufficient permissions");
+
+  if (!role) {
+    redirect("/sign-in");
   }
+
+  if (!allowedRoles.includes(role)) {
+    redirect("/dashboard");
+  }
+}
+
+/**
+ * Returns the current user's identity (role + vendorId) or null when signed out.
+ * Useful for API ownership checks.
+ */
+export async function getCurrentUserIdentity() {
+  const { role, vendorId } = await getCurrentUserRole();
+  return role ? { role, vendorId } : null;
 }

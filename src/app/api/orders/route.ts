@@ -1,7 +1,9 @@
+import { auth } from "@clerk/nextjs/server";
 import { type FilterQuery, Types } from "mongoose";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { connectToDatabase } from "@/lib/mongodb";
+import { getCurrentUserIdentity } from "@/lib/roles";
 import { Order, type OrderDocument } from "@/models/order";
 import { Product } from "@/models/product";
 import { Vendor } from "@/models/vendor";
@@ -94,6 +96,8 @@ export async function GET(request: NextRequest) {
     const sort = params.get("sort")?.trim() ?? "newest";
 
     const filter: FilterQuery<OrderDocument> = {};
+    const session = await auth();
+    const viewer = session.userId ? await getCurrentUserIdentity() : null;
 
     if (vendorId) {
       if (!Types.ObjectId.isValid(vendorId)) {
@@ -102,11 +106,30 @@ export async function GET(request: NextRequest) {
           { status: 400 },
         );
       }
+      if (viewer?.role !== "admin" && viewer?.vendorId !== vendorId) {
+        return NextResponse.json(
+          { error: "You do not have access to this vendor's orders" },
+          { status: 403 },
+        );
+      }
       filter.vendorId = new Types.ObjectId(vendorId);
     }
 
     if (customerClerkId) {
+      if (customerClerkId !== session.userId) {
+        return NextResponse.json(
+          { error: "You can only view your own orders" },
+          { status: 403 },
+        );
+      }
       filter.customerClerkId = customerClerkId;
+    }
+
+    if (!vendorId && !customerClerkId && viewer?.role !== "admin") {
+      return NextResponse.json(
+        { error: "You are not allowed to list all orders" },
+        { status: 403 },
+      );
     }
 
     if (status) {
@@ -158,6 +181,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    if (!session.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     await connectToDatabase();
 
     const payload = await request.json();
@@ -244,7 +272,7 @@ export async function POST(request: NextRequest) {
         data.customerId && Types.ObjectId.isValid(data.customerId)
           ? new Types.ObjectId(data.customerId)
           : null,
-      customerClerkId: data.customerClerkId ?? null,
+      customerClerkId: session.userId,
       vendorId: vendorObjectId,
       items,
       subtotal,
