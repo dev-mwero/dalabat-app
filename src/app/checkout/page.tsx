@@ -8,6 +8,7 @@ import {
   CheckCircle,
   MapPin,
   Phone,
+  ShoppingCart,
   Truck,
 } from "lucide-react";
 import Image from "next/image";
@@ -43,6 +44,7 @@ export default function CheckoutPage() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [orderRef, setOrderRef] = useState("");
 
   useEffect(() => {
     if (!vendorId) return;
@@ -95,9 +97,15 @@ export default function CheckoutPage() {
     return (
       <div className="min-h-screen bg-surface text-on-surface">
         <div className="container flex flex-col items-center justify-center px-4 py-20 text-center">
-          <div className="mb-4 text-6xl">🛒</div>
-          <h2 className="mb-2 text-xl font-bold">Your cart is empty</h2>
-          <Link href="/" className="font-medium text-primary hover:underline">
+          <ShoppingCart className="mb-4 h-16 w-16 text-on-surface-variant/40" />
+          <h2 className="mb-2 text-2xl font-bold">Your cart is empty</h2>
+          <p className="mb-4 text-on-surface-variant">
+            Add some everyday provisions before checking out.
+          </p>
+          <Link
+            href="/"
+            className="rounded-full bg-primary-container text-white px-6 py-3 text-sm font-bold shadow-lg shadow-primary-container/20 hover:scale-[1.02] active:scale-95 transition-all"
+          >
             Browse vendors
           </Link>
         </div>
@@ -117,23 +125,38 @@ export default function CheckoutPage() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring" }}
-            className="mb-6 text-7xl"
+            className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary-container/20"
           >
-            🎉
+            <CheckCircle className="h-10 w-10 text-primary" />
           </motion.div>
-          <CheckCircle className="mb-4 h-16 w-16 text-primary" />
-          <h2 className="mb-2 text-2xl font-extrabold">Order Placed!</h2>
-          <p className="mb-6 max-w-sm text-on-surface-variant">
-            Your order has been sent to {completedVendorName}. You&apos;ll be
-            notified when it&apos;s ready.
+          <h2 className="mb-2 text-3xl font-extrabold tracking-tight">
+            Order Placed!
+          </h2>
+          <p className="mb-2 max-w-sm text-on-surface-variant">
+            {paymentMethod === "mpesa-auto"
+              ? `Check your phone — an M-Pesa prompt was sent to ${phone}. You'll be notified when ${completedVendorName} confirms your order.`
+              : `Your order has been sent to ${completedVendorName}. You'll be notified when it's ready.`}
           </p>
-          <button
-            type="button"
-            onClick={() => router.push("/")}
-            className="rounded-full bg-primary-container text-white px-6 py-3 text-sm font-bold shadow-lg shadow-primary-container/20 hover:scale-[1.02] active:scale-95 transition-all"
-          >
-            Back to Marketplace
-          </button>
+          {orderRef && (
+            <p className="text-sm font-bold text-primary mb-6">
+              Order reference: {orderRef}
+            </p>
+          )}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link
+              href={orderRef ? `/track-order?id=${orderRef}` : "/track-order"}
+              className="rounded-full bg-primary text-white px-6 py-3 text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+            >
+              Track My Order
+            </Link>
+            <button
+              type="button"
+              onClick={() => router.push("/")}
+              className="rounded-full bg-surface-container-low text-on-surface px-6 py-3 text-sm font-bold hover:bg-surface-container-high transition-colors"
+            >
+              Back to Marketplace
+            </button>
+          </div>
         </motion.div>
       </div>
     );
@@ -190,6 +213,8 @@ export default function CheckoutPage() {
         return;
       }
 
+      const result = await response.json();
+      setOrderRef(result.tracking?.orderRef ?? "");
       setCompletedVendorName(vendor?.name || "the vendor");
       clearCart();
       setOrderPlaced(true);
@@ -438,6 +463,17 @@ export default function CheckoutPage() {
                         className="w-full bg-surface-container-lowest border-0 rounded-lg p-4 focus:ring-2 focus:ring-primary transition-all placeholder:text-on-surface-variant/40"
                       />
                     </div>
+                    {paymentMethod === "mpesa-auto" ? (
+                      <p className="text-sm text-on-surface-variant">
+                        You&apos;ll receive an M-Pesa prompt on this number to
+                        approve payment before the store confirms your order.
+                      </p>
+                    ) : (
+                      <p className="text-sm text-on-surface-variant">
+                        Pay the store directly, then enter the transaction code
+                        you received from M-Pesa.
+                      </p>
+                    )}
                     {paymentMethod === "mpesa-manual" && (
                       <div className="space-y-2">
                         <label
