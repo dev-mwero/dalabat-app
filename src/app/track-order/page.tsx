@@ -12,7 +12,8 @@ import {
   Truck,
 } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type OrderStatus =
   | "pending"
@@ -176,49 +177,64 @@ function buildTimeline(order: TrackedOrder): TimelineStep[] {
   });
 }
 
-export default function TrackOrderPage() {
-  const [searchId, setSearchId] = useState("");
+function TrackOrderContent() {
+  const searchParams = useSearchParams();
+  const initialId = searchParams.get("id") ?? "";
+  const [searchId, setSearchId] = useState(initialId);
   const [trackingId, setTrackingId] = useState<string | null>(null);
   const [order, setOrder] = useState<TrackedOrder | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const timeline = useMemo(() => (order ? buildTimeline(order) : []), [order]);
+  const autoSearched = useRef(false);
 
-  async function handleSearch() {
-    const trimmed = searchId.trim().toUpperCase();
-    if (!trimmed) {
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    setTrackingId(trimmed);
-
-    try {
-      const response = await fetch(`/api/track/${encodeURIComponent(trimmed)}`);
-      if (!response.ok) {
-        if (response.status === 404) {
-          setOrder(null);
-          setError(
-            "Order not found. Double-check your order ID and try again.",
-          );
-          return;
-        }
-
-        throw new Error("Failed to load order");
+  const search = useCallback(
+    async (id?: string) => {
+      const trimmed = (id ?? searchId).trim().toUpperCase();
+      if (!trimmed) {
+        return;
       }
 
-      const result = await response.json();
-      setOrder(result.data as TrackedOrder);
+      setLoading(true);
       setError(null);
-    } catch {
-      setOrder(null);
-      setError("Unable to track this order right now.");
-    } finally {
-      setLoading(false);
+      setTrackingId(trimmed);
+
+      try {
+        const response = await fetch(
+          `/api/track/${encodeURIComponent(trimmed)}`,
+        );
+        if (!response.ok) {
+          if (response.status === 404) {
+            setOrder(null);
+            setError(
+              "Order not found. Double-check your order ID and try again.",
+            );
+            return;
+          }
+
+          throw new Error("Failed to load order");
+        }
+
+        const result = await response.json();
+        setOrder(result.data as TrackedOrder);
+        setError(null);
+      } catch {
+        setOrder(null);
+        setError("Unable to track this order right now.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [searchId],
+  );
+
+  useEffect(() => {
+    if (initialId && !autoSearched.current) {
+      autoSearched.current = true;
+      void search(initialId);
     }
-  }
+  }, [initialId, search]);
 
   return (
     <main className="min-h-screen bg-background">
@@ -247,7 +263,7 @@ export default function TrackOrderPage() {
               onChange={(event) => setSearchId(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
-                  void handleSearch();
+                  void search();
                 }
               }}
               className="h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 text-sm"
@@ -256,7 +272,7 @@ export default function TrackOrderPage() {
           <button
             type="button"
             onClick={() => {
-              void handleSearch();
+              void search();
             }}
             disabled={loading}
             className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
@@ -424,5 +440,13 @@ export default function TrackOrderPage() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function TrackOrderPage() {
+  return (
+    <Suspense fallback={null}>
+      <TrackOrderContent />
+    </Suspense>
   );
 }
