@@ -11,6 +11,16 @@ import { useVendors } from "@/hooks/useVendors";
 
 const PRODUCTS_PER_PAGE = 8;
 
+const categories = [
+  { id: "all", name: "All Provisions" },
+  { id: "rice", name: "Rice & Grains" },
+  { id: "flour", name: "Flour & Baking" },
+  { id: "sugar", name: "Sugar & Sweeteners" },
+  { id: "salt", name: "Salt & Spices" },
+  { id: "oil", name: "Cooking Oils" },
+  { id: "general", name: "General Groceries" },
+];
+
 export default function MarketPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -31,6 +41,12 @@ export default function MarketPage() {
 
   useEffect(() => {
     setCurrentPage(1);
+
+    const params = new URLSearchParams(window.location.search);
+    const category = params.get("category");
+    if (category && categories.some((c) => c.name === category)) {
+      setSelectedCategory(category);
+    }
   }, []);
 
   const filteredProducts = useMemo(() => {
@@ -54,15 +70,6 @@ export default function MarketPage() {
     const start = (currentPage - 1) * PRODUCTS_PER_PAGE;
     return filteredProducts.slice(start, start + PRODUCTS_PER_PAGE);
   }, [filteredProducts, currentPage]);
-
-  const categories = [
-    { id: "all", name: "All Provisions" },
-    { id: "rice", name: "Rice & Grains" },
-    { id: "flour", name: "Flour & Baking" },
-    { id: "sugar", name: "Sugar & Sweeteners" },
-    { id: "salt", name: "Salt & Spices" },
-    { id: "oil", name: "Cooking Oils" },
-  ];
 
   const currency = new Intl.NumberFormat("en-KE", {
     style: "currency",
@@ -216,7 +223,7 @@ export default function MarketPage() {
           <section className="flex-1">
             <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
-                <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">
+                <h1 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-on-surface mb-2">
                   Everyday Provisions
                 </h1>
                 <p className="text-on-surface-variant font-medium">
@@ -264,7 +271,7 @@ export default function MarketPage() {
               </div>
             ) : paginatedProducts.length === 0 ? (
               <div className="text-center py-20 bg-surface-container-lowest rounded-3xl ring-1 ring-outline-variant/10 shadow-sm">
-                <div className="text-5xl mb-4">🔍</div>
+                <Search className="mx-auto h-12 w-12 text-on-surface-variant/40 mb-4" />
                 <h3 className="text-xl font-bold mb-2 text-on-surface">
                   No results found
                 </h3>
