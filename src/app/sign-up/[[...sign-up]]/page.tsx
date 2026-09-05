@@ -37,7 +37,7 @@ function SignUpContent() {
               <ShoppingBag className="w-8 h-8 text-white" />
             )}
           </div>
-          <h2 className="text-3xl font-black text-white mb-4 leading-tight">
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-white mb-4 leading-tight">
             {isVendor
               ? "Launch your provisions storefront."
               : isTeller
@@ -46,7 +46,7 @@ function SignUpContent() {
           </h2>
           <p className="text-white/70 font-medium text-lg leading-relaxed">
             {isVendor
-              ? "Join hundreds of producers connecting with thousands of buyers across Kenya."
+              ? "A dedicated dashboard for managing stock, staff, and orders."
               : isTeller
                 ? "You've been invited to manage orders and inventory as a Teller."
                 : "Support local vendors and enjoy quality provisions delivered to your doorstep."}

@@ -39,7 +39,7 @@ export default function CartPage() {
     <main className="max-w-screen-2xl mx-auto px-6 py-12 mb-24 md:mb-0">
       <div className="mb-10 flex items-center justify-between">
         <div>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface mb-2 flex items-center gap-4">
+          <h1 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-on-surface mb-2 flex items-center gap-4">
             Your Basket
           </h1>
           <p className="text-on-surface-variant font-medium">

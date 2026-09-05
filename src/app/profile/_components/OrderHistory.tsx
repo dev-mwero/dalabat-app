@@ -111,7 +111,7 @@ export function OrderHistory() {
   if (orders.length === 0) {
     return (
       <div className="text-center py-16 bg-muted/30 rounded-2xl border-2 border-dashed border-border mt-4">
-        <div className="text-5xl mb-4">🛍️</div>
+        <ShoppingBag className="mx-auto h-12 w-12 text-muted-foreground/60 mb-4" />
         <h3 className="text-lg font-bold mb-1">No orders yet</h3>
         <p className="text-muted-foreground text-sm mb-6">
           Start shopping from our amazing vendors!

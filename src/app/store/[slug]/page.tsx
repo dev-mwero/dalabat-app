@@ -183,12 +183,12 @@ export default function VendorStorePage() {
                     className="object-cover"
                   />
                 ) : (
-                  "🏪"
+                  <Store className="w-12 h-12 text-on-surface-variant" />
                 )}
               </div>
             </div>
             <div>
-              <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-2">
+              <h1 className="font-display text-3xl md:text-5xl font-semibold text-white tracking-tight mb-2">
                 {vendor.name}
               </h1>
               <div className="flex flex-wrap items-center gap-3 text-white/90 font-medium">

@@ -222,7 +222,7 @@ export default function CheckoutPage() {
         <div className="flex flex-col lg:flex-row gap-12">
           <div className="flex-1 space-y-12">
             <div className="space-y-2">
-              <h1 className="text-4xl font-extrabold tracking-tight text-on-surface leading-tight">
+              <h1 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-on-surface leading-tight">
                 Complete your order
               </h1>
               <p className="text-on-surface-variant body-md">

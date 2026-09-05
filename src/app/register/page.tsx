@@ -77,7 +77,7 @@ export default function RegisterPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-14"
         >
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 mb-4">
+          <h1 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-slate-900 mb-4">
             How will you use IIBSO?
           </h1>
           <p className="text-slate-500 text-lg font-medium max-w-md mx-auto">

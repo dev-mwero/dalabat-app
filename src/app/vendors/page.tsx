@@ -37,7 +37,7 @@ export default function VendorsDirectoryPage() {
 
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              <h1 className="font-display text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
                 Vendor Directory
               </h1>
               <p className="mt-1 text-muted-foreground">

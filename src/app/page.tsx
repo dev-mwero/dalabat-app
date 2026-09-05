@@ -7,6 +7,7 @@ import {
   ChevronRight,
   Globe,
   Heart,
+  PackageCheck,
   ShieldCheck,
   ShoppingBag,
   Store,
@@ -16,6 +17,15 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+
+const stapleCategories = [
+  "Rice & Grains",
+  "Flour & Baking",
+  "Cooking Oils",
+  "Sugar & Sweeteners",
+  "Salt & Spices",
+  "General Groceries",
+];
 
 export default function LandingPage() {
   const fadeIn = {
@@ -28,7 +38,7 @@ export default function LandingPage() {
     {
       title: "For Buyers",
       description:
-        "Fill your kitchen with quality everyday staples — rice, flour, oil, sugar and more — delivered to your doorstep by trusted local vendors.",
+        "Fill your kitchen with quality everyday staples — rice, flour, oil, sugar and more — delivered by trusted local vendors.",
       icon: ShoppingBag,
       color: "bg-orange-50 text-orange-600",
       cta: "Explore Market",
@@ -37,11 +47,32 @@ export default function LandingPage() {
     {
       title: "For Vendors",
       description:
-        "Run your staple-food business with professional tools. Manage inventory, staff, and analytics in one powerful dashboard.",
+        "Run your staple-food business with professional tools. Manage inventory, staff, and analytics in one dashboard.",
       icon: Store,
       color: "bg-blue-50 text-blue-600",
       cta: "Start Selling",
       link: "/register?role=vendor",
+    },
+  ];
+
+  const steps = [
+    {
+      title: "Pick a store",
+      description:
+        "Browse the directory and choose a trusted local vendor near you.",
+      icon: Store,
+    },
+    {
+      title: "Order your staples",
+      description:
+        "Fill a cart with rice, flour, oil, sugar and more — pay by cash or M-Pesa.",
+      icon: ShoppingBag,
+    },
+    {
+      title: "Get it delivered",
+      description:
+        "Track your order from the vendor's counter to your doorstep.",
+      icon: PackageCheck,
     },
   ];
 
@@ -98,23 +129,31 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div {...fadeIn}>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-50 text-orange-600 text-xs font-black uppercase tracking-widest mb-6">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+              <h1 className="font-display text-5xl lg:text-7xl font-semibold leading-[1.05] tracking-tight text-slate-900 mb-8">
+                Everyday provisions, from vendors you{" "}
+                <span className="relative whitespace-nowrap text-orange-600">
+                  trust
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 120 12"
+                    className="absolute -bottom-2 left-0 w-full h-3 text-orange-300"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M2 9C30 3 70 3 118 8"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                    />
+                  </svg>
                 </span>
-                Now Live in Nairobi
-              </div>
-              <h1 className="text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight text-slate-900 mb-8">
-                The Future of{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-rose-500">
-                  Provisions
-                </span>{" "}
-                Commerce.
+                .
               </h1>
               <p className="text-xl text-slate-500 font-medium leading-relaxed mb-10 max-w-lg">
-                Connecting families with trusted local vendors. A complete
-                ecosystem for everyday staples, built for speed and scale.
+                IIBSO connects families with dependable local vendors for
+                quality rice, flour, sugar, oil and more — delivered to your
+                door or ready for pickup.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
@@ -131,30 +170,24 @@ export default function LandingPage() {
                   Open Your Store
                 </Link>
               </div>
-              <div className="mt-12 flex items-center gap-6">
-                <div className="flex -space-x-3">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div
-                      key={i}
-                      className="w-10 h-10 rounded-full border-4 border-white bg-slate-100 overflow-hidden relative"
-                    >
-                      <Image
-                        src={`https://i.pravatar.cc/100?img=${i + 10}`}
-                        alt="User"
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-                <p className="text-sm font-bold text-slate-400 italic">
-                  Trusted by 1,200+ families
-                </p>
+              <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm font-bold text-slate-400">
+                <Link
+                  href="/vendors"
+                  className="inline-flex items-center gap-2 hover:text-slate-900 transition-colors"
+                >
+                  <Store className="w-4 h-4" /> Browse the vendor directory
+                </Link>
+                <Link
+                  href="/track-order"
+                  className="inline-flex items-center gap-2 hover:text-slate-900 transition-colors"
+                >
+                  <PackageCheck className="w-4 h-4" /> Track an order
+                </Link>
               </div>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.8, x: 50 }}
+              initial={{ opacity: 0, scale: 0.92, x: 50 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative aspect-square lg:aspect-auto lg:h-[600px] rounded-[40px] overflow-hidden shadow-2xl border-8 border-white"
@@ -211,21 +244,38 @@ export default function LandingPage() {
         <div className="absolute bottom-0 left-0 -z-10 w-[600px] h-[600px] bg-blue-100/20 blur-[100px] rounded-full -translate-x-1/2 translate-y-1/2"></div>
       </section>
 
+      {/* Staple Categories Strip */}
+      <section className="py-10 border-y border-slate-100 bg-slate-50/60">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-wrap justify-center gap-4">
+            {stapleCategories.map((category) => (
+              <Link
+                key={category}
+                href={`/market?category=${encodeURIComponent(category)}`}
+                className="rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-orange-600 hover:border-orange-200 transition-colors"
+              >
+                {category}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Feature Split */}
       <section id="features" className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-4xl font-black tracking-tight text-slate-900 mb-4">
-              Dual-Powered Experience
+            <h2 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-slate-900 mb-4">
+              Built for the pantry, and the people who stock it
             </h2>
             <p className="text-slate-500 font-medium max-w-xl mx-auto text-lg">
-              Whether you are stocking your pantry or building your grocery
-              brand, we provide the ultimate platform for everyday provisions.
+              One marketplace for dependable everyday staples — whether you are
+              stocking your kitchen or running a provisions store.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {features.map((feature, _i) => (
+            {features.map((feature) => (
               <motion.div
                 key={feature.title}
                 whileHover={{ y: -10 }}
@@ -237,7 +287,7 @@ export default function LandingPage() {
                   >
                     <feature.icon className="w-8 h-8" />
                   </div>
-                  <h3 className="text-3xl font-black text-slate-900 mb-6">
+                  <h3 className="font-display text-3xl font-semibold text-slate-900 mb-6">
                     {feature.title}
                   </h3>
                   <p className="text-lg text-slate-500 leading-relaxed mb-10">
@@ -257,21 +307,55 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section id="how-it-works" className="py-24 bg-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-slate-900">
+              From counter to kitchen
+            </h2>
+            <p className="text-slate-500 font-medium max-w-xl mx-auto text-lg mt-4">
+              Ordering daily staples should feel as simple as a trip to the
+              neighborhood store.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {steps.map((step, index) => (
+              <div key={step.title} className="relative">
+                <div className="text-5xl font-display font-semibold text-slate-200 mb-6">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+                <step.icon className="w-8 h-8 text-orange-600 mb-4" />
+                <h3 className="font-display text-2xl font-semibold text-slate-900 mb-3">
+                  {step.title}
+                </h3>
+                <p className="text-slate-500 font-medium leading-relaxed">
+                  {step.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Trust Bar */}
       <section className="py-12 border-y border-slate-100 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-wrap justify-center gap-12 opacity-30 grayscale hover:grayscale-0 transition-all duration-500">
-            <div className="flex items-center gap-2 font-black text-2xl tracking-tighter">
-              <Globe className="w-6 h-6" /> LocalFirst
+          <div className="flex flex-wrap justify-center gap-12 text-slate-400">
+            <div className="flex items-center gap-2 font-black text-xl tracking-tight">
+              <Store className="w-6 h-6 text-orange-600" /> Vetted Local Vendors
             </div>
-            <div className="flex items-center gap-2 font-black text-2xl tracking-tighter">
-              <ShieldCheck className="w-6 h-6" /> SecureTrade
+            <div className="flex items-center gap-2 font-black text-xl tracking-tight">
+              <ShieldCheck className="w-6 h-6 text-orange-600" /> Quality
+              Guarantee
             </div>
-            <div className="flex items-center gap-2 font-black text-2xl tracking-tighter">
-              <Truck className="w-6 h-6" /> FastDeli
+            <div className="flex items-center gap-2 font-black text-xl tracking-tight">
+              <PackageCheck className="w-6 h-6 text-orange-600" /> Live Order
+              Tracking
             </div>
-            <div className="flex items-center gap-2 font-black text-2xl tracking-tighter">
-              <Heart className="w-6 h-6" /> PureQuality
+            <div className="flex items-center gap-2 font-black text-xl tracking-tight">
+              <Heart className="w-6 h-6 text-orange-600" /> Cash & M-Pesa
             </div>
           </div>
         </div>
@@ -282,18 +366,17 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto px-6 text-center">
           <div className="bg-slate-900 rounded-[50px] p-16 md:p-24 relative overflow-hidden">
             <div className="relative z-10 space-y-8">
-              <h2 className="text-4xl md:text-6xl font-black text-white leading-tight">
-                Ready to taste the <br />
-                <span className="text-orange-400">Extraordinary?</span>
+              <h2 className="font-display text-4xl md:text-6xl font-semibold text-white leading-tight">
+                Stock your pantry with staples worth cooking with.
               </h2>
               <p className="text-slate-400 text-lg md:text-xl font-medium max-w-2xl mx-auto">
-                Join the thousands of shoppers and hundreds of vendors building
-                the future of food supply in Kenya — one staple at a time.
+                Join vendors and households across Nairobi keeping quality
+                everyday provisions close to home.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                 <Link
                   href="/market"
-                  className="bg-white text-slate-900 px-10 py-5 rounded-2xl font-black text-lg hover:bg-orange-50 transition-all"
+                  className="bg-white text-slate-900 px-10 py-5 rounded-2xl font-black text-lg hover:bg-orange-50 hover:text-orange-700 transition-all"
                 >
                   Shop the Market
                 </Link>
@@ -351,13 +434,13 @@ export default function LandingPage() {
             <h4 className="font-black text-slate-900 mb-6">Company</h4>
             <ul className="space-y-4 text-sm font-bold text-slate-500">
               <li>
-                <Link href="#" className="hover:text-slate-900">
-                  About Us
+                <Link href="/support" className="hover:text-slate-900">
+                  Support
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-slate-900">
-                  Privacy Policy
+                <Link href="/track-order" className="hover:text-slate-900">
+                  Track Order
                 </Link>
               </li>
               <li>

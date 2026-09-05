@@ -5,6 +5,8 @@
     var(--font-jakarta), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+
   /* Base neutrals (shadcn/ui component mapping) */
   --color-background: oklch(0.983 0.008 279);
   --color-foreground: oklch(0.223 0.045 254);
@@ -90,8 +92,56 @@
     @apply border-border;
   }
 
+  html {
+    color-scheme: light;
+    scroll-padding-top: 5rem;
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    caret-color: var(--color-primary);
+  }
+
+  ::selection {
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(
+      in oklch,
+      var(--color-outline-variant) 65%,
+      transparent
+    );
+    border-radius: 9999px;
+    border: 2px solid var(--color-background);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-outline);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-outline-variant) transparent;
   }
 }
 
