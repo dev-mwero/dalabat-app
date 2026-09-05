@@ -1,14 +1,7 @@
-import { ArrowLeft, Headphones, Mail, MessageCircle } from "lucide-react";
+import { ArrowLeft, Mail, MapPin, PackageSearch } from "lucide-react";
 import Link from "next/link";
 
 const channels = [
-  {
-    icon: MessageCircle,
-    title: "Chat with us",
-    detail: "Reach the IIBSO team on WhatsApp during store hours.",
-    action: "+254 700 000 000",
-    href: "#",
-  },
   {
     icon: Mail,
     title: "Email support",
@@ -17,11 +10,18 @@ const channels = [
     href: "mailto:support@iibso.co.ke",
   },
   {
-    icon: Headphones,
-    title: "Order help line",
-    detail: "For urgent help with a delivery or pickup order.",
-    action: "+254 700 000 000",
-    href: "#",
+    icon: PackageSearch,
+    title: "Track an order",
+    detail: "Use the order ID from your confirmation to see live status.",
+    action: "Go to order tracking",
+    href: "/track-order",
+  },
+  {
+    icon: MapPin,
+    title: "Find a store",
+    detail: "Browse the market and reach out to a specific store directly.",
+    action: "View the market",
+    href: "/market",
   },
 ];
 
@@ -53,7 +53,7 @@ export default function SupportPage() {
               className="group rounded-lg border border-border bg-card p-5 shadow-sm transition-shadow hover:shadow-md"
             >
               <channel.icon className="h-6 w-6 text-primary" />
-              <h2 className="mt-3 font-bold text-foreground group-hover:text-primary transition-colors">
+              <h2 className="mt-3 font-bold text-foreground transition-colors group-hover:text-primary">
                 {channel.title}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -64,21 +64,6 @@ export default function SupportPage() {
               </p>
             </Link>
           ))}
-        </div>
-
-        <div className="rounded-lg border border-border bg-card/50 p-6 text-center">
-          <p className="text-sm font-semibold text-foreground">
-            Tracking an order?
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Use the order ID from your confirmation to see live status.
-          </p>
-          <Link
-            href="/track-order"
-            className="mt-4 inline-flex rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
-          >
-            Track my order
-          </Link>
         </div>
       </div>
     </main>

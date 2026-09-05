@@ -116,16 +116,16 @@ export default function AdminVendorsPage() {
     <div className="space-y-10">
       <header className="flex flex-col md:flex-row justify-between md:items-end gap-4">
         <div>
-          <h1 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-slate-900 mb-2">
+          <h1 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-foreground mb-2">
             Vendor Directory
           </h1>
-          <p className="text-slate-500 font-medium text-lg">
+          <p className="text-muted-foreground font-medium text-lg">
             {vendors.length} storefronts across the platform.
           </p>
         </div>
         <Link
           href="/register?role=vendor"
-          className="bg-slate-900 text-white font-bold py-4 px-8 rounded-2xl shadow-xl shadow-slate-200 flex items-center gap-2 hover:bg-slate-800 transition-all"
+          className="bg-primary text-primary-foreground font-bold py-4 px-8 rounded-2xl shadow-xl shadow-primary/20 flex items-center gap-2 hover:bg-primary/90 transition-all"
         >
           <Plus className="w-5 h-5" />
           Onboard Vendor
@@ -133,13 +133,13 @@ export default function AdminVendorsPage() {
       </header>
 
       {/* Filters */}
-      <section className="bg-white p-4 rounded-3xl border border-slate-200 flex flex-wrap items-center gap-4">
+      <section className="bg-card p-4 rounded-3xl border border-border flex flex-wrap items-center gap-4">
         <div className="relative flex-1 min-w-[240px]">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-50 border-none rounded-xl pl-11 pr-4 py-3 text-sm font-medium focus:ring-2 ring-slate-200"
+            className="w-full bg-muted border-none rounded-xl pl-11 pr-4 py-3 text-sm font-medium focus:ring-2 ring-ring"
             placeholder="Search by store name, location, or slug..."
             type="search"
           />
@@ -148,7 +148,7 @@ export default function AdminVendorsPage() {
           type="button"
           onClick={() => loadVendors()}
           disabled={loading}
-          className="flex items-center gap-2 px-6 py-3 bg-slate-50 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-3 bg-muted rounded-xl text-sm font-bold text-muted-foreground hover:bg-muted/70 disabled:opacity-50"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           Refresh
@@ -156,21 +156,21 @@ export default function AdminVendorsPage() {
       </section>
 
       {/* Vendor Table */}
-      <section className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+      <section className="bg-card rounded-3xl border border-border overflow-hidden shadow-sm">
         {loading && vendors.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="w-10 h-10 border-4 border-slate-200 border-t-slate-900 rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-slate-400 font-bold text-sm">
+            <div className="w-10 h-10 border-4 border-muted border-t-foreground rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-muted-foreground font-bold text-sm">
               Loading storefronts...
             </p>
           </div>
         ) : vendors.length === 0 ? (
           <div className="p-16 text-center">
-            <Store className="mx-auto h-10 w-10 text-slate-300" />
-            <p className="mt-3 font-bold text-slate-700">
+            <Store className="mx-auto h-10 w-10 text-muted-foreground/60" />
+            <p className="mt-3 font-bold text-foreground">
               No storefronts found
             </p>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-muted-foreground">
               Try a different search, or onboard a new vendor.
             </p>
           </div>
@@ -178,37 +178,37 @@ export default function AdminVendorsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-slate-50/50 border-b border-slate-100">
-                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <tr className="bg-muted/40 border-b border-border">
+                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                     Storefront
                   </th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                     Location
                   </th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                     Rating
                   </th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                     Delivery
                   </th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                     State
                   </th>
-                  <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-50">
+              <tbody className="divide-y divide-border">
                 {vendors.map((vendor) => (
                   <motion.tr
                     layout
                     key={vendor._id}
-                    className="hover:bg-slate-50/50 transition-colors group"
+                    className="hover:bg-muted/40 transition-colors group"
                   >
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl overflow-hidden relative bg-slate-100 border border-slate-200">
+                        <div className="w-12 h-12 rounded-xl overflow-hidden relative bg-muted border border-border">
                           {vendor.image ? (
                             <Image
                               src={vendor.image}
@@ -219,43 +219,43 @@ export default function AdminVendorsPage() {
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <Store className="w-5 h-5 text-slate-400" />
+                              <Store className="w-5 h-5 text-muted-foreground" />
                             </div>
                           )}
                         </div>
                         <div>
-                          <p className="font-bold text-slate-900">
+                          <p className="font-bold text-foreground">
                             {vendor.name}
                           </p>
-                          <p className="text-xs text-slate-400 font-medium tracking-tight">
+                          <p className="text-xs text-muted-foreground font-medium tracking-tight">
                             /{vendor.slug}
                           </p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-5">
-                      <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-full uppercase tracking-tight">
+                      <span className="text-xs font-bold text-muted-foreground bg-muted px-3 py-1 rounded-full uppercase tracking-tight">
                         {vendor.location.split(",")[0]}
                       </span>
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-1">
                         <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                        <span className="text-sm font-bold text-slate-700">
+                        <span className="text-sm font-bold text-foreground">
                           {vendor.rating.toFixed(1)}
                         </span>
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-muted-foreground">
                           ({vendor.reviewCount})
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-5">
-                      <p className="text-sm font-bold text-slate-700">
+                      <p className="text-sm font-bold text-foreground">
                         {vendor.deliveryFee > 0
                           ? currency.format(vendor.deliveryFee)
                           : "Free"}
                       </p>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-muted-foreground">
                         {vendor.deliveryTime}
                       </p>
                     </td>
@@ -264,10 +264,10 @@ export default function AdminVendorsPage() {
                         type="button"
                         onClick={() => toggleOpen(vendor)}
                         disabled={updatingId === vendor._id}
-                        className={`flex items-center gap-2 font-bold text-xs uppercase tracking-widest disabled:opacity-50 ${vendor.isOpen ? "text-emerald-600" : "text-slate-400"}`}
+                        className={`flex items-center gap-2 font-bold text-xs uppercase tracking-widest disabled:opacity-50 ${vendor.isOpen ? "text-emerald-600" : "text-muted-foreground"}`}
                       >
                         <span
-                          className={`w-1.5 h-1.5 rounded-full ${vendor.isOpen ? "bg-emerald-500" : "bg-slate-300"}`}
+                          className={`w-1.5 h-1.5 rounded-full ${vendor.isOpen ? "bg-emerald-500" : "bg-muted-foreground/40"}`}
                         />
                         {vendor.isOpen ? "Open" : "Closed"}
                       </button>
@@ -276,7 +276,7 @@ export default function AdminVendorsPage() {
                       <div className="flex items-center justify-end gap-2">
                         <Link
                           href={`/store/${vendor.slug}`}
-                          className="p-2 text-slate-400 hover:text-slate-900 hover:bg-white rounded-lg border border-transparent hover:border-slate-200 transition-all"
+                          className="p-2 text-muted-foreground hover:text-foreground hover:bg-card rounded-lg border border-transparent hover:border-border transition-all"
                           title="View storefront"
                         >
                           <ExternalLink className="w-4 h-4" />
@@ -285,7 +285,7 @@ export default function AdminVendorsPage() {
                           type="button"
                           onClick={() => deleteVendor(vendor)}
                           disabled={updatingId === vendor._id}
-                          className="p-2 text-slate-400 hover:text-rose-600 hover:bg-white rounded-lg border border-transparent hover:border-slate-200 transition-all disabled:opacity-50"
+                          className="p-2 text-muted-foreground hover:text-rose-600 hover:bg-card rounded-lg border border-transparent hover:border-border transition-all disabled:opacity-50"
                           title="Delete storefront"
                         >
                           <Trash2 className="w-4 h-4" />

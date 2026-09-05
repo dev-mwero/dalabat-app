@@ -13,7 +13,6 @@ import {
   Store,
   TrendingUp,
   Truck,
-  Zap,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -77,32 +76,34 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="bg-white text-slate-900 font-sans overflow-x-hidden">
+    <div className="bg-background text-foreground overflow-x-hidden">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-[100] bg-white/80 backdrop-blur-md border-b border-slate-100">
+      <nav className="fixed top-0 w-full z-[100] bg-background/80 backdrop-blur-md border-b border-border">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
-              <Zap className="text-white w-5 h-5 fill-white" />
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <Store className="text-primary-foreground w-5 h-5" />
             </div>
-            <span className="text-xl font-black tracking-tight">IIBSO</span>
+            <span className="font-display text-xl font-semibold tracking-tight">
+              IIBSO
+            </span>
           </div>
-          <div className="hidden md:flex items-center gap-8 text-sm font-bold text-slate-500">
+          <div className="hidden md:flex items-center gap-8 text-sm font-bold text-muted-foreground">
             <Link
               href="/market"
-              className="hover:text-slate-900 transition-colors"
+              className="hover:text-foreground transition-colors"
             >
               Marketplace
             </Link>
             <Link
               href="#features"
-              className="hover:text-slate-900 transition-colors"
+              className="hover:text-foreground transition-colors"
             >
               Features
             </Link>
             <Link
               href="#how-it-works"
-              className="hover:text-slate-900 transition-colors"
+              className="hover:text-foreground transition-colors"
             >
               How it Works
             </Link>
@@ -110,13 +111,13 @@ export default function LandingPage() {
           <div className="flex items-center gap-4">
             <Link
               href="/sign-in"
-              className="text-sm font-bold text-slate-600 hover:text-slate-900"
+              className="text-sm font-bold text-muted-foreground hover:text-foreground"
             >
               Login
             </Link>
             <Link
               href="/register"
-              className="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:shadow-xl hover:shadow-slate-200 transition-all"
+              className="bg-primary text-primary-foreground px-6 py-2.5 rounded-full text-sm font-bold hover:shadow-xl hover:shadow-primary/20 transition-all"
             >
               Get Started
             </Link>
@@ -129,7 +130,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div {...fadeIn}>
-              <h1 className="font-display text-5xl lg:text-7xl font-semibold leading-[1.05] tracking-tight text-slate-900 mb-8">
+              <h1 className="font-display text-5xl lg:text-7xl font-semibold leading-[1.05] tracking-tight text-foreground mb-8">
                 Everyday provisions, from vendors you{" "}
                 <span className="relative whitespace-nowrap text-orange-600">
                   trust
@@ -340,9 +341,9 @@ export default function LandingPage() {
       </section>
 
       {/* Trust Bar */}
-      <section className="py-12 border-y border-slate-100 bg-white">
+      <section className="py-12 border-y border-border bg-card">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-wrap justify-center gap-12 text-slate-400">
+          <div className="flex flex-wrap justify-center gap-12 text-muted-foreground">
             <div className="flex items-center gap-2 font-black text-xl tracking-tight">
               <Store className="w-6 h-6 text-orange-600" /> Vetted Local Vendors
             </div>
@@ -376,13 +377,13 @@ export default function LandingPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                 <Link
                   href="/market"
-                  className="bg-white text-slate-900 px-10 py-5 rounded-2xl font-black text-lg hover:bg-orange-50 hover:text-orange-700 transition-all"
+                  className="bg-white text-slate-900 px-10 py-5 rounded-2xl font-black text-lg hover:bg-slate-100 transition-all"
                 >
                   Shop the Market
                 </Link>
                 <Link
                   href="/register?role=vendor"
-                  className="bg-slate-800 text-white border border-slate-700 px-10 py-5 rounded-2xl font-black text-lg hover:bg-slate-700 transition-all"
+                  className="bg-primary text-primary-foreground border border-primary px-10 py-5 rounded-2xl font-black text-lg hover:bg-primary/90 transition-all"
                 >
                   Become a Vendor
                 </Link>
@@ -396,69 +397,93 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-50 pt-20 pb-10 border-t border-slate-200">
+      <footer className="bg-muted/50 pt-20 pb-10 border-t border-border">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12 mb-20">
           <div className="col-span-2">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
-                <Zap className="text-white w-5 h-5 fill-white" />
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <Store className="text-primary-foreground w-5 h-5" />
               </div>
-              <span className="text-xl font-black tracking-tight">IIBSO</span>
+              <span className="font-display text-xl font-semibold tracking-tight">
+                IIBSO
+              </span>
             </div>
-            <p className="text-slate-500 font-medium max-w-sm">
+            <p className="text-muted-foreground font-medium max-w-sm">
               Empowering local vendors and connecting them with the people who
               value quality everyday provisions.
             </p>
           </div>
           <div>
-            <h4 className="font-black text-slate-900 mb-6">Platform</h4>
-            <ul className="space-y-4 text-sm font-bold text-slate-500">
+            <h4 className="font-display font-semibold text-foreground mb-6">
+              Platform
+            </h4>
+            <ul className="space-y-4 text-sm font-bold text-muted-foreground">
               <li>
-                <Link href="/market" className="hover:text-slate-900">
+                <Link
+                  href="/market"
+                  className="hover:text-foreground transition-colors"
+                >
                   Marketplace
                 </Link>
               </li>
               <li>
-                <Link href="/vendors" className="hover:text-slate-900">
+                <Link
+                  href="/vendors"
+                  className="hover:text-foreground transition-colors"
+                >
                   Vendor Directory
                 </Link>
               </li>
               <li>
-                <Link href="/register" className="hover:text-slate-900">
+                <Link
+                  href="/register"
+                  className="hover:text-foreground transition-colors"
+                >
                   Registration
                 </Link>
               </li>
             </ul>
           </div>
           <div>
-            <h4 className="font-black text-slate-900 mb-6">Company</h4>
-            <ul className="space-y-4 text-sm font-bold text-slate-500">
+            <h4 className="font-display font-semibold text-foreground mb-6">
+              Company
+            </h4>
+            <ul className="space-y-4 text-sm font-bold text-muted-foreground">
               <li>
-                <Link href="/support" className="hover:text-slate-900">
+                <Link
+                  href="/support"
+                  className="hover:text-foreground transition-colors"
+                >
                   Support
                 </Link>
               </li>
               <li>
-                <Link href="/track-order" className="hover:text-slate-900">
+                <Link
+                  href="/track-order"
+                  className="hover:text-foreground transition-colors"
+                >
                   Track Order
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-slate-900">
-                  Terms of Service
+                <Link
+                  href="/market"
+                  className="hover:text-foreground transition-colors"
+                >
+                  Market
                 </Link>
               </li>
             </ul>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto px-6 pt-10 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-sm font-bold text-slate-400">
+        <div className="max-w-7xl mx-auto px-6 pt-10 border-t border-border flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-sm font-bold text-muted-foreground">
             © 2026 IIBSO Marketplace. All rights reserved.
           </p>
-          <div className="flex items-center gap-6 text-slate-400">
-            <TrendingUp className="w-5 h-5 hover:text-slate-900 cursor-pointer" />
-            <Globe className="w-5 h-5 hover:text-slate-900 cursor-pointer" />
-            <Truck className="w-5 h-5 hover:text-slate-900 cursor-pointer" />
+          <div className="flex items-center gap-6 text-muted-foreground">
+            <TrendingUp className="w-5 h-5" />
+            <Globe className="w-5 h-5" />
+            <Truck className="w-5 h-5" />
           </div>
         </div>
       </footer>
