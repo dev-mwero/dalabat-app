@@ -404,8 +404,8 @@ export default function VendorInventoryPage() {
             Curated Inventory
           </h1>
           <p className="text-on-surface-variant text-lg max-w-xl">
-            Manage your premium offerings and maintain the stock of your
-            artisanal pantry staples.
+            Manage your offerings and maintain the stock of your everyday
+            staples.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
@@ -671,7 +671,7 @@ export default function VendorInventoryPage() {
                     setForm((prev) => ({ ...prev, name: e.target.value }))
                   }
                   className="mt-1 h-12 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all"
-                  placeholder="e.g. Artisan Sourdough Loaf"
+                  placeholder="e.g. 2kg Rice"
                 />
               </div>
 

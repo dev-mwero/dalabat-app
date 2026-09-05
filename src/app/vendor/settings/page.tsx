@@ -408,9 +408,11 @@ export default function VendorSettingsPage() {
                         id="profile-category"
                         className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-container text-on-surface font-medium"
                       >
-                        <option>Bakery & Pastries</option>
-                        <option>Organic Produce</option>
-                        <option>Artisan Cheese</option>
+                        <option>Rice & Grains</option>
+                        <option>Flour & Baking</option>
+                        <option>Sugar & Sweeteners</option>
+                        <option>Cooking Oils</option>
+                        <option>Salt & Spices</option>
                         <option>General Groceries</option>
                       </select>
                     </div>

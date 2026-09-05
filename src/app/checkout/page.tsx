@@ -203,10 +203,10 @@ export default function CheckoutPage() {
 
   return (
     <div className="bg-surface text-on-surface antialiased min-h-screen">
-      <header className="bg-[#F8F9FF]/90 backdrop-blur-lg sticky top-0 z-50 py-4 px-6 border-b border-outline-variant/10">
+      <header className="bg-surface/90 backdrop-blur-lg sticky top-0 z-50 py-4 px-6 border-b border-outline-variant/10">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="text-2xl font-extrabold tracking-tighter text-[#9D4300]">
-            Zest Marketplace
+          <div className="text-2xl font-extrabold tracking-tighter text-primary">
+            IIBSO
           </div>
           <Link
             href={vendor ? `/store/${vendor.slug || vendor._id}` : "/"}
@@ -226,7 +226,7 @@ export default function CheckoutPage() {
                 Complete your order
               </h1>
               <p className="text-on-surface-variant body-md">
-                Review your details and confirm your artisanal selection.
+                Review your details and confirm your provisions.
               </p>
             </div>
 
@@ -557,7 +557,7 @@ export default function CheckoutPage() {
 
       <footer className="py-12 px-6 border-t border-outline-variant/10 text-center">
         <p className="text-sm text-on-surface-variant">
-          © {new Date().getFullYear()} Zest Marketplace. All transactions are
+          © {new Date().getFullYear()} IIBSO Marketplace. All transactions are
           encrypted.
         </p>
       </footer>

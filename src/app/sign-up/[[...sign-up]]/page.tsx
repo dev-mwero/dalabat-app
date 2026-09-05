@@ -39,17 +39,17 @@ function SignUpContent() {
           </div>
           <h2 className="text-3xl font-black text-white mb-4 leading-tight">
             {isVendor
-              ? "Launch your artisanal storefront."
+              ? "Launch your provisions storefront."
               : isTeller
                 ? "Join your team's storefront."
-                : "Discover the finest artisanal provisions."}
+                : "Discover quality everyday staples."}
           </h2>
           <p className="text-white/70 font-medium text-lg leading-relaxed">
             {isVendor
               ? "Join hundreds of producers connecting with thousands of buyers across Kenya."
               : isTeller
                 ? "You've been invited to manage orders and inventory as a Teller."
-                : "Support local producers and enjoy premium artisanal goods delivered to your doorstep."}
+                : "Support local vendors and enjoy quality provisions delivered to your doorstep."}
           </p>
 
           <div className="mt-12 space-y-4">

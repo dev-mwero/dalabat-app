@@ -57,10 +57,11 @@ export default function MarketPage() {
 
   const categories = [
     { id: "all", name: "All Provisions" },
-    { id: "bakery", name: "Artisanal Breads" },
-    { id: "dairy", name: "Cheeses & Dairy" },
-    { id: "groceries", name: "Cold-Pressed Oils" },
-    { id: "fruits", name: "Fresh Produce" },
+    { id: "rice", name: "Rice & Grains" },
+    { id: "flour", name: "Flour & Baking" },
+    { id: "sugar", name: "Sugar & Sweeteners" },
+    { id: "salt", name: "Salt & Spices" },
+    { id: "oil", name: "Cooking Oils" },
   ];
 
   const currency = new Intl.NumberFormat("en-KE", {
@@ -72,11 +73,11 @@ export default function MarketPage() {
   return (
     <div className="bg-surface text-on-surface min-h-screen font-sans">
       {/* TopNavBar */}
-      <header className="bg-[#F8F9FF]/90 backdrop-blur-lg dark:bg-[#0B1C30]/90 sticky top-0 z-50 border-b border-outline-variant/10">
+      <header className="bg-surface/90 backdrop-blur-lg sticky top-0 z-50 border-b border-outline-variant/10">
         <div className="flex justify-between items-center w-full px-6 py-4 max-w-screen-2xl mx-auto">
           <Link
             href="/"
-            className="text-2xl font-extrabold tracking-tighter text-[#9D4300] dark:text-[#F97316]"
+            className="text-2xl font-extrabold tracking-tighter text-primary"
           >
             IIBSO
           </Link>
@@ -84,13 +85,13 @@ export default function MarketPage() {
           <nav className="hidden md:flex items-center gap-8">
             <Link
               href="/market"
-              className="text-[#9D4300] font-bold border-b-2 border-[#F97316] pb-1 hover:text-[#F97316] transition-colors duration-200"
+              className="text-primary font-bold border-b-2 border-primary-container pb-1 hover:text-primary-container transition-colors duration-200"
             >
               Discover
             </Link>
             <Link
               href="/vendors"
-              className="text-[#584237] dark:text-slate-400 font-medium hover:text-[#F97316] transition-colors duration-200"
+              className="text-on-surface-variant font-medium hover:text-primary-container transition-colors duration-200"
             >
               Vendors
             </Link>
@@ -101,13 +102,13 @@ export default function MarketPage() {
               <Search className="text-on-surface-variant w-4 h-4 mr-2" />
               <input
                 className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-on-surface-variant/60 focus:outline-none"
-                placeholder="Search artisanal provisions..."
+                placeholder="Search provisions and staples..."
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-4 text-[#9D4300] dark:text-[#F97316]">
+            <div className="flex items-center gap-4 text-primary">
               <Link
                 href="/checkout"
                 className="active:opacity-80 active:scale-95 transition-all relative"
@@ -216,7 +217,7 @@ export default function MarketPage() {
             <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
                 <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">
-                  Artisanal Finds
+                  Everyday Provisions
                 </h1>
                 <p className="text-on-surface-variant font-medium">
                   Showing {filteredProducts.length} results
@@ -307,7 +308,7 @@ export default function MarketPage() {
                         </div>
                         <p className="text-sm text-on-surface-variant line-clamp-2 mb-4 leading-relaxed flex-1">
                           {product.description ||
-                            "Authentic artisanal provision carefully crafted for the best quality."}
+                            "Quality everyday staple, sourced and prepared with care."}
                         </p>
                         <div className="flex items-center justify-between pt-4 border-t border-surface-container-low mt-auto">
                           {vendor ? (

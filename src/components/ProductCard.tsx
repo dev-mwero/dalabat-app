@@ -32,10 +32,10 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
 
   // Generate a predictable background color based on product ID or name
   const bgColors = [
-    "bg-[#E5EEFF]",
-    "bg-[#FFDBC9]",
-    "bg-[#DAE2FD]",
-    "bg-[#F8F9FF]",
+    "bg-surface-container",
+    "bg-primary-fixed",
+    "bg-secondary-container",
+    "bg-surface",
   ];
   const bgColor = bgColors[(product.name.length || 0) % bgColors.length];
 

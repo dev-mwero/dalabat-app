@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IIBSO — The Artisanal Marketplace",
+  title: "IIBSO — Everyday Provisions Marketplace",
   description:
-    "IIBSO connects discerning buyers with master artisanal producers across Kenya.",
+    "IIBSO connects families with trusted local vendors for quality everyday staples — rice, flour, oil, sugar and more — delivered to your doorstep.",
 };
 
 export default function RootLayout({

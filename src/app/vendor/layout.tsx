@@ -35,9 +35,7 @@ export default function VendorLayout({
       {/* SideNavBar */}
       <aside className="h-screen w-64 fixed left-0 top-0 border-r border-outline-variant/10 bg-surface-container-lowest flex flex-col gap-2 p-4 z-50">
         <div className="mb-8 px-2">
-          <h1 className="text-lg font-extrabold text-[#9D4300] dark:text-[#F97316]">
-            Management
-          </h1>
+          <h1 className="text-lg font-extrabold text-primary">Management</h1>
           <p className="text-xs text-on-surface-variant opacity-70">
             Vendor Portal
           </p>
@@ -75,7 +73,7 @@ export default function VendorLayout({
         {/* TopNavBar */}
         <header className="bg-surface/80 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center w-full px-8 py-4 shadow-sm border-b border-outline-variant/10">
           <div className="flex items-center gap-4">
-            <span className="text-xl font-bold italic text-[#9D4300] dark:text-[#F97316]">
+            <span className="text-xl font-bold italic text-primary">
               The Digital Pantry
             </span>
           </div>

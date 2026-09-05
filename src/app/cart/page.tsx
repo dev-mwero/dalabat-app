@@ -43,7 +43,7 @@ export default function CartPage() {
             Your Basket
           </h1>
           <p className="text-on-surface-variant font-medium">
-            Review your curated selection of artisanal provisions
+            Review your selection of everyday provisions
           </p>
         </div>
         <Link
@@ -64,7 +64,7 @@ export default function CartPage() {
             Your basket is empty
           </h2>
           <p className="text-on-surface-variant mb-8">
-            Looks like you haven't added any artisanal provisions yet.
+            Looks like you haven't added any provisions yet.
           </p>
           <Link
             href="/"
@@ -168,7 +168,7 @@ export default function CartPage() {
                     Smoked Sea Salt
                   </span>
                   —harvested by hand in small batches. It's the perfect pairing
-                  for your artisanal selection.
+                  for your everyday provisions.
                 </p>
                 <button
                   type="button"
@@ -269,8 +269,8 @@ export default function CartPage() {
               <div className="pt-4 flex flex-col items-center gap-3">
                 <ShieldCheck className="w-6 h-6 text-primary/50" />
                 <p className="text-[10px] text-on-surface-variant text-center leading-tight">
-                  Your order is protected by our Curator Guarantee. <br />
-                  Secure transaction processed via Zest Pay.
+                  Your order is protected by our Quality Guarantee. <br />
+                  Secure transaction processed via IIBSO Pay.
                 </p>
               </div>
             </div>

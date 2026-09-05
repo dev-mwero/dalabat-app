@@ -28,7 +28,7 @@ export default function LandingPage() {
     {
       title: "For Buyers",
       description:
-        "Access a curated world of artisanal provisions. From small-batch sourdough to cold-pressed oils, delivered to your doorstep.",
+        "Fill your kitchen with quality everyday staples — rice, flour, oil, sugar and more — delivered to your doorstep by trusted local vendors.",
       icon: ShoppingBag,
       color: "bg-orange-50 text-orange-600",
       cta: "Explore Market",
@@ -37,7 +37,7 @@ export default function LandingPage() {
     {
       title: "For Vendors",
       description:
-        "Scale your artisanal business with professional tools. Manage inventory, staff, and analytics in one powerful dashboard.",
+        "Run your staple-food business with professional tools. Manage inventory, staff, and analytics in one powerful dashboard.",
       icon: Store,
       color: "bg-blue-50 text-blue-600",
       cta: "Start Selling",
@@ -108,13 +108,13 @@ export default function LandingPage() {
               <h1 className="text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight text-slate-900 mb-8">
                 The Future of{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-rose-500">
-                  Artisanal
+                  Provisions
                 </span>{" "}
                 Commerce.
               </h1>
               <p className="text-xl text-slate-500 font-medium leading-relaxed mb-10 max-w-lg">
-                Connecting discerning buyers with master producers. A complete
-                ecosystem for artisanal provisions, built for speed and scale.
+                Connecting families with trusted local vendors. A complete
+                ecosystem for everyday staples, built for speed and scale.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
@@ -148,7 +148,7 @@ export default function LandingPage() {
                   ))}
                 </div>
                 <p className="text-sm font-bold text-slate-400 italic">
-                  Trusted by 1,200+ food enthusiasts
+                  Trusted by 1,200+ families
                 </p>
               </div>
             </motion.div>
@@ -161,7 +161,7 @@ export default function LandingPage() {
             >
               <Image
                 src="/hero-banner.png"
-                alt="Artisanal Marketplace"
+                alt="Everyday staples marketplace"
                 fill
                 priority
                 className="object-cover"
@@ -219,8 +219,8 @@ export default function LandingPage() {
               Dual-Powered Experience
             </h2>
             <p className="text-slate-500 font-medium max-w-xl mx-auto text-lg">
-              Whether you are curating your kitchen or building your brand, we
-              provide the ultimate platform for artisanal success.
+              Whether you are stocking your pantry or building your grocery
+              brand, we provide the ultimate platform for everyday provisions.
             </p>
           </div>
 
@@ -288,7 +288,7 @@ export default function LandingPage() {
               </h2>
               <p className="text-slate-400 text-lg md:text-xl font-medium max-w-2xl mx-auto">
                 Join the thousands of shoppers and hundreds of vendors building
-                the future of the Kenyan artisanal food scene.
+                the future of food supply in Kenya — one staple at a time.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                 <Link
@@ -323,8 +323,8 @@ export default function LandingPage() {
               <span className="text-xl font-black tracking-tight">IIBSO</span>
             </div>
             <p className="text-slate-500 font-medium max-w-sm">
-              Empowering artisanal producers and connecting them with the people
-              who value quality above all else.
+              Empowering local vendors and connecting them with the people who
+              value quality everyday provisions.
             </p>
           </div>
           <div>

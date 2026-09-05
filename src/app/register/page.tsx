@@ -14,14 +14,14 @@ const roles = [
     title: "I'm a Buyer",
     subtitle: "Shop the Market",
     description:
-      "Discover and order artisanal provisions from the best local producers, delivered to your door.",
+      "Discover and order everyday staples from the best local vendors, delivered to your door.",
     icon: ShoppingBag,
     color: "from-orange-400 to-rose-500",
     bg: "bg-orange-50",
     border: "border-orange-200",
     selectedBorder: "border-orange-500 ring-4 ring-orange-100",
     perks: [
-      "Browse thousands of artisanal products",
+      "Browse quality staples and provisions",
       "Order from multiple stores in one cart",
       "Track deliveries in real-time",
       "Save favourites and re-order easily",
@@ -32,7 +32,7 @@ const roles = [
     title: "I'm a Vendor",
     subtitle: "Open Your Store",
     description:
-      "Launch your artisanal storefront, manage inventory, and reach thousands of discerning buyers.",
+      "Launch your staple-food storefront, manage inventory, and reach thousands of shoppers.",
     icon: Store,
     color: "from-blue-500 to-violet-600",
     bg: "bg-blue-50",
